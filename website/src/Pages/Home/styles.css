@@ -1,0 +1,28 @@
+.homeContainer {
+  height: 100vh;
+  /* width: 100vw; */
+  position: relative;
+}
+
+.loading {
+  height: 100vh;
+}
+
+/* .homeContent {
+    height: 100%;
+} */
+/* 
+.parkingInfo {
+    flex-grow: 1;
+}
+
+.parkingInfo>h2 {
+    margin: 0;
+} */
+
+/* .factsHolderImg {
+  width: 100%;
+  height: 650px;
+  object-fit: cover;
+  position: absolute;
+} */

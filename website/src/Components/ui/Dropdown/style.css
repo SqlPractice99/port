@@ -1,0 +1,143 @@
+.dropdown {
+  background-color: #0d2a46;
+  color: #ffffff;
+  position: fixed;
+  width: 100%;
+  height: calc(100vh - 60px);
+  min-height: 99.7%;
+  top: 60px;
+  left: 0;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 10;
+  /* border: solid 1px yellow; */
+  /* overflow-y: auto; */
+}
+
+.dropdown-content {
+  max-width: 1783px;
+  margin-top: -60px;
+  /* height: 70%; */
+  /* max-width: 1528px; */
+  /* border: solid 1px red; */
+}
+
+.dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown li {
+  margin-bottom: 30px;
+  /* border: yellow solid 1px; */
+  transition: color 0.3s ease;
+}
+
+.dropdown li:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown li:hover {
+  color: red;
+}
+
+.dropdown li.active {
+  color: red;
+  font-weight: bold;
+}
+
+.dropdown-options {
+  margin: 0 5vw;
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.dropdown-options li {
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+  font-size: 20px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.dropdown-info {
+  padding: 0;
+}
+
+.dropdown-info ul {
+  flex-wrap: wrap;
+  /* border: solid 1px purple; */
+  list-style-type: none;
+  row-gap: 40px;
+  margin-right: 60px;
+}
+
+.dropdown-info li {
+  box-sizing: border-box;
+  /* border: solid 1px green; */
+  width: 40%;
+}
+
+.info-phone,
+.info-location,
+.info-email {
+  width: 50px;
+}
+
+.info-email-address, .info-phone-number {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.info-socialMedia {
+  width: 40px;
+}
+
+.info-twitter,
+.info-instagram,
+.info-linkedin {
+  width: 20px;
+  height: 20px;
+}
+
+.info-facebook {
+  width: 13px;
+  height: 20px;
+}
+
+.info-twitter:hover img {
+  content: url("../../../assets/images/twitter_active.png");
+}
+
+.info-facebook:hover img {
+  content: url("../../../assets/images/facebook_active.png");
+}
+
+.info-instagram:hover img {
+  content: url("../../../assets/images/instagram_active.png");
+}
+
+.info-linkedin:hover img {
+  content: url("../../../assets/images/linkedin_active.png");
+}
+
+.info-text {
+  font-family: "Montserrat", sans-serif;
+  color: #fff;
+  /* font-weight: 500; */
+  font-size: 16px;
+  text-align: center;
+}
+
+.socialMedia-imgs:hover {
+  /* background-color: #ffe030; */
+  transition: transform 0.3s ease;
+}
+
+.socialMedia-imgs a {
+  text-decoration: none;
+}
+
+.active-tab, .info-select:hover, .info-email-address:hover, .info-phone-number:hover{
+  color: red;
+}

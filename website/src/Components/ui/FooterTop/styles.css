@@ -1,0 +1,44 @@
+.footerTop {
+  /* width: auto; */
+  background-color: #1a548d;
+  padding: 50px 0;
+  margin-top: auto;
+}
+
+.newSafeArea {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.leftFooterTop {
+  color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+}
+
+.leftFooterTopUp {
+  font-size: 32px;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.leftFooterTopList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 17px;
+}
+
+.leftFooterTopList a {
+  text-decoration: none;
+  color: #ffffff90;
+}
+
+.leftFooterTopList a:hover {
+  text-decoration: underline;
+  color: #ffffff;
+  transition: color 0.5s ease, text-decoration 0.5s ease;
+}
+
+.rightFooterTopImg {
+  width: 100px;
+}

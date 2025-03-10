@@ -1,0 +1,33 @@
+.adminSectionContainer {
+  margin-top: 40px;
+  width: 100%;
+  max-width: 1240px;
+}
+
+.adminSection {
+  transition: transform 0.3s ease;
+  /* height: 50px; */
+}
+
+.adminSection:hover {
+  transform: scale(1.1);
+}
+
+.adminSectionImg {
+  width: 250px;
+  height: 200px;
+  object-fit: cover;
+  /* border: solid 1px black; */
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.adminSection h4 {
+  margin-top: 8px;
+}
+
+/* .adminSectionImgContainer {
+    height: 250px;
+    background-color: solid 1px #ffffff;
+    border: solid 1px black;
+  } */

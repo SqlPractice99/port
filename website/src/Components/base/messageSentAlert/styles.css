@@ -1,0 +1,151 @@
+.closed {
+  display: none;
+}
+
+.message-opened {
+  background-color: #fff;
+  position: fixed;
+  width: 90%;
+  max-width: 450px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow-y: auto;
+  max-height: 90%;
+}
+
+.message-alert-container {
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group input[type="file"] {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.input-group input[type="file"] {
+  width: 95%;
+}
+
+.submit {
+  text-align: center;
+}
+
+.post-submit-btn {
+  background-color: rgb(0, 102, 255);
+  color: white;
+  padding: 8px 14px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  column-gap: 5px;
+}
+
+.book-input {
+  width: 97.5% !important;
+}
+
+.media-input {
+  padding-left: 0 !important;
+}
+
+.message-alert-form-container, .message-close-btn {
+    padding-bottom: 20px;
+}
+
+.message-close-button {
+  /* background-color: black; */
+  color: white;
+  padding: 6px 10px;
+  border-radius: 0;
+  font-size: 12px;
+}
+
+.message-close-button:hover {
+    color: #000;
+  background-color: #6e6e6e50;
+}
+
+.submit {
+  column-gap: 10px;
+}
+
+.selected-image {
+  margin-top: 0px;
+}
+
+.confirm {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+@media only screen and (max-width: 600px) {
+  .opened {
+    width: 90%;
+    max-width: 270px;
+    padding: 15px;
+    border-radius: 8px;
+    /* max-height: 83%; */
+  }
+
+  .input-group input[type="text"],
+  .input-group input[type="number"] {
+    width: 90%;
+    padding: 5px;
+  }
+
+  .book-input {
+    width: 97.5% !important;
+  }
+
+  .post-submit-btn {
+    padding: 6px 12px;
+  }
+
+  /* 
+      .form-row {
+        flex-direction: column;
+      } */
+
+  .input-group input[type="file"] {
+    width: 91.5%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 2px;
+  }
+
+  .input-group {
+    width: 100%;
+    margin-bottom: 7px;
+  }
+
+  .form-title {
+    margin-top: -25px;
+  }
+
+  .image {
+    margin-top: 7px;
+  }
+}

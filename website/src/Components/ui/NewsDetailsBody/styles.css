@@ -1,0 +1,370 @@
+.newsDetailsSection {
+  width: 1240px;
+  margin: 0 auto 30px auto;
+}
+
+.tenderDetailsCoverImg {
+  min-height: 460px;
+  height: auto;
+  width: 100%;
+  object-fit: cover;
+  flex-grow: 1;
+}
+
+.tenderDetailsLeftContent {
+  margin-top: 48px;
+  width: 92%;
+}
+
+.tenderDetailsDate {
+  color: #ffffff;
+  width: fit-content;
+  background-color: #D71813;
+  direction: rtl;
+  text-align: right;
+  font-family: 'Almarai', sans-serif;
+  font-weight: normal;
+  font-size: 18px;
+  margin-bottom: 35px;
+  padding: 5px 10px;
+}
+
+.newsDetailsTitle {
+  color: #ffffff;
+  font-family: 'Almarai', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 37px;
+  margin-bottom: 30px;
+}
+
+.tenderDetailsSubTitle {
+  color: #ffffff;
+  font-size: 17px;
+  line-height: 28px;
+  direction: rtl;
+  text-align: right;
+  font-family: 'Almarai', sans-serif;
+  font-weight: normal;
+  padding-bottom: 30px;
+}
+
+.tenderDetailsLeft {
+  background-color: #0D2A46;
+}
+
+.newsDetailsDownload {
+  font-size: 17px;
+  text-align: justify;
+  line-height: 29px;
+  font-family: 'Almarai', sans-serif;
+  font-weight: normal;
+  padding: 50px 0 30px 0;
+}
+
+.tenderDetailsDownload a {
+  color: #1A548D;
+  text-decoration: none;
+}
+
+.tenderDetailsDownload a:hover {
+  text-decoration: underline;
+}
+
+.newsDetailsDownloadText {
+  font-size: 17px;
+  text-align: justify;
+  line-height: 29px;
+  color: #4d4d4d;
+  font-family: 'Almarai', sans-serif;
+  font-weight: normal;
+}
+
+.newsDetailsImgCont {
+  max-width: 850px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.newsDetailsImg {
+  width: 100%; /* Adjust width dynamically */
+  height: auto; /* Maintain aspect ratio */
+  /* max-height: 100%; /* Prevent from scaling beyond its original size */
+  object-fit: cover;
+} 
+
+/* The normal old version of the newsDetails/Cont/Img height and style */
+/* .newsDetailsImgCont {
+  max-width: 850px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.newsDetailsImg {
+  width: 100%;
+  height: auto;
+  padding-right: 0;
+  object-fit: contain;
+}  */
+
+
+
+/* .newsDetailsImg { */
+ /*  width: 100%; /* Adjust width automatically */
+ /*  height: auto; /* Adjust height automatically */
+ /*  object-fit: contain; /* Ensure the entire image is visible */
+  /* display: block; /* Avoid extra space below inline images */
+/* } */
+
+
+
+
+
+
+
+.tenderBody {
+    padding: 50px 0px;
+    width: 1240px;
+    margin: 0 auto;
+  }
+  
+  .tenderList {
+    list-style: none;
+    padding-left: 0;
+    column-gap: 24px;
+  }
+  
+  .tenderList li {
+    width: 32%;
+    margin-bottom: 55px;
+  }
+  
+  .tenderListImg {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
+  
+  .tenderListDate {
+    font-size: 16px;
+    color: #1A548D;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-family: 'Almarai', sans-serif;
+  }
+
+
+
+  .tenderListTitle {
+    color: #4D4D4D;
+    font-size: 18px;
+    line-height: 22px;
+    font-family: 'Almarai', sans-serif;
+    font-weight: normal;
+    /* direction: rtl;
+    text-align: right; */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap');
+  
+  .editInput, .editTextarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    line-height: 25px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .editInput, .editTextarea {
+    min-height: 150px;
+    resize: vertical;
+    /* direction: rtl; */
+    /* text-align: right; */
+  }
+  
+  .editButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .editBtn, .saveBtn, .cancelBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .editBtn, .saveBtn {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .cancelBtn {
+    background-color: #a7a7a7;
+    color: white;
+  }
+  
+  .remove-btn {
+    background-color: #ff4d4d; /* Red color for warning */
+    color: white; /* White text for contrast */
+    border: none; /* Remove default border */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Readable text size */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    transition: 0.3s ease, transform 0.2s ease;
+  }
+  
+  .remove-btn:hover {
+    background-color: #cc0000; /* Darker red on hover */
+  }
+  
+  .remove-btn:active {
+    transform: scale(0.95); /* Slight press effect */
+  }
+  
+  .upload-container {
+    margin-bottom: 15px;
+  }
+
+  /* .popupimg {
+    width: 150px;
+    height: auto;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.popupimg:hover {
+    transform: scale(1.05);
+}
+
+.popupdialog {
+    border: none;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+}
+
+.popupdialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.popup-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+}
+
+.popupclose-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    background: none;
+    border: none;
+} */
+
+
+.layoutTabs {
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tabBtn {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.tabBtn.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Slideshow Container */
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  max-width: 600px;
+  margin: auto;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background-color: #f3f3f3; */
+}
+
+/* Slide Image */
+/* .slideshow-slide img { */
+  /* max-width: 100%; */
+  /* max-height: 100%; */
+  /* width: auto; */
+  /* height: auto; */
+  /* object-fit: contain; */
+
+  /* max-width: 90vw;
+    max-height: 60vh; */
+/* } */
+
+.scale-slider {
+  margin-bottom: 20px;
+}
+
+/* .newsDetailsImg {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+} */
+
+/* Navigation Buttons */
+.prevBtn, .nextBtn {
+  width: 50px; /* Set width */
+  height: 50px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  /* padding: 15px; */
+  cursor: pointer;
+  border: none;
+  font-size: 24px;
+  border-radius: 50%;
+  z-index: 100;
+  transition: background-color 0.3s ease;
+}
+
+.prevBtn {
+  left: 10px;
+}
+
+.nextBtn {
+  right: 10px;
+}
+
+.prevBtn:hover, .nextBtn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.large-image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+}

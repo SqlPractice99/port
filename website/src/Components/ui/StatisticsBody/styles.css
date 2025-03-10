@@ -1,0 +1,48 @@
+.statisticsBody {
+  padding: 50px 60px;
+  width: 1306px;
+  margin-left: -1px;
+}
+
+.statisticsOptionsLabel {
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+.statisticsOptionsSelect {
+  background-color: transparent;
+  /* -webkit-appearance: none; */
+  border-radius: 0;
+  border: 1px solid #4d6370;
+  padding: 10px;
+  color: #4d4d4d;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+  align-items: center;
+  justify-content: center;
+}
+
+.statisticsOptionsList {
+  background-color: transparent;
+  /* -webkit-appearance: none; */
+  border-radius: 0;
+  border: 1px solid #4d6370;
+  padding: 10px;
+  color: #4d4d4d;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+}
+
+.statisticsSearch {
+  border-radius: 0;
+  border: 1px solid #4d6370;
+  padding: 10px;
+  color: #4d4d4d;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+}

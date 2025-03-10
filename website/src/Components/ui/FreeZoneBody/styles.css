@@ -1,0 +1,176 @@
+.content {
+    display: none;
+    /* padding: 10px; */
+    /* background-color: #f1f1f1; */
+
+
+    /* margin-top: 30px; */
+}
+
+.content.show {
+    display: flex;
+}
+
+.title {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    margin: 5px 0;
+}
+
+.title:hover {
+    background-color: #0056b3;
+}
+
+.freeZoneContent {
+    width: 1240px;
+    margin: 40px 0 60px 0;
+}
+
+.freeZoneList {
+    width: 88%;
+    padding-left: 0;
+}
+
+.freeZoneList li {
+    cursor: pointer;
+    list-style: none;
+    color: #1A548D;
+    background-color: transparent;
+    border: 1px solid #1A548D;
+    font-size: 15px;
+    padding: 10px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: normal;
+}
+
+.freeZoneList li:hover {
+    background-color: #1A548D;
+    color: #ffffff;
+    transition: color 0.6s ease;
+}
+
+.freeZoneActiveList {
+    color: #ffffff !important;
+    background-color: #1A548D !important;
+}
+
+.freeZoneTitleContent, .edit-input, .edit-textarea {
+    color: #4d4d4d;
+    font-size: 14px;
+    line-height: 22px;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+}
+
+.freeZoneSubTitle {
+    margin-bottom: 10px;
+    font-size: 19px;
+    color: #1A548D;
+    line-height: 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+.empty-line {
+    height: 22px;
+}
+
+.red-color {
+    color: #D71813;
+    font-size: 12pt;
+    font-family: "Times New Roman",serif;
+    /* font-size: 16px; */
+    /* font-weight: 600; */
+}
+
+.bl-color {
+    color: #3366cc;
+    font-size: 12.0pt;
+    font-weight: bold;
+    font-family: "Times New Roman",serif;
+}
+
+.bl-light-color {
+    color: #3366cc;
+    font-size: 10.0pt;
+    font-weight: normal;
+    font-family: 'Arial',sans-serif;
+}
+
+.freeZoneContentList {
+    padding-left: 15px;
+    line-height: 20px;
+    margin-bottom: 0;
+    color: #6d6d6d;
+    font-family: 'Arial',sans-serif;
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+.freeZoneContentList li {
+    margin-bottom: 10px;
+}
+
+.line-ht-10 {
+    line-height: 12px;
+}
+
+.freeZoneContentText {
+    font-size: 9.5pt;
+}
+
+.special-width {
+    width: 450pt;
+}
+
+.freeZoneTitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+}
+
+@import url('https://fonts.cdnfonts.com/css/times-new-roman');
+@font-face {
+    font-family: 'Arial';
+    src: url('../../../assets/fonts/ARIAL.TTF') format('truetype');
+  }
+
+.edit-input,
+.edit-textarea {
+    width: 100%;
+    padding: 8px;
+    /* border: 0px solid #ccc; */
+    border-radius: 5px;
+    
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 40px;
+}
+
+.edit-btn, .save-btn, .cancel-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.save-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #a7a7a7;
+    color: white;
+}

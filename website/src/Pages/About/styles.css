@@ -1,0 +1,23 @@
+.pageLocationContainer {
+  padding: 15px 0;
+  background-color: #ffffff;
+}
+
+.pageLocation {
+  /* padding-left: 45px; */
+  width: 1250px;
+}
+
+.pageLocationHome {
+  color: #4d4d4d;
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+}
+
+.pageLocationTab {
+  color: #1a548d;
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+}

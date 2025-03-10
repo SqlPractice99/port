@@ -1,0 +1,166 @@
+.contactInfo {
+  width: 1240px;
+  margin: auto;
+  padding: 40px 0;
+  border-bottom: 1px solid #cccccc;
+  margin-bottom: 40px;
+}
+
+.contactImg {
+  margin: 20px 0;
+}
+
+.contactInfoImg {
+  width: 50px;
+}
+
+.contactText {
+  color: #4d4d4d;
+  letter-spacing: 2px;
+  font-weight: normal;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.locateUsbBtn,
+.sendEmailBtn {
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  text-decoration: none;
+  border: 1px solid #4d4d4d;
+  padding: 15px 37px;
+  position: relative;
+  color: #4d4d4d;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  transition: color 0.5s ease, background-color 0.5s ease;
+  margin-bottom: 60px;
+}
+
+.locateUsbBtn:hover,
+.sendEmailBtn:hover {
+  background-color: #1a548d;
+}
+
+.locateUsbBtn:hover a,
+.sendEmailBtn:hover a {
+  color: #ffffff;
+}
+
+.locateUsbBtn a {
+  text-decoration: none;
+  color: #4d4d4d;
+}
+
+.contactMessage {
+  padding-top: 50px;
+  background-color: #f2f2f2;
+}
+
+.contactMessageContainer {
+  width: 1210px;
+}
+
+.messageTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a548d;
+  margin-bottom: 20px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.messageInputs {
+  margin-bottom: 35px;
+  width: 1204px;
+}
+
+.messageName {
+  color: #4d4d4d;
+  font-size: 16px;
+  margin-bottom: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+}
+
+.messageNameInput {
+  background-color: transparent;
+  /* -webkit-appearance: none; */
+  border-radius: 0 !important;
+  border: 1px solid #4d6370 !important;
+  padding: 10px !important;
+  color: #4d4d4d;
+  font-size: 12px;
+  width: 97% !important;
+  align-items: flex-end !important;
+  margin: 0 !important;
+  /* justify-content: flex-start !important; */
+}
+
+.messageNameInput:focus {
+  outline: none;
+}
+
+.messageInput > textarea {
+  resize: none;
+  height: 90px !important;
+}
+
+.sendEmailBtn {
+  width: 8%;
+  font-weight: 400;
+}
+
+.sendEmailBtn:hover {
+  color: #ffffff;
+}
+
+
+/* Container for the image and text */
+.container {
+  position: relative; /* Required for absolute positioning of child elements */
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  margin: 0 auto;
+}
+
+/* Style for the image */
+.background-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Overlay for the text */
+.text-overlay {
+  position: absolute;
+  top: 20%; /* Adjust vertical position */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  width: 80%; /* Adjust width of the text box */
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+  text-align: center;
+}
+
+/* Style for the text */
+.text-overlay p {
+  margin: 5px 0;
+}
+
+/* Specific styles for name, email, subject, and message */
+.name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.email-subject {
+  font-size: 18px;
+}
+
+.message {
+  font-size: 16px;
+  margin-top: 10px;
+}

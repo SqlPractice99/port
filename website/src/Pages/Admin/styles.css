@@ -1,0 +1,6 @@
+.adminContainer {
+  /* overflow: hidden; */
+  height: 100%;
+  width: auto;
+  min-height: 100vh;
+}

@@ -1,0 +1,12 @@
+.inputContainer>h4{
+    margin: 0;
+}
+
+.input {
+    height: 15px;
+    width: 170px;
+    padding: 5px;
+    border: 1px solid;
+    border-radius: 5px;
+    margin: 7px 0 10px 0;
+}

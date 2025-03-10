@@ -1,0 +1,52 @@
+.popupmodal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.popupmodal-content {
+    position: relative;
+    max-width: 90vw;
+    /* Makes sure modal doesn't exceed viewport width */
+    max-height: 90vh;
+    /* Ensures modal doesn't exceed viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* Prevents overflow issues */
+}
+
+.popup-image {
+    max-width: 90vw;
+    /* Limit width to avoid overflow */
+    max-height: 90vh;
+    /* Limit height to fit the screen */
+    /* min-width: 70vw; */
+    /* Minimum width */
+    min-height: 70vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    /* Ensures full image is visible */
+    display: block;
+    margin: auto;
+}
+
+.popupclose-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ffffff80;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}

@@ -1,0 +1,55 @@
+.header {
+  background-color: #1a548d;
+  height: auto;
+  /* min-height: 60px; */
+  width: 100%;
+  position: relative;
+  /* top: 0px; */
+  z-index: 200;
+  padding: 8px 0px;
+}
+
+.header-content {
+  width: 100%;
+  max-width: 1240px;
+}
+
+.header-logo-container {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.header-logo {
+  width: 230px;
+  /* height: 70px; */
+  object-fit: contain;
+}
+
+.header-logo-link {
+  text-decoration: none;
+}
+
+.lang {
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.lang > h4 {
+  margin: 0 30px 0 0;
+  font-weight: normal;
+}
+
+.menu-img {
+  object-fit: contain;
+  width: 35px;
+  height: 35px;
+}
+
+.login {
+  margin-left: -30px;
+  font-weight: 600;
+  color: #ffffff;
+}
