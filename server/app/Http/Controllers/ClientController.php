@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Response;
 
 
 class ClientController extends Controller
@@ -315,6 +316,52 @@ public function testImage () {
         return response()->json(['data' => $news]);
     }
     
+    public function streamVideo($filename, Request $request)
+    {
+        $path = public_path("{$filename}");
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        $fileSize = filesize($path);
+        $headers = [
+            'Content-Type' => 'video/mp4',
+            'Accept-Ranges' => 'bytes',
+        ];
+
+        if ($request->header('Range')) {
+            $range = $request->header('Range');
+            preg_match('/bytes=(\d+)-(\d+)?/', $range, $matches);
+            $start = intval($matches[1]);
+            $end = isset($matches[2]) ? intval($matches[2]) : ($fileSize - 1);
+            $length = $end - $start + 1;
+
+            $file = fopen($path, 'rb');
+            fseek($file, $start);
+
+            $headers += [
+                'Content-Range' => "bytes $start-$end/$fileSize",
+                'Content-Length' => $length,
+                'Cache-Control' => 'no-cache',
+                'Connection' => 'keep-alive',
+                'Pragma' => 'no-cache',
+            ];
+
+            return response()->stream(function () use ($file, $length) {
+                $bufferSize = 8192; // 8KB chunks
+                while (!feof($file) && $length > 0) {
+                    $readSize = min($bufferSize, $length);
+                    echo fread($file, $readSize);
+                    flush(); // Ensure the buffer is sent to the client
+                    $length -= $readSize;
+                }
+                fclose($file);
+            }, 206, $headers);
+        }
+
+        return response()->file($path, $headers);
+    }
 
     // public function sendEmail(Request $request)
     // {

@@ -1,17 +1,30 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import './styles.css';
+import React from "react";
+import { useState, useEffect } from "react";
+import "./styles.css";
 
-const Image = ({ src, alt, className, onClick = null, fullImage = null, title = null, imageArray = [], currentIndex, setCurrentIndex, display = null, slideshow=false }) => {
+const Image = ({
+  src,
+  alt,
+  className,
+  onClick = null,
+  fullImage = null,
+  title = null,
+  imageArray = [],
+  currentIndex,
+  setCurrentIndex,
+  display = null,
+  slideshow = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [index, setIndex] = useState(currentIndex); // Track current image index
+  const imageExtensions = ["jpeg", "jpg", "png"];
 
   useEffect(() => {
     if (isOpen) {
       setIndex(currentIndex); // Reset index when modal opens
     }
   }, [isOpen, currentIndex]);
-  
+
   useEffect(() => {
     if (!currentIndex) {
       setIndex(0);
@@ -24,8 +37,8 @@ const Image = ({ src, alt, className, onClick = null, fullImage = null, title = 
   }, [currentIndex]);
 
   useEffect(() => {
-    if (imageArray.length == 0 && display ==='true') {
-      console.log('whatttttttttt: ' + src)
+    if (imageArray.length == 0 && display === "true") {
+      // console.log("whatttttttttt: " + src);
     }
     // console.log("IIIIIIndex: " + index)
     // console.log("ccccccurrentIndex: " + currentIndex)
@@ -34,27 +47,27 @@ const Image = ({ src, alt, className, onClick = null, fullImage = null, title = 
   const prevSlide = (e) => {
     //e.stopPropagation(); // Prevent closing popup when clicking button
     setIndex((prev) => (prev > 0 ? prev - 1 : imageArray.length - 1));
-    console.log('nooooooooo   ' + slideshow)
-    if(slideshow) {
-      console.log('helloooooooooo')
+    // console.log("nooooooooo   " + slideshow);
+    if (slideshow) {
+      // console.log("helloooooooooo");
       setCurrentIndex((prev) => (prev > 0 ? prev - 1 : imageArray.length - 1));
     }
 
-    console.log("Index: " + index)
-    console.log("currentIndex: " + currentIndex)
+    // console.log("Index: " + index);
+    // console.log("currentIndex: " + currentIndex);
   };
 
   const nextSlide = (e) => {
     //e.stopPropagation();
     setIndex((prev) => (prev < imageArray.length - 1 ? prev + 1 : 0));
-    console.log('nooooooooo   ' + slideshow)
-    if(slideshow) {
-      console.log('helloooooooooo')
+    // console.log("nooooooooo   " + slideshow);
+    if (slideshow) {
+      // console.log("helloooooooooo");
       setCurrentIndex((prev) => (prev < imageArray.length - 1 ? prev + 1 : 0));
     }
 
-    console.log("Index: " + index)
-    console.log("currentIndex: " + currentIndex)
+    // console.log("Index: " + index);
+    // console.log("currentIndex: " + currentIndex);
   };
 
   // Listen for keyboard events when popup is open
@@ -78,6 +91,16 @@ const Image = ({ src, alt, className, onClick = null, fullImage = null, title = 
     };
   }, [isOpen]);
 
+  // useEffect(() => {
+  //   console.log(imageExtensions);
+
+  //   if (imageArray.length > 0) {
+  //     console.log("Current File:", imageArray[index]);
+  //     console.log("File Type:", imageArray[index]?.split(".").pop()?.toLowerCase());
+  //   }
+  // }, [index, imageArray]);
+  
+
   return (
     <>
       <img
@@ -89,22 +112,57 @@ const Image = ({ src, alt, className, onClick = null, fullImage = null, title = 
       />
 
       {isOpen && fullImage && (
-        <div className="popupmodal-overlay fit-wdith" onClick={() => setIsOpen(false)}>
-          <div className="popupmodal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="popupclose-btn" onClick={() => setIsOpen(false)}>✕</button>
+        <div
+          className="popupmodal-overlay fit-wdith"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="popupmodal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="popupclose-btn" onClick={() => setIsOpen(false)}>
+              ✕
+            </button>
 
             {/* Navigation Buttons */}
-            {imageArray?.length > 0 ? (<button className="prevBtn" onClick={prevSlide}>❮</button>) : <></>}
+            {imageArray?.length > 0 ? (
+              <button className="prevBtn" onClick={prevSlide}>
+                ❮
+              </button>
+            ) : (
+              <></>
+            )}
 
-            <img src={imageArray?.length > 0 ? `http://localhost:8000/${imageArray[index]}` : src} alt={`Image ${index + 1}`} className="popup-image" />
-
-            {imageArray?.length > 0 ? (<button className="nextBtn" onClick={nextSlide}>❯</button>) : <></>}
-
+            {imageExtensions.includes(imageArray[index].split(".").pop().toLowerCase()) ? (
+              <img
+                src={
+                  imageArray?.length > 0
+                    ? `http://localhost:8000/${imageArray[index]}`
+                    : src
+                }
+                alt={`Image ${index + 1}`}
+                className="popup-image"
+              />
+            ) : (
+              <video controls style={{ marginTop: "10px" }}>
+                <source src={imageArray?.length > 0
+                    ? `http://localhost:8000/${imageArray[index]}`
+                    : src} />
+                Your browser does not support the video tag.
+              </video>
+            )}
+            {imageArray?.length > 0 ? (
+              <button className="nextBtn" onClick={nextSlide}>
+                ❯
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Image
+export default Image;

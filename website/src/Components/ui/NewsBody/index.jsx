@@ -320,7 +320,7 @@ const NewsBody = () => {
           {/* Lazy Load Trigger */}
           {hasMore && !loading && <div ref={ref} className="loadingNews flex justify-content">{language === 'en' ? 'Loading more news...' : '...تحميل المزيد من الأخبار'}</div>}
           {loading && <div className="noNews flex justify-content">{language === 'en' ? 'Searching for news...' : '...تحميل المزيد من الأخبار'}</div>}
-          {data.length === 0 && !loading && <div className="noNews flex justify-content">{language === 'en' ? 'No news found' : 'لم يتم العثور على أخبار'}</div>}
+          {data.length === 0 && !loading && !hasMore && <div className="noNews flex justify-content">{language === 'en' ? 'No news found' : 'لم يتم العثور على أخبار'}</div>}
         </div>
       </div>
     </>

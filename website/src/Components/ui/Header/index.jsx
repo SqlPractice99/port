@@ -117,6 +117,7 @@ const Header = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("userToken");
+    console.log("tokennnnnnn: " + token)
     setIsLoggedIn(!!token);
 
     const preventDragHandler = (e) => {

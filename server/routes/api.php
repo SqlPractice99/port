@@ -40,6 +40,7 @@ Route::group(["middleware" => "auth:api"], function () {
 Route::post('data', [ClientController::class, 'getData']);
 Route::post('tenders', [ClientController::class, 'getTenders']);
 Route::post('news', [ClientController::class, 'getNews']);
+Route::get('videos/{filename}', [ClientController::class, 'streamVideo'])->where('filename', '.*');
 Route::post('search', [ClientController::class, 'search']);
 // Route::get('news/{slug}', [NewsController::class, 'share'])->name('news.share');
 // Route::post('sendEmail', [ClientController::class, 'sendEmail']);

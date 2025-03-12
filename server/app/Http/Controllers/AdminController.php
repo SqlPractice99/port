@@ -199,7 +199,7 @@ class AdminController extends Controller
             'enContent' => 'required|string',
             'language' => 'required|string|max:10',
             'coverImg' => 'required|image|mimes:jpg,jpeg,png',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,mov,avi,wmv|max:50000',
             // 'tender_paper' => 'nullable|file',
         ]);
 
