@@ -44,52 +44,56 @@ const Image = ({
     // console.log("ccccccurrentIndex: " + currentIndex)
   }, []);
 
-  const prevSlide = (e) => {
-    //e.stopPropagation(); // Prevent closing popup when clicking button
-    setIndex((prev) => (prev > 0 ? prev - 1 : imageArray.length - 1));
-    // console.log("nooooooooo   " + slideshow);
-    if (slideshow) {
-      // console.log("helloooooooooo");
-      setCurrentIndex((prev) => (prev > 0 ? prev - 1 : imageArray.length - 1));
-    }
+  const getNextImageIndex = (currentIndex, direction) => {
+    let newIndex = currentIndex;
 
-    // console.log("Index: " + index);
-    // console.log("currentIndex: " + currentIndex);
+    do {
+      newIndex = (newIndex + direction + imageArray.length) % imageArray.length;
+    } while (
+      !imageExtensions.includes(
+        imageArray[newIndex].split(".").pop().toLowerCase()
+      ) &&
+      newIndex !== currentIndex
+    );
+
+    return newIndex;
   };
 
-  const nextSlide = (e) => {
-    //e.stopPropagation();
-    setIndex((prev) => (prev < imageArray.length - 1 ? prev + 1 : 0));
-    // console.log("nooooooooo   " + slideshow);
-    if (slideshow) {
-      // console.log("helloooooooooo");
-      setCurrentIndex((prev) => (prev < imageArray.length - 1 ? prev + 1 : 0));
-    }
+  const prevSlide = () => {
+    if (imageArray.length === 0) return;
+    setIndex(getNextImageIndex(index, -1));
+    if (slideshow) setCurrentIndex(getNextImageIndex(index, -1));
+  };
 
-    // console.log("Index: " + index);
-    // console.log("currentIndex: " + currentIndex);
+  const nextSlide = () => {
+    if (imageArray.length === 0) return;
+    setIndex(getNextImageIndex(index, 1));
+    if (slideshow) setCurrentIndex(getNextImageIndex(index, 1));
   };
 
   // Listen for keyboard events when popup is open
   useEffect(() => {
     if (!isOpen) return;
-
+  
     const handleKeyDown = (e) => {
       if (e.key === "ArrowRight") {
-        nextSlide();
+        setIndex(getNextImageIndex(index, 1));
+        if (slideshow) setCurrentIndex(getNextImageIndex(index, 1));
       } else if (e.key === "ArrowLeft") {
-        prevSlide();
+        setIndex(getNextImageIndex(index, -1));
+        if (slideshow) setCurrentIndex(getNextImageIndex(index, -1));
       } else if (e.key === "Escape") {
         setIsOpen(false); // Close popup on Escape key
       }
     };
-
+  
     window.addEventListener("keydown", handleKeyDown);
-
+  
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, index, slideshow]); // Added dependencies
+  
 
   // useEffect(() => {
   //   console.log(imageExtensions);
@@ -99,7 +103,6 @@ const Image = ({
   //     console.log("File Type:", imageArray[index]?.split(".").pop()?.toLowerCase());
   //   }
   // }, [index, imageArray]);
-  
 
   return (
     <>
@@ -133,7 +136,9 @@ const Image = ({
               <></>
             )}
 
-            {imageExtensions.includes(imageArray[index].split(".").pop().toLowerCase()) ? (
+            {imageExtensions.includes(
+              imageArray[index].split(".").pop().toLowerCase()
+            ) ? (
               <img
                 src={
                   imageArray?.length > 0
@@ -144,12 +149,7 @@ const Image = ({
                 className="popup-image"
               />
             ) : (
-              <video controls style={{ marginTop: "10px" }}>
-                <source src={imageArray?.length > 0
-                    ? `http://localhost:8000/${imageArray[index]}`
-                    : src} />
-                Your browser does not support the video tag.
-              </video>
+              <></>
             )}
             {imageArray?.length > 0 ? (
               <button className="nextBtn" onClick={nextSlide}>

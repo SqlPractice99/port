@@ -15,8 +15,8 @@ const ShareButton = ({ news }) => {
 
     return (
         <div>
-            <input type="text" value={shareUrl} readOnly style={{ width: "100%" }} />
-            <button onClick={copyToClipboard}>Copy Link</button>
+            {/* <input type="text" value={shareUrl} readOnly style={{ width: "100%", border: "none" }} /> */}
+            <button className='editBtn pointer' onClick={copyToClipboard}>Copy Link</button>
         </div>
     );
 };

@@ -1,0 +1,12 @@
+.media-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.media-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: grab;
+}

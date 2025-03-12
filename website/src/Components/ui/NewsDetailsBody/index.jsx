@@ -6,6 +6,7 @@ import Image from "../../base/image";
 import axios from "axios";
 import ShareButton from "../../base/ShareButton";
 import Video from "../../base/video";
+import MediaGallery from "../../base/mediaGallery";
 
 const NewsDetailsBody = () => {
   // const { encodedNews } = useParams(); // Get encoded news from URL
@@ -18,6 +19,8 @@ const NewsDetailsBody = () => {
   );
   const token = JSON.parse(localStorage.getItem("userToken"));
   const language = useSelector((state) => state.language.language);
+  const [imageArray, setImageArray] = useState([]);
+  let tempImageArray = [];
 
   // State for image scaling
   const [imageScale, setImageScale] = useState(40); // Default 100% scale
@@ -105,7 +108,7 @@ const NewsDetailsBody = () => {
     // console.log("FormData as an object:", formDataObject);
     // console.log("existingImages");
     // console.log(existingImages);
-    let imageArray = [];
+    // let imageArray = [];
 
     if (Array.isArray(existingImages)) {
       // console.log(existingImages)
@@ -114,12 +117,12 @@ const NewsDetailsBody = () => {
       console.log("case 1");
       console.log(typeof existingImages);
 
-      imageArray = existingImages;
+      tempImageArray = existingImages;
     } else if (typeof existingImages === "object" && existingImages !== null) {
       // Case 2: If existingImages is an object, convert it to an array using Object.values
       console.log("case 2");
       console.log(typeof existingImages);
-      imageArray = Object.values(existingImages);
+      tempImageArray = Object.values(existingImages);
     } else {
       try {
         // Case 3: If it's neither an array nor an object, try parsing it as a JSON string
@@ -127,7 +130,7 @@ const NewsDetailsBody = () => {
         // console.log(existingImages);
 
         if (typeof existingImages === "string") {
-          imageArray = Object.values(JSON.parse(existingImages));
+          tempImageArray = Object.values(JSON.parse(existingImages));
           console.log("case 3");
           console.log(typeof existingImages);
           // console.log(imageArray);
@@ -137,19 +140,21 @@ const NewsDetailsBody = () => {
 
           if (!Array.isArray(imageArray)) {
             console.error("Parsed result is not an array");
-            imageArray = []; // Fallback to an empty array
+            tempImageArray = []; // Fallback to an empty array
           }
         } else {
           console.error(
             "existingImages is neither an array nor a valid string"
           );
-          imageArray = []; // Fallback to an empty array if it's an invalid type
+          tempImageArray = []; // Fallback to an empty array if it's an invalid type
         }
       } catch (error) {
         // If parsing fails, handle the error and set to an empty array
         console.error("Failed to parse existingImages:", error);
-        imageArray = []; // Fallback to empty array
+        tempImageArray = []; // Fallback to empty array
       }
+
+      setImageArray(tempImageArray);
     }
 
     // console.log(imageArray); // Final array
@@ -283,9 +288,9 @@ const NewsDetailsBody = () => {
         // console.log(typeof (prev))
         let imageArray;
         if (typeof prev !== "object") {
-          imageArray = Object.values(JSON.parse(prev));
+          tempImageArray = Object.values(JSON.parse(prev));
         } else {
-          imageArray = Object.values(prev);
+          tempImageArray = Object.values(prev);
         }
         // console.log(imageArray)
 
@@ -348,7 +353,6 @@ const NewsDetailsBody = () => {
   //   console.log("imageScale " + imageScale);
   // }, [imageScale]);
 
-  let imageArray = [];
   let imageType;
 
   // console.log(existingImages)
@@ -360,12 +364,12 @@ const NewsDetailsBody = () => {
     console.log("case 1");
     console.log(typeof existingImages);
 
-    imageArray = existingImages;
+    tempImageArray = existingImages;
   } else if (typeof existingImages === "object" && existingImages !== null) {
     // Case 2: If existingImages is an object, convert it to an array using Object.values
     console.log("case 2");
     console.log(typeof existingImages);
-    imageArray = Object.values(existingImages);
+    tempImageArray = Object.values(existingImages);
   } else {
     try {
       // Case 3: If it's neither an array nor an object, try parsing it as a JSON string
@@ -374,7 +378,7 @@ const NewsDetailsBody = () => {
       // console.log(existingImages);
 
       if (typeof existingImages === "string") {
-        imageArray = Object.values(JSON.parse(existingImages));
+        tempImageArray = Object.values(JSON.parse(existingImages));
         // console.log(typeof existingImages);
         // console.log(imageArray);
 
@@ -383,17 +387,19 @@ const NewsDetailsBody = () => {
 
         if (!Array.isArray(imageArray)) {
           console.error("Parsed result is not an array");
-          imageArray = []; // Fallback to an empty array
+          tempImageArray = []; // Fallback to an empty array
         }
       } else {
         console.error("existingImages is neither an array nor a valid string");
-        imageArray = []; // Fallback to an empty array if it's an invalid type
+        tempImageArray = []; // Fallback to an empty array if it's an invalid type
       }
     } catch (error) {
       // If parsing fails, handle the error and set to an empty array
       console.error("Failed to parse existingImages: ", error);
-      imageArray = []; // Fallback to empty array
+      tempImageArray = []; // Fallback to empty array
     }
+
+    setImageArray(tempImageArray);
   }
 
   // console.log(imageArray); // Final array
@@ -532,28 +538,30 @@ const NewsDetailsBody = () => {
           )}
         </div> */}
 
-        {/* Edit, Save & Cancel Buttons */}
-        <div className="editButtons">
-          {isEditing ? (
-            <>
-              <button className="saveBtn" onClick={handleSaveClick}>
-                Save
-              </button>
-              <button className="cancelBtn" onClick={handleCancelClick}>
-                Cancel
-              </button>
-            </>
-          ) : (
-            token && (
-              <button className="editBtn" onClick={handleEditClick}>
-                Edit
-              </button>
-            )
-          )}
-        </div>
+        <div className="flex space-between">
+          <div className="shareBtn">
+            <ShareButton news={news} />
+          </div>
 
-        <div className="">
-          <ShareButton news={news} />
+          {/* Edit, Save & Cancel Buttons */}
+          <div className="editButtons">
+            {isEditing ? (
+              <>
+                <button className="saveBtn" onClick={handleSaveClick}>
+                  Save
+                </button>
+                <button className="cancelBtn" onClick={handleCancelClick}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              token && (
+                <button className="editBtn" onClick={handleEditClick}>
+                  Edit
+                </button>
+              )
+            )}
+          </div>
         </div>
 
         <div className="flex center c-gap-20">
@@ -621,7 +629,7 @@ const NewsDetailsBody = () => {
                 {/* Existing Images */}
                 {imageArray.map((imagePath, index) => (
                   <div
-                    className={`newsDetailsImgCont flex wrap width-${imageScale} center width-${imageScale} border`}
+                    className={`newsDetailsImgCont flex wrap width-${imageScale} center width-${imageScale}`}
                     key={`new-${index}`}
                   >
                     {imageExtensions.includes(
@@ -631,10 +639,9 @@ const NewsDetailsBody = () => {
                         src={`http://localhost:8000/${imagePath}`}
                         alt={`News Image ${index + 1}`}
                         title={`Image ${index + 1}`}
-                        className={`newsDetailsImg pointer flex border`}
+                        className={`newsDetailsImg pointer flex`}
                         fullImage="true"
-                        imageArray={imageArray} // Pass the array of images
-                        currentIndex={index}
+                        imageArray={imageArray}
                       />
                     ) : (
                       <Video video={imagePath} />
@@ -651,7 +658,7 @@ const NewsDetailsBody = () => {
                 {/* New Uploaded Images (Preview) */}
                 {newImages.map((imageFile, index) => (
                   <div
-                    className={`newsDetailsImgCont flex wrap width-${imageScale} aspectRation5-4 border`}
+                    className={`newsDetailsImgCont flex wrap width-${imageScale}`}
                     key={`new-${index}`}
                   >
                     {console.log(imageFile.name)}
@@ -662,9 +669,9 @@ const NewsDetailsBody = () => {
                         src={URL.createObjectURL(imageFile)} // Preview for new images
                         alt={`New Image ${index + 1}`}
                         title={`New Image ${index + 1}`}
-                        className={`newsDetailsImg pointer flex border`}
+                        className={`newsDetailsImg pointer aspectRation5-4 flex`}
                         fullImage="true"
-                        imageArray={imageArray} // Pass the array of images
+                        imageArray={imageArray}
                         currentIndex={index}
                       />
                     ) : (
@@ -684,29 +691,62 @@ const NewsDetailsBody = () => {
               // {console.log('uye')}
               // {console.log(imageArray)}
               // </>
-              imageArray.map((imagePath, index) => (
-                <div
-                  className={`newsDetailsImgCont flex width-${imageScale} aspectRation5-4`}
-                  key={`new-${index}`}
-                >
-                  {imageExtensions.includes(
-                    imagePath.split(".").pop().toLowerCase()
-                  ) ? (
-                    <Image
-                      src={`http://localhost:8000/${imagePath}`}
-                      alt={`News Image ${index + 1}`}
-                      title={`Image ${index + 1}`}
-                      className={`newsDetailsImg pointer flex`}
-                      fullImage="true"
-                      imageArray={imageArray} // Pass the array of images
-                      currentIndex={index}
-                      display="true"
-                    />
-                  ) : (
-                    <Video video={imagePath} />
-                  )}
-                </div>
-              ))
+
+              <>
+                {/* Media Gallery for Drag & Drop Sorting */}
+                <MediaGallery
+                  mediaArray={imageArray}
+                  setMediaArray={setImageArray}
+                />
+
+                {/* Displaying Images & Videos */}
+                {imageArray.map((imagePath, index) => (
+                  <div
+                    className={`newsDetailsImgCont flex justify-content width-${imageScale}`}
+                    key={`new-${index}`}
+                  >
+                    {imageExtensions.includes(
+                      imagePath.split(".").pop().toLowerCase()
+                    ) ? (
+                      <Image
+                        src={`http://localhost:8000/${imagePath}`}
+                        alt={`News Image ${index + 1}`}
+                        title={`Image ${index + 1}`}
+                        className={`newsDetailsImg pointer aspectRation5-4 flex`}
+                        fullImage="true"
+                        imageArray={imageArray}
+                        currentIndex={index}
+                        display="true"
+                      />
+                    ) : (
+                      <Video video={imagePath} />
+                    )}
+                  </div>
+                ))}
+              </>
+              // imageArray.map((imagePath, index) => ( the right codeeeeeeeeeeeeeeeeeeeeee
+              //   <div
+              //     className={`newsDetailsImgCont flex justify-content width-${imageScale}`}
+              //     key={`new-${index}`}
+              //   >
+              //     {imageExtensions.includes(
+              //       imagePath.split(".").pop().toLowerCase()
+              //     ) ? (
+              //       <Image
+              //         src={`http://localhost:8000/${imagePath}`}
+              //         alt={`News Image ${index + 1}`}
+              //         title={`Image ${index + 1}`}
+              //         className={`newsDetailsImg pointer aspectRation5-4 flex`}
+              //         fullImage="true"
+              //         imageArray={imageArray}
+              //         currentIndex={index}
+              //         display="true"
+              //       />
+              //     ) : (
+              //       <Video video={imagePath} />
+              //     )}
+              //   </div>
+              // )) the right codeeeeeeeeeeeeeeeeeeeeee
             )}
           </div>
         )}
@@ -723,7 +763,7 @@ const NewsDetailsBody = () => {
                   title={`Slide ${currentIndex + 1}`}
                   className="newsDetailsImg pointer"
                   fullImage="true"
-                  imageArray={imageArray} // Pass the array of images
+                  imageArray={imageArray}
                   currentIndex={currentIndex}
                   setCurrentIndex={setCurrentIndex}
                   slideshow={true}
@@ -768,11 +808,13 @@ const NewsDetailsBody = () => {
                     title={`Image ${index + 1}`}
                     className={`newsDetailsImg pointer flex`}
                     fullImage="true"
-                    imageArray={imageArray} // Pass the array of images
+                    imageArray={imageArray}
                     currentIndex={index}
                   />
                 ) : (
-                  <Video video={imagePath} />
+                  <div className="videoCont">
+                    <Video video={imagePath} className="videoCont" />
+                  </div>
                 )}
               </div>
             ))}

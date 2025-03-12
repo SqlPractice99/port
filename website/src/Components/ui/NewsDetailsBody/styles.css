@@ -82,6 +82,7 @@
 
 .newsDetailsImgCont {
   max-width: 850px;
+  max-height: 450px;
   height: auto;
   margin-bottom: 15px;
 }
@@ -89,7 +90,6 @@
 .newsDetailsImg {
   width: 100%; /* Adjust width dynamically */
   height: auto; /* Maintain aspect ratio */
-  /* max-height: 100%; /* Prevent from scaling beyond its original size */
   object-fit: cover;
 } 
 
@@ -189,6 +189,10 @@
     /* direction: rtl; */
     /* text-align: right; */
   }
+
+  .shareBtn {
+    margin: 20px 0;
+  }
   
   .editButtons {
     display: flex;
@@ -206,7 +210,7 @@
   }
   
   .editBtn, .saveBtn {
-    background-color: #007bff;
+    background-color: #1a548d;
     color: white;
   }
   
@@ -367,4 +371,9 @@
   width: 100%;
   height: auto;
   margin-bottom: 20px;
+}
+
+.videoCont {
+  max-width: 100%;
+  object-fit: contain;
 }
