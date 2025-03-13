@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./styles.css";
@@ -9,35 +9,24 @@ import Video from "../../base/video";
 import MediaGallery from "../../base/mediaGallery";
 
 const NewsDetailsBody = () => {
-  // const { encodedNews } = useParams(); // Get encoded news from URL
-  // const { slug } = useParams();
   const imageExtensions = ["jpeg", "jpg", "png"];
   const location = useLocation();
   const storedNews = sessionStorage.getItem("news");
+  const token = JSON.parse(localStorage.getItem("userToken"));
+  const language = useSelector((state) => state.language.language);
+  const [newImages, setNewImages] = useState([]);
+  const [layout, setLayout] = useState("flex-wrap");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [imageArray, setImageArray] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [imageScale, setImageScale] = useState(40);
   const [news, setNews] = useState(
     storedNews ? JSON.parse(storedNews) : location.state?.news
   );
-  const token = JSON.parse(localStorage.getItem("userToken"));
-  const language = useSelector((state) => state.language.language);
-  const [imageArray, setImageArray] = useState([]);
-  let tempImageArray = [];
-
-  // State for image scaling
-  const [imageScale, setImageScale] = useState(40); // Default 100% scale
-
-  // Function to handle image scaling
-  const handleScaleChange = (e) => {
-    setImageScale(e.target.value);
-  };
-
-  // States for edit mode
   const [title, setTitle] = useState(news.title);
   const [enTitle, setEnTitle] = useState(news.enTitle);
   const [content, setContent] = useState(news.content);
   const [enContent, setEnContent] = useState(news.enContent);
-  const [isEditing, setIsEditing] = useState(false);
-
-  // Store original data for cancel functionality
   const [originalData, setOriginalData] = useState({
     title: news.title,
     enTitle: news.enTitle,
@@ -45,17 +34,15 @@ const NewsDetailsBody = () => {
     enContent: news.enContent,
     images: JSON.parse(news.image) || [],
   });
-
-  // Manage images
-  // const [existingImages, setExistingImages] = useState(JSON.parse(news.image) || []);
   const [existingImages, setExistingImages] = useState(
     Array.isArray(news.image) ? news.image : JSON.parse(news.image)
   );
-  const [newImages, setNewImages] = useState([]);
 
-  const [layout, setLayout] = useState("flex-wrap"); // Default layout
+  let tempImageArray = [];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const handleScaleChange = (e) => {
+    setImageScale(e.target.value);
+  };
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % imageArray.length);
@@ -71,11 +58,10 @@ const NewsDetailsBody = () => {
     setLayout(layoutType);
   };
 
-  // Enable edit mode and store original values
   const handleEditClick = () => {
     setOriginalData((prev) => ({
-      title: news.title ?? prev.title, // Keep previous value if null/undefined
-      enTitle: news.enTitle ?? prev.enTitle, // Keep previous value if null/undefined
+      title: news.title ?? prev.title,
+      enTitle: news.enTitle ?? prev.enTitle,
       content: news.content ?? prev.content,
       enContent: news.enContent ?? prev.enContent,
       images: existingImages,
@@ -84,12 +70,7 @@ const NewsDetailsBody = () => {
     setLayout("flex-wrap");
   };
 
-  // Handle Save
   const handleSaveClick = async () => {
-    // console.log("news.id: " + news.id )
-    // console.log("title: " + title )
-    // console.log("content: " + content)imageArrayexisting
-    // console.log("token: " + token)
     const formData = new FormData();
     formData.append("token", token);
     formData.append("id", news.id);
@@ -98,142 +79,76 @@ const NewsDetailsBody = () => {
     formData.append("content", content);
     formData.append("enContent", enContent);
 
-    {
-      /* Extra method to read the FormData */
-    }
-    // const formDataObject = {};
-    // formData.forEach((value, key) => {
-    //   formDataObject[key] = value;
-    // });
-    // console.log("FormData as an object:", formDataObject);
-    // console.log("existingImages");
-    // console.log(existingImages);
-    // let imageArray = [];
-
     if (Array.isArray(existingImages)) {
-      // console.log(existingImages)
-      // console.log(Array.isArray(existingImages))
-      // Case 1: If existingImages is already an array, keep it as is
       console.log("case 1");
       console.log(typeof existingImages);
 
       tempImageArray = existingImages;
     } else if (typeof existingImages === "object" && existingImages !== null) {
-      // Case 2: If existingImages is an object, convert it to an array using Object.values
       console.log("case 2");
       console.log(typeof existingImages);
       tempImageArray = Object.values(existingImages);
     } else {
       try {
-        // Case 3: If it's neither an array nor an object, try parsing it as a JSON string
-        // console.log(typeof existingImages);
-        // console.log(existingImages);
-
         if (typeof existingImages === "string") {
           tempImageArray = Object.values(JSON.parse(existingImages));
           console.log("case 3");
           console.log(typeof existingImages);
-          // console.log(imageArray);
-
-          // If parsed result is not an array, set to an empty array
-          // console.log(typeof imageArray);
 
           if (!Array.isArray(imageArray)) {
             console.error("Parsed result is not an array");
-            tempImageArray = []; // Fallback to an empty array
+            tempImageArray = [];
           }
         } else {
           console.error(
             "existingImages is neither an array nor a valid string"
           );
-          tempImageArray = []; // Fallback to an empty array if it's an invalid type
+          tempImageArray = [];
         }
       } catch (error) {
-        // If parsing fails, handle the error and set to an empty array
         console.error("Failed to parse existingImages:", error);
-        tempImageArray = []; // Fallback to empty array
+        tempImageArray = [];
       }
-
-      setImageArray(tempImageArray);
     }
 
-    // console.log(imageArray); // Final array
-
-    // console.log(imageArray);
-    // console.log(Array.isArray(imageArray));
+    // setImageArray(tempImageArray);
 
     imageArray.forEach((img, index) =>
       formData.append(`imageArray[${index}]`, img)
     );
-    // console.log(imageArray);
 
     newImages.forEach((img) => formData.append("newImages[]", img));
-    // console.log(newImages); // Append new images
-
-    // const allImages = [...Object.values(existingImages), ...newImages]; // Merge existing and new images
-
-    // allImages.forEach((img, index) => formData.append(`images[${index}]`, img));
-
-    // console.log("Logging FormData:");
-    // for (let [key, value] of formData.entries()) {
-    // console.log(`${key}:`, value);
-    // }
 
     try {
-      // console.log("Logging FormData:");
-      // for (let [key, value] of formData.entries()) {
-      //   console.log(`${key}:`, value);
-      // }
       const response = await axios.post(
         "http://localhost:8000/api/editNews",
         formData
       );
-      // console.log("Dataaaa: ");
-      // console.log(response.data);
       setIsEditing(false);
-      // console.log(response.data.data.image);
-      // console.log(Array.isArray(response.data.data.image));
-
-      // console.log(Object.values(response.data.data.image));
       setNews((prevNews) => {
         let newImages = [];
 
         try {
           if (response.data.data.image) {
-            // Ensure it's an array
             newImages = response.data.data.image;
-
-            // console.error("newImagessssssssss:");
-            // console.log(newImages);
 
             setExistingImages(response.data.data.image);
           }
         } catch (error) {
           console.error("Error processing imagePaths:", error);
-          newImages = []; // Fallback to empty array
+          newImages = [];
         }
 
-        // Ensure existingImages is always an array
         let existingImagesArray;
         try {
           existingImagesArray = Object.values(
             JSON.parse(response.data.data.image)
           );
-          // console.log(existingImagesArray);
-          // Convert from string to array
-          // console.log("existingImagesArray");
-          // console.log(existingImagesArray);
-          // if (!Array.isArray(existingImagesArray)) {
-          // existingImagesArray = []; // Fallback if it's not a valid array
-          // }
         } catch {
           console.log("error existingImagesArray");
-          // existingImagesArray = []; // Fallback if parsing fails
         }
 
         existingImagesArray = [...existingImagesArray];
-        // console.log("Final existingImagesArray:", existingImagesArray);
-        // console.log("New images being added:", newImages);
 
         return {
           ...prevNews,
@@ -241,17 +156,10 @@ const NewsDetailsBody = () => {
           enTitle: enTitle,
           content: content,
           enContent: enContent,
-          image: JSON.stringify(response.data.data.image), // Properly formatted array
+          image: JSON.stringify(response.data.data.image),
         };
       });
 
-      // ✅ Update `existingImages` state
-      // setExistingImages((prev) => [
-      //   ...prev,
-      //   ...response.data.imagePaths // Add new images
-      // ]);
-
-      // ✅ Clear newImages since they are now saved
       setNewImages([]);
     } catch (error) {
       console.error("Error updating news:", error);
@@ -259,7 +167,6 @@ const NewsDetailsBody = () => {
     }
   };
 
-  // Handle Cancel (restore original data)
   const handleCancelClick = () => {
     setTitle(originalData.title);
     setEnTitle(originalData.enTitle);
@@ -270,9 +177,9 @@ const NewsDetailsBody = () => {
     setIsEditing(false);
   };
 
-  // Handle Image Removal
   const handleRemoveImage = (index, isNewImage = false) => {
     setCurrentIndex(0);
+  
     if (isNewImage) {
       setNewImages((prev) =>
         Array.isArray(prev)
@@ -280,63 +187,48 @@ const NewsDetailsBody = () => {
           : prev
       );
     } else {
-      // console.log("Before removing:", existingImages);
-
       setExistingImages((prev) => {
-        // Convert `prev` (object) to an array
-        // console.log(prev)
-        // console.log(typeof (prev))
-        let imageArray;
-        if (typeof prev !== "object") {
-          tempImageArray = Object.values(JSON.parse(prev));
-        } else {
+        let tempImageArray = [];
+  
+        if (Array.isArray(prev)) {
+          tempImageArray = prev;
+        } else if (typeof prev === "string") {
+          try {
+            tempImageArray = JSON.parse(prev);
+          } catch (error) {
+            console.error("Failed to parse existingImages:", error);
+            return prev;
+          }
+        } else if (typeof prev === "object" && prev !== null) {
           tempImageArray = Object.values(prev);
         }
-        // console.log(imageArray)
-
-        if (!Array.isArray(imageArray)) {
-          console.error("existingImages is not an array:", imageArray);
-          return prev; // Return the original state if conversion fails
+  
+        if (!Array.isArray(tempImageArray)) {
+          console.error("existingImages is not an array:", tempImageArray);
+          return prev;
         }
-
-        // Remove the selected image
-        let updatedImages = imageArray.filter((_, i) => i !== index);
-
-        // console.log("After removing:", updatedImages);
-        return updatedImages;
+  
+        return tempImageArray.filter((_, i) => i !== index);
       });
     }
   };
+  
 
-  // Handle Image Upload
   const handleImageUpload = (event) => {
     if (!event.target.files) return;
 
-    // Create a temporary array to store files in order
     let selectedFiles = [];
     for (let i = 0; i < event.target.files.length; i++) {
-      selectedFiles.push(event.target.files[i]); // Push in selection order
+      selectedFiles.push(event.target.files[i]);
     }
 
-    setNewImages((prev) => [...prev, ...selectedFiles]); // Maintain order
+    setNewImages((prev) => [...prev, ...selectedFiles]);
   };
-
-  // const handleDrop = (event) => {
-  //   event.preventDefault();
-  //   const droppedFiles = Array.from(event.dataTransfer.files);
-  //   setNewImages((prev) => [...prev, ...droppedFiles]);
-  // };
-
-  // // Prevent default browser behavior for drag events
-  // const preventDefaults = (event) => {
-  //   event.preventDefault();
-  // };
 
   useEffect(() => {
     if (news) {
       sessionStorage.setItem("news", JSON.stringify(news));
     }
-    // console.log(news);
   }, [news]);
 
   useEffect(() => {
@@ -345,71 +237,69 @@ const NewsDetailsBody = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Updated existingImages:", existingImages);
-  // }, [existingImages]);
-
-  // useEffect(() => {
-  //   console.log("imageScale " + imageScale);
-  // }, [imageScale]);
-
   let imageType;
 
-  // console.log(existingImages)
   if (Array.isArray(existingImages)) {
-    // console.log(Array.isArray(existingImages))
-    // console.log(existingImages)
-
-    // Case 1: If existingImages is already an array, keep it as is
     console.log("case 1");
     console.log(typeof existingImages);
 
     tempImageArray = existingImages;
   } else if (typeof existingImages === "object" && existingImages !== null) {
-    // Case 2: If existingImages is an object, convert it to an array using Object.values
     console.log("case 2");
-    console.log(typeof existingImages);
+    console.log(existingImages);
     tempImageArray = Object.values(existingImages);
+    console.log("tempImageArray");
+    console.log(tempImageArray);
   } else {
     try {
-      // Case 3: If it's neither an array nor an object, try parsing it as a JSON string
       console.log("case 3");
       console.log(typeof existingImages);
-      // console.log(existingImages);
 
       if (typeof existingImages === "string") {
         tempImageArray = Object.values(JSON.parse(existingImages));
-        // console.log(typeof existingImages);
-        // console.log(imageArray);
-
-        // If parsed result is not an array, set to an empty array
-        // console.log(typeof imageArray);
 
         if (!Array.isArray(imageArray)) {
           console.error("Parsed result is not an array");
-          tempImageArray = []; // Fallback to an empty array
+          tempImageArray = [];
         }
       } else {
         console.error("existingImages is neither an array nor a valid string");
-        tempImageArray = []; // Fallback to an empty array if it's an invalid type
+        tempImageArray = [];
       }
     } catch (error) {
-      // If parsing fails, handle the error and set to an empty array
       console.error("Failed to parse existingImages: ", error);
-      tempImageArray = []; // Fallback to empty array
+      tempImageArray = [];
     }
-
-    setImageArray(tempImageArray);
   }
 
-  // console.log(imageArray); // Final array
+  // setImageArray(tempImageArray);
 
-  // console.log(imageArray); // Check the result
+  useEffect(() => {
+    console.log("imageArray");
+    console.log(imageArray);
+  }, [imageArray]);
 
-  // console.log("imageArray");
-  // console.log(imageArray);
-  // console.log(imageArray.length === 0);
-  // console.log(Array.isArray(imageArray));
+  const processedImages = useMemo(() => {
+    if (Array.isArray(existingImages)) return existingImages;
+    if (typeof existingImages === "string") {
+      try {
+        return JSON.parse(existingImages);
+      } catch (error) {
+        console.error("Failed to parse existingImages:", error);
+        return [];
+      }
+    }
+    if (typeof existingImages === "object" && existingImages !== null) {
+      return Object.values(existingImages);
+    }
+    return [];
+  }, [existingImages]); // Only reprocess when `existingImages` changes
+  
+  useEffect(() => {
+    if (JSON.stringify(processedImages) !== JSON.stringify(imageArray)) {
+      setImageArray(processedImages); // Only update state if it's actually different
+    }
+  }, [processedImages, imageArray]);
 
   const tenderDetailsContent = [
     <div
@@ -433,7 +323,6 @@ const NewsDetailsBody = () => {
           </div>
         </div>
 
-        {/* Editable Title */}
         {isEditing ? (
           <textarea
             type="text"
@@ -465,24 +354,6 @@ const NewsDetailsBody = () => {
     </div>,
   ];
 
-  //   useEffect(() => {
-  //     if (!news) {
-  //         axios.get(`/api/news/${slug}`)
-  //             .then(response => setNews(response.data))
-  //             .catch(error => console.error("Error fetching news:", error));
-  //     }
-  // }, [slug, news]);
-
-  // useEffect(() => {
-  //   try {
-  //       const decodedNews = JSON.parse(atob(encodedNews)); // Decode Base64
-  //       setNews(decodedNews);
-  //       console.log(decodedNews)
-  //   } catch (error) {
-  //       console.error("Invalid news data:", error);
-  //   }
-  // }, [encodedNews]);
-
   return (
     <div className="tenderDetailsContainer width-100 flex column center">
       <div className="newsDetailsSection flex column">
@@ -492,7 +363,6 @@ const NewsDetailsBody = () => {
             : tenderDetailsContent.reverse()}
         </div>
 
-        {/* Editable Content */}
         <div className="newsDetailsDownload flex column align-items-end">
           {isEditing ? (
             <textarea
@@ -505,7 +375,6 @@ const NewsDetailsBody = () => {
               className={`editTextarea ${language === "en" ? "en" : "ar"}`}
             />
           ) : (
-            // <div className={`newsDetailsDownloadText ${language === 'en' ? 'en' : 'ar'}`}>{`${language === 'en' ? news.enContent : news.content}`}</div>
             (language === "en" ? news.enContent : news.content)
               ?.split("<br>")
               .map((line, index) =>
@@ -526,24 +395,11 @@ const NewsDetailsBody = () => {
           )}
         </div>
 
-        {/* <div className="newsDetailsDownload flex column r-gap-30">
-          {isEditing ? (
-            <textarea
-              value={enContent}
-              onChange={(e) => setEnContent(e.target.value)}
-              className="editTextarea en"
-            />
-          ) : (
-            <div className="newsDetailsDownloadText en">{news.enContent}</div>
-          )}
-        </div> */}
-
         <div className="flex space-between">
           <div className="shareBtn">
             <ShareButton news={news} />
           </div>
 
-          {/* Edit, Save & Cancel Buttons */}
           <div className="editButtons">
             {isEditing ? (
               <>
@@ -565,7 +421,6 @@ const NewsDetailsBody = () => {
         </div>
 
         <div className="flex center c-gap-20">
-          {/* Layout Tabs */}
           {!isEditing && imageArray.length !== 0 ? (
             <div className="layoutTabs flex">
               <button
@@ -621,15 +476,14 @@ const NewsDetailsBody = () => {
         ) : (
           <></>
         )}
-        {/* Image Layout Rendering */}
+
         {layout === "flex-wrap" && (
           <div className="flex align-items-start justify-content wrap c-gap-30">
             {isEditing ? (
               <>
-                {/* Existing Images */}
-                {imageArray.map((imagePath, index) => (
+                {imageArray && imageArray.map((imagePath, index) => (
                   <div
-                    className={`newsDetailsImgCont flex wrap width-${imageScale} center width-${imageScale}`}
+                    className={`newsDetailsImgCont flex wrap width-${imageScale} center`}
                     key={`new-${index}`}
                   >
                     {imageExtensions.includes(
@@ -639,9 +493,10 @@ const NewsDetailsBody = () => {
                         src={`http://localhost:8000/${imagePath}`}
                         alt={`News Image ${index + 1}`}
                         title={`Image ${index + 1}`}
-                        className={`newsDetailsImg pointer flex`}
+                        className={`newsDetailsImg pointer flex aspectRation5-4`}
                         fullImage="true"
                         imageArray={imageArray}
+                        currentIndex={index}
                       />
                     ) : (
                       <Video video={imagePath} />
@@ -655,7 +510,6 @@ const NewsDetailsBody = () => {
                   </div>
                 ))}
 
-                {/* New Uploaded Images (Preview) */}
                 {newImages.map((imageFile, index) => (
                   <div
                     className={`newsDetailsImgCont flex wrap width-${imageScale}`}
@@ -666,7 +520,7 @@ const NewsDetailsBody = () => {
                       imageFile.name.split(".").pop().toLowerCase()
                     ) ? (
                       <Image
-                        src={URL.createObjectURL(imageFile)} // Preview for new images
+                        src={URL.createObjectURL(imageFile)}
                         alt={`New Image ${index + 1}`}
                         title={`New Image ${index + 1}`}
                         className={`newsDetailsImg pointer aspectRation5-4 flex`}
@@ -687,19 +541,16 @@ const NewsDetailsBody = () => {
                 ))}
               </>
             ) : (
-              // <>
-              // {console.log('uye')}
-              // {console.log(imageArray)}
-              // </>
-
               <>
                 {/* Media Gallery for Drag & Drop Sorting */}
-                <MediaGallery
-                  mediaArray={imageArray}
-                  setMediaArray={setImageArray}
-                />
+
+              {/* //   <MediaGallery
+              //     mediaArray={imageArray}
+              //     setMediaArray={setImageArray}
+              //   /> */}
 
                 {/* Displaying Images & Videos */}
+                {console.log(imageArray)}
                 {imageArray.map((imagePath, index) => (
                   <div
                     className={`newsDetailsImgCont flex justify-content width-${imageScale}`}
@@ -724,7 +575,7 @@ const NewsDetailsBody = () => {
                   </div>
                 ))}
               </>
-              // imageArray.map((imagePath, index) => ( the right codeeeeeeeeeeeeeeeeeeeeee
+              // imageArray.map((imagePath, index) => (  the right codeeeeee
               //   <div
               //     className={`newsDetailsImgCont flex justify-content width-${imageScale}`}
               //     key={`new-${index}`}
@@ -736,7 +587,7 @@ const NewsDetailsBody = () => {
               //         src={`http://localhost:8000/${imagePath}`}
               //         alt={`News Image ${index + 1}`}
               //         title={`Image ${index + 1}`}
-              //         className={`newsDetailsImg pointer aspectRation5-4 flex`}
+              //         className={`newsDetailsImg pointer aspectRation5-4 flex border`}
               //         fullImage="true"
               //         imageArray={imageArray}
               //         currentIndex={index}
@@ -746,7 +597,7 @@ const NewsDetailsBody = () => {
               //       <Video video={imagePath} />
               //     )}
               //   </div>
-              // )) the right codeeeeeeeeeeeeeeeeeeeeee
+              // )) the right codeeeeee
             )}
           </div>
         )}
@@ -792,11 +643,10 @@ const NewsDetailsBody = () => {
         )}
 
         {layout === "column" && (
-          <div className="column-images flex center column">
+          <div className="flex center column">
             {imageArray.map((imagePath, index) => (
               <div
-                className={`newsDetailsImgCont flex`}
-                style={layout === "column" ? { maxWidth: "none" } : {}}
+                className={`column-images flex`}
                 key={`new-${index}`}
               >
                 {imageExtensions.includes(

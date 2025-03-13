@@ -38,20 +38,23 @@ const Image = ({
 
   useEffect(() => {
     if (imageArray.length == 0 && display === "true") {
-      // console.log("whatttttttttt: " + src);
+      console.warn("Image array is empty!");
     }
     // console.log("IIIIIIndex: " + index)
     // console.log("ccccccurrentIndex: " + currentIndex)
   }, []);
 
   const getNextImageIndex = (currentIndex, direction) => {
+    if (imageArray.length === 0) return 0; // Prevent errors when array is empty
+
     let newIndex = currentIndex;
 
     do {
       newIndex = (newIndex + direction + imageArray.length) % imageArray.length;
     } while (
+      imageArray[newIndex] &&
       !imageExtensions.includes(
-        imageArray[newIndex].split(".").pop().toLowerCase()
+        imageArray[newIndex]?.split(".").pop()?.toLowerCase()
       ) &&
       newIndex !== currentIndex
     );
@@ -74,7 +77,7 @@ const Image = ({
   // Listen for keyboard events when popup is open
   useEffect(() => {
     if (!isOpen) return;
-  
+
     const handleKeyDown = (e) => {
       if (e.key === "ArrowRight") {
         setIndex(getNextImageIndex(index, 1));
@@ -86,14 +89,13 @@ const Image = ({
         setIsOpen(false); // Close popup on Escape key
       }
     };
-  
+
     window.addEventListener("keydown", handleKeyDown);
-  
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, index, slideshow]); // Added dependencies
-  
 
   // useEffect(() => {
   //   console.log(imageExtensions);
@@ -103,6 +105,10 @@ const Image = ({
   //     console.log("File Type:", imageArray[index]?.split(".").pop()?.toLowerCase());
   //   }
   // }, [index, imageArray]);
+
+  useEffect(() => {
+    console.log(imageArray);
+  }, [isOpen]);
 
   return (
     <>
@@ -116,7 +122,7 @@ const Image = ({
 
       {isOpen && fullImage && (
         <div
-          className="popupmodal-overlay fit-wdith"
+          className="popupmodal-overlay"
           onClick={() => setIsOpen(false)}
         >
           <div
@@ -128,7 +134,7 @@ const Image = ({
             </button>
 
             {/* Navigation Buttons */}
-            {imageArray?.length > 0 ? (
+            {imageArray?.length > 1 ? (
               <button className="prevBtn" onClick={prevSlide}>
                 ❮
               </button>
@@ -136,8 +142,9 @@ const Image = ({
               <></>
             )}
 
-            {imageExtensions.includes(
-              imageArray[index].split(".").pop().toLowerCase()
+            {imageArray?.[index] &&
+            imageExtensions.includes(
+              imageArray[index]?.split(".").pop()?.toLowerCase()
             ) ? (
               <img
                 src={
@@ -149,9 +156,11 @@ const Image = ({
                 className="popup-image"
               />
             ) : (
-              <></>
+              <>
+                <p className="error-message">Invalid or missing image.</p>
+              </>
             )}
-            {imageArray?.length > 0 ? (
+            {imageArray?.length > 1 ? (
               <button className="nextBtn" onClick={nextSlide}>
                 ❯
               </button>

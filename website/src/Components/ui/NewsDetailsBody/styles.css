@@ -373,6 +373,12 @@
   margin-bottom: 20px;
 }
 
+.column-images {
+  margin-bottom: 20px;
+  max-width: none;
+  max-height: none;
+}
+
 .videoCont {
   max-width: 100%;
   object-fit: contain;
