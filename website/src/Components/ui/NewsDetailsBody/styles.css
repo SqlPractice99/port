@@ -85,6 +85,8 @@
   max-height: 450px;
   height: auto;
   margin-bottom: 15px;
+  margin-right: 0;
+  padding-right: 0;
 }
 
 .newsDetailsImg {

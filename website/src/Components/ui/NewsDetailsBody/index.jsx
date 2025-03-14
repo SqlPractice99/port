@@ -9,6 +9,12 @@ import Video from "../../base/video";
 import MediaGallery from "../../base/mediaGallery";
 
 const NewsDetailsBody = () => {
+  // const initialMedia = [
+  //   { id: "1", name: "Image 1", thumb: "/images/gary.png" },
+  //   { id: "2", name: "Image 2", thumb: "/images/cato.png" },
+  //   { id: "3", name: "Image 3", thumb: "/images/kvn.png" },
+  // ];
+  // const [media, setMedia] = useState(initialMedia);
   const imageExtensions = ["jpeg", "jpg", "png"];
   const location = useLocation();
   const storedNews = sessionStorage.getItem("news");
@@ -79,6 +85,7 @@ const NewsDetailsBody = () => {
     formData.append("content", content);
     formData.append("enContent", enContent);
 
+    console.log("where");
     if (Array.isArray(existingImages)) {
       console.log("case 1");
       console.log(typeof existingImages);
@@ -179,7 +186,7 @@ const NewsDetailsBody = () => {
 
   const handleRemoveImage = (index, isNewImage = false) => {
     setCurrentIndex(0);
-  
+
     if (isNewImage) {
       setNewImages((prev) =>
         Array.isArray(prev)
@@ -188,31 +195,34 @@ const NewsDetailsBody = () => {
       );
     } else {
       setExistingImages((prev) => {
-        let tempImageArray = [];
-  
-        if (Array.isArray(prev)) {
-          tempImageArray = prev;
-        } else if (typeof prev === "string") {
-          try {
-            tempImageArray = JSON.parse(prev);
-          } catch (error) {
-            console.error("Failed to parse existingImages:", error);
+        let tempImageArray = prev;
+
+        while (!Array.isArray(tempImageArray)) {
+          if (typeof tempImageArray === "string") {
+            try {
+              tempImageArray = JSON.parse(tempImageArray);
+            } catch (error) {
+              console.error("Failed to parse existingImages:", error);
+              return prev; // Return previous state if parsing fails
+            }
+          } else if (
+            typeof tempImageArray === "object" &&
+            tempImageArray !== null
+          ) {
+            tempImageArray = Object.values(tempImageArray);
+          } else {
+            console.error(
+              "existingImages is neither a valid string nor object:",
+              tempImageArray
+            );
             return prev;
           }
-        } else if (typeof prev === "object" && prev !== null) {
-          tempImageArray = Object.values(prev);
         }
-  
-        if (!Array.isArray(tempImageArray)) {
-          console.error("existingImages is not an array:", tempImageArray);
-          return prev;
-        }
-  
+
         return tempImageArray.filter((_, i) => i !== index);
       });
     }
   };
-  
 
   const handleImageUpload = (event) => {
     if (!event.target.files) return;
@@ -237,40 +247,40 @@ const NewsDetailsBody = () => {
     };
   }, []);
 
-  let imageType;
+  // let imageType;
 
-  if (Array.isArray(existingImages)) {
-    console.log("case 1");
-    console.log(typeof existingImages);
+  // if (Array.isArray(existingImages)) {
+  //   console.log("case 1");
+  //   console.log(typeof existingImages);
 
-    tempImageArray = existingImages;
-  } else if (typeof existingImages === "object" && existingImages !== null) {
-    console.log("case 2");
-    console.log(existingImages);
-    tempImageArray = Object.values(existingImages);
-    console.log("tempImageArray");
-    console.log(tempImageArray);
-  } else {
-    try {
-      console.log("case 3");
-      console.log(typeof existingImages);
+  //   tempImageArray = existingImages;
+  // } else if (typeof existingImages === "object" && existingImages !== null) {
+  //   console.log("case 2");
+  //   console.log(existingImages);
+  //   tempImageArray = Object.values(existingImages);
+  //   console.log("tempImageArray");
+  //   console.log(tempImageArray);
+  // } else {
+  //   try {
+  //     console.log("case 3");
+  //     console.log(typeof existingImages);
 
-      if (typeof existingImages === "string") {
-        tempImageArray = Object.values(JSON.parse(existingImages));
+  //     if (typeof existingImages === "string") {
+  //       tempImageArray = Object.values(JSON.parse(existingImages));
 
-        if (!Array.isArray(imageArray)) {
-          console.error("Parsed result is not an array");
-          tempImageArray = [];
-        }
-      } else {
-        console.error("existingImages is neither an array nor a valid string");
-        tempImageArray = [];
-      }
-    } catch (error) {
-      console.error("Failed to parse existingImages: ", error);
-      tempImageArray = [];
-    }
-  }
+  //       if (!Array.isArray(imageArray)) {
+  //         console.error("Parsed result is not an array");
+  //         tempImageArray = [];
+  //       }
+  //     } else {
+  //       console.error("existingImages is neither an array nor a valid string");
+  //       tempImageArray = [];
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to parse existingImages: ", error);
+  //     tempImageArray = [];
+  //   }
+  // }
 
   // setImageArray(tempImageArray);
 
@@ -280,26 +290,35 @@ const NewsDetailsBody = () => {
   }, [imageArray]);
 
   const processedImages = useMemo(() => {
-    if (Array.isArray(existingImages)) return existingImages;
-    if (typeof existingImages === "string") {
-      try {
-        return JSON.parse(existingImages);
-      } catch (error) {
-        console.error("Failed to parse existingImages:", error);
+    let result = existingImages;
+
+    while (!Array.isArray(result)) {
+      if (typeof result === "string") {
+        try {
+          result = JSON.parse(result);
+        } catch (error) {
+          console.error("Failed to parse existingImages:", error);
+          return []; // Return an empty array if parsing fails
+        }
+      } else if (typeof result === "object" && result !== null) {
+        result = Object.values(result);
+      } else {
+        console.error(
+          "existingImages is neither a valid string nor object:",
+          result
+        );
         return [];
       }
     }
-    if (typeof existingImages === "object" && existingImages !== null) {
-      return Object.values(existingImages);
-    }
-    return [];
-  }, [existingImages]); // Only reprocess when `existingImages` changes
-  
+
+    return result;
+  }, [existingImages]);
+
   useEffect(() => {
     if (JSON.stringify(processedImages) !== JSON.stringify(imageArray)) {
       setImageArray(processedImages); // Only update state if it's actually different
     }
-  }, [processedImages, imageArray]);
+  }, [processedImages]);
 
   const tenderDetailsContent = [
     <div
@@ -481,7 +500,71 @@ const NewsDetailsBody = () => {
           <div className="flex align-items-start justify-content wrap c-gap-30">
             {isEditing ? (
               <>
-                {imageArray && imageArray.map((imagePath, index) => (
+                {/* Media Gallery for Existing Images */}
+                {(imageArray.length > 0 || newImages.length > 0) && (
+                  <MediaGallery
+                    mediaArray={[...imageArray, ...newImages]} // ✅ Merge both arrays
+                    setMediaArray={(updatedArray) => {
+                      // ✅ Split back into existing & new images
+                      setImageArray(updatedArray.slice(0, imageArray.length)); // Keep existing images
+                      setNewImages(updatedArray.slice(imageArray.length)); // Separate new images
+                    }}
+                    renderItem={(imagePathOrFile, index) => {
+                      const isNewImage = imagePathOrFile instanceof File; // ✅ Check if it's a new image
+
+                      return (
+                        <div
+                          className={`newsDetailsImgCont flex wrap width-${imageScale} center`}
+                        >
+                          {isNewImage ? (
+                            imageExtensions.includes(
+                              imagePathOrFile.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase()
+                            ) ? (
+                              <Image
+                                src={URL.createObjectURL(imagePathOrFile)}
+                                alt={`New Image ${index + 1}`}
+                                title={`New Image ${index + 1}`}
+                                className={`newsDetailsImg pointer aspectRation5-4 flex`}
+                                fullImage="true"
+                                imageArray={imageArray}
+                                currentIndex={index}
+                              />
+                            ) : (
+                              <Video video={imagePathOrFile} newVideo={true} />
+                            )
+                          ) : imageExtensions.includes(
+                              imagePathOrFile.split(".").pop().toLowerCase()
+                            ) ? (
+                            <Image
+                              src={`http://localhost:8000/${imagePathOrFile}`}
+                              alt={`News Image ${index + 1}`}
+                              title={`Image ${index + 1}`}
+                              className={`newsDetailsImg pointer flex aspectRation5-4`}
+                              fullImage="true"
+                              imageArray={imageArray}
+                              currentIndex={index}
+                            />
+                          ) : (
+                            <Video video={imagePathOrFile} />
+                          )}
+
+                          <button
+                            className="remove-btn pointer"
+                            onClick={() => handleRemoveImage(index, isNewImage)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      );
+                    }}
+                  />
+                )}
+                {/* </> */}
+
+                {/* {imageArray && imageArray.length > 0 && imageArray.map((imagePath, index) => (
                   <div
                     className={`newsDetailsImgCont flex wrap width-${imageScale} center`}
                     key={`new-${index}`}
@@ -538,17 +621,13 @@ const NewsDetailsBody = () => {
                       ✕
                     </button>
                   </div>
-                ))}
+                ))} */}
               </>
             ) : (
               <>
                 {/* Media Gallery for Drag & Drop Sorting */}
 
-              {/* //   <MediaGallery
-              //     mediaArray={imageArray}
-              //     setMediaArray={setImageArray}
-              //   /> */}
-
+                {/* <MediaGallery mediaArray={media} setMediaArray={setMedia} /> */}
                 {/* Displaying Images & Videos */}
                 {console.log(imageArray)}
                 {imageArray.map((imagePath, index) => (
@@ -645,10 +724,7 @@ const NewsDetailsBody = () => {
         {layout === "column" && (
           <div className="flex center column">
             {imageArray.map((imagePath, index) => (
-              <div
-                className={`column-images flex`}
-                key={`new-${index}`}
-              >
+              <div className={`column-images flex`} key={`new-${index}`}>
                 {imageExtensions.includes(
                   imagePath.split(".").pop().toLowerCase()
                 ) ? (

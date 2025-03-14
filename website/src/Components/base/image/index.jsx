@@ -106,9 +106,9 @@ const Image = ({
   //   }
   // }, [index, imageArray]);
 
-  useEffect(() => {
-    console.log(imageArray);
-  }, [isOpen]);
+  // useEffect(() => {
+  //   console.log(imageArray);
+  // }, [isOpen]);
 
   return (
     <>

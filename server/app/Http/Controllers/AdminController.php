@@ -425,7 +425,7 @@ class AdminController extends Controller
             
             // Keep only the images that are still in `existingImages[]`
             $existingImages = $request->imageArray ?? [];
-            $imagePaths = array_intersect($imagePaths, $existingImages);
+            $imagePaths = array_values(array_intersect($existingImages, $imagePaths));
 
             // Add new images if uploaded
             if ($request->hasFile('newImages')) {

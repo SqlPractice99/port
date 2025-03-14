@@ -1,53 +1,38 @@
-import React,  {useEffect} from "react";
+import React, { useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Image from "../image";
 import Video from "../video";
 
-const MediaGallery = ({ mediaArray, setMediaArray }) => {
+const MediaGallery = ({ mediaArray, setMediaArray, renderItem }) => {
   const handleDragEnd = (result) => {
-    if (!result.destination) return; // If dropped outside, do nothing
-  
-    const updatedArray = Array.from(mediaArray); // Create a new array
-    const [reorderedItem] = updatedArray.splice(result.source.index, 1);
-    updatedArray.splice(result.destination.index, 0, reorderedItem);
-  
-    setMediaArray([...updatedArray]); // Ensure a new array reference
-  };
-  
+    if (!result.destination) return;
 
-  useEffect(() => {
-    console.log("Updated mediaArray:", mediaArray);
-  }, [mediaArray]); // Depend on mediaArray to track updates
-  
+    const updatedArray = [...mediaArray];
+    const [movedItem] = updatedArray.splice(result.source.index, 1);
+    updatedArray.splice(result.destination.index, 0, movedItem);
+
+    setMediaArray([...updatedArray]); // Update parent state
+  };
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable
-        droppableId="media-list"
-        isDropDisabled={false}
-        isCombineEnabled={false}
-        ignoreContainerClipping={false}
-      >
+      <Droppable droppableId="media-list">
         {(provided) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            className="media-list border"
-          >
+          <div {...provided.droppableProps} ref={provided.innerRef} className="med-list flex column center border">
             {mediaArray.map((item, index) => (
-              <Draggable key={item} draggableId={item} index={index}>
-                {(provided) => (
+              <Draggable key={index} draggableId={String(index)} index={index}>
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="media-item border"
+                    className="media-item flex center border"
+                    style={{
+                      ...provided.draggableProps.style,
+                      background: snapshot.isDragging ? "#f0f0f0" : "white",
+                    }}
                   >
-                    {item.endsWith(".mp4") ? (
-                      <Video video={item} />
-                    ) : (
-                      <Image src={`http://localhost:8000/${item}`} />
-                    )}
+                    {renderItem(item, index)} {/* 👈 Custom Render Function */}
                   </div>
                 )}
               </Draggable>
