@@ -200,6 +200,7 @@ class AdminController extends Controller
             'language' => 'required|string|max:10',
             'coverImg' => 'required|image|mimes:jpg,jpeg,png',
             'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,mov,avi,wmv|max:50000',
+            'newImages.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5000', // 5MB limit
             // 'tender_paper' => 'nullable|file',
         ]);
 
@@ -390,6 +391,11 @@ class AdminController extends Controller
     {
         $news = News::find($request->id);
 
+        // return response()->json([
+        //     'status' => 'Error',
+        //     'data' => $request->all()
+        // ], 404);
+
         if ($news) {
             if ($request->has('title') && $news->title !== $request->title) {
                 $news->title = $request->title;
@@ -420,31 +426,47 @@ class AdminController extends Controller
                 $news->coverImg = 'images/' . $coverImgName;
             }
 
-            // 🔹 **Handle Multiple Images (Existing & New)**
-            $imagePaths = json_decode($news->image, true) ?? [];
-            
-            // Keep only the images that are still in `existingImages[]`
-            $existingImages = $request->imageArray ?? [];
-            $imagePaths = array_values(array_intersect($existingImages, $imagePaths));
+            // Get existing images from DB
+$imagePaths = json_decode($news->image, true) ?? [];
 
-            // Add new images if uploaded
-            if ($request->hasFile('newImages')) {
-                foreach ($request->file('newImages') as $image) {
-                    $imageName = time() . '_' . $image->getClientOriginalName();
-                    $image->move(public_path('images'), $imageName);
-                    $imagePaths[] = 'images/' . $imageName;
-                }
-            }
+// Get the requested order from the frontend
+$requestedOrder = $request->imageArray ?? $imagePaths; // Maintain order if imageArray is missing
 
-            // 🔹 **Save Updated Image Paths**
-            $news->image = json_encode($imagePaths, JSON_UNESCAPED_SLASHES);
+// Handle new image uploads
+$newImagePaths = [];
+if ($request->hasFile('newImages')) {
+    foreach ($request->file('newImages') as $image) {
+        $imageName = time() . '_' . $image->getClientOriginalName();
+        $image->move(public_path('images'), $imageName);
+        $newImagePaths[] = 'images/' . $imageName;
+    }
+}
 
-            $news->save();
+// Ensure new images are inserted in the correct position
+$finalImagePaths = [];
+foreach ($requestedOrder as $image) {
+    if (in_array($image, $imagePaths)) {
+        $finalImagePaths[] = $image; // Keep existing images in order
+    } elseif ($image === "{}" || $image === "new") {  
+        // "{}" or "new" represents a placeholder for new images
+        if (!empty($newImagePaths)) {
+            $finalImagePaths[] = array_shift($newImagePaths); // Replace placeholder with new image
+        }
+    }
+}
 
-            return response()->json([
-                'status' => 'Success',
-                'data' => $news
-            ]);
+// Append any remaining new images (if not already placed)
+$finalImagePaths = array_merge($finalImagePaths, $newImagePaths);
+
+// Save updated images in the correct order
+$news->image = json_encode($finalImagePaths, JSON_UNESCAPED_SLASHES);
+$news->save();
+
+return response()->json([
+    'status' => 'Success',
+    'data' => $news
+]);
+
         } else {
             return response()->json([
                 'status' => 'Error',
@@ -452,6 +474,7 @@ class AdminController extends Controller
             ], 404);
         }
     }
+
 
     public function editData(Request $request)
     {

@@ -33,7 +33,7 @@ const NewsBody = () => {
   useEffect(() => {
     if (data.length > 0 && originalData === null && searchQuery === "") {
       setOriginalData(data);
-      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+      // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
     }
   }, [data]);
 
@@ -64,10 +64,10 @@ const NewsBody = () => {
     if (query.trim() === "") {
       if (originalData && originalData.length > 0) {
         setData(originalData); // Restore only if data exists
-        console.log("originalData"); // Restore only if data exists
-        console.log(originalData); // Restore only if data exists
-        console.log('page: ' + page); // Restore only if data exists
-        console.log('hasmore: ' + hasMore); // Restore only if data exists
+        // console.log("originalData"); // Restore only if data exists
+        // console.log(originalData); // Restore only if data exists
+        // console.log('page: ' + page); // Restore only if data exists
+        // console.log('hasmore: ' + hasMore); // Restore only if data exists
       }
 
       setPage(2);
@@ -148,10 +148,10 @@ const NewsBody = () => {
     // console.log(data.data);
   }, []);
 
-  useEffect(() => {
-    console.log('dataaaaaa');
-    console.log(data);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log('dataaaaaa');
+  //   console.log(data);
+  // }, [data]);
 
   // let filteredNews = [];
   // useEffect(() => {

@@ -21,6 +21,7 @@ const AdminBody = () => {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isTenderModalOpen, setIsTenderModalOpen] = useState(false);
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
+  const dropDown = useSelector((state) => state.dropDown.dropDown);
   // const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   // const dispatch = useDispatch();
   // const navigate = useNavigate();
@@ -65,6 +66,14 @@ const AdminBody = () => {
     //   document.removeEventListener("dragstart", preventDragHandler);
     // };
 //   }, []);
+
+useEffect(() => {
+  if(dropDown) {
+    closeNewsModal();
+    closeTenderModal();
+    closePostModal();
+  }
+}, [dropDown])
 
   return (
     <div className="adminSectionContainer width-100 flex center c-gap-30">

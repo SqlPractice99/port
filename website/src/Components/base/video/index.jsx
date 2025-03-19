@@ -35,7 +35,6 @@ const Video = ({ video, className = null, newVideo = false }) => {
       <video
         ref={videoRef}
         controls
-        style={{ maxWidth: "100%" }}
         className={className}
         onClick={() => setIsActive(true)} // Activate when clicked
         onPause={() => setIsActive(false)} // Deactivate when paused
