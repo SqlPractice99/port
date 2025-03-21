@@ -426,46 +426,54 @@ class AdminController extends Controller
                 $news->coverImg = 'images/' . $coverImgName;
             }
 
-            // Get existing images from DB
-$imagePaths = json_decode($news->image, true) ?? [];
+            if (!$news) {
+                return response()->json([
+                    'status' => 'Error',
+                    'data' => 'News with ID: ' . $request->id . ' not found.'
+                ], 404);
+            }
+        
+            // Get existing images from the database
+            $imagePaths = json_decode($news->image, true) ?? [];
+        
+            // Get the order from imageArray (frontend)
+            $requestedOrder = $request->imageArray ?? $imagePaths; 
+        
+            // Handle new image uploads
+            $newImagePaths = [];
+            if ($request->hasFile('newImages')) {
+                foreach ($request->file('newImages') as $image) {
+                    $imageName = time() . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('images'), $imageName);
+                    $newImagePaths[] = 'images/' . $imageName;
+                }
+            }
+        
+            // Final array to maintain correct order
+            $finalImagePaths = [];
+            $newImageIndex = 0; // Track index for new images
+        
+            foreach ($requestedOrder as $index => $image) {
+                if (str_starts_with($image, 'images/')) {
+                    // Existing image, keep in order
+                    $finalImagePaths[] = $image;
+                } elseif ($newImageIndex < count($newImagePaths)) {
+                    // Replace "new" placeholder or empty slot with an uploaded image
+                    $finalImagePaths[] = $newImagePaths[$newImageIndex++];
+                }
+            }
+        
+            // If any new images are left, append them at the end (failsafe)
+            $finalImagePaths = array_merge($finalImagePaths, array_slice($newImagePaths, $newImageIndex));
+        
+            // Save the final ordered images to the database
+            $news->image = json_encode($finalImagePaths, JSON_UNESCAPED_SLASHES);
+            $news->save();
 
-// Get the requested order from the frontend
-$requestedOrder = $request->imageArray ?? $imagePaths; // Maintain order if imageArray is missing
-
-// Handle new image uploads
-$newImagePaths = [];
-if ($request->hasFile('newImages')) {
-    foreach ($request->file('newImages') as $image) {
-        $imageName = time() . '_' . $image->getClientOriginalName();
-        $image->move(public_path('images'), $imageName);
-        $newImagePaths[] = 'images/' . $imageName;
-    }
-}
-
-// Ensure new images are inserted in the correct position
-$finalImagePaths = [];
-foreach ($requestedOrder as $image) {
-    if (in_array($image, $imagePaths)) {
-        $finalImagePaths[] = $image; // Keep existing images in order
-    } elseif ($image === "{}" || $image === "new") {  
-        // "{}" or "new" represents a placeholder for new images
-        if (!empty($newImagePaths)) {
-            $finalImagePaths[] = array_shift($newImagePaths); // Replace placeholder with new image
-        }
-    }
-}
-
-// Append any remaining new images (if not already placed)
-$finalImagePaths = array_merge($finalImagePaths, $newImagePaths);
-
-// Save updated images in the correct order
-$news->image = json_encode($finalImagePaths, JSON_UNESCAPED_SLASHES);
-$news->save();
-
-return response()->json([
-    'status' => 'Success',
-    'data' => $news
-]);
+            return response()->json([
+                'status' => 'Success',
+                'data' => $news
+            ]);
 
         } else {
             return response()->json([

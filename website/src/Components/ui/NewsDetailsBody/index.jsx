@@ -26,6 +26,7 @@ const NewsDetailsBody = () => {
   const [imageArray, setImageArray] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [imageScale, setImageScale] = useState(40);
+  const [height, setHeight] = useState(40);
   const [news, setNews] = useState(
     storedNews ? JSON.parse(storedNews) : location.state?.news
   );
@@ -45,14 +46,15 @@ const NewsDetailsBody = () => {
   );
 
   const [tempMediaArray, setTempMediaArray] = useState([
-    ...existingImages, 
-    ...newImages
+    existingImages,
+    newImages,
   ]);
-   // Temporary state
+  // Temporary state
   let tempImageArray = [];
 
   const handleScaleChange = (e) => {
     setImageScale(e.target.value);
+    setHeight(e.target.value);
   };
 
   const nextSlide = () => {
@@ -71,8 +73,8 @@ const NewsDetailsBody = () => {
 
   const handleEditClick = () => {
     const parsedExistingImages = Array.isArray(existingImages)
-    ? existingImages
-    : JSON.parse(existingImages || "[]");
+      ? existingImages
+      : JSON.parse(existingImages || "[]");
 
     setOriginalData((prev) => ({
       title: news.title ?? prev.title,
@@ -151,10 +153,10 @@ const NewsDetailsBody = () => {
 
     // console.log("processedImages:", processedImages);
 
-    
     tempMediaArray.flat().forEach((img, index) => {
       if (img instanceof File) {
         formData.append(`newImages[${index}]`, img); // Append new images
+        formData.append(`imageArray[${index}]`, "new"); // Append existing images
       } else {
         formData.append(`imageArray[${index}]`, img); // Append existing images
       }
@@ -208,7 +210,7 @@ const NewsDetailsBody = () => {
           }
         } catch (error) {
           console.error("Error processing imagePaths:", error);
-          newImages = [];
+          setNewImages([]);
         }
 
         let existingImagesArray;
@@ -251,26 +253,25 @@ const NewsDetailsBody = () => {
   };
 
   const handleMediaChange = (updatedArray) => {
-    console.warn('Updated Array:', updatedArray);
-    
+    console.warn("Updated Array:", updatedArray);
+
     setTempMediaArray(updatedArray);
 
     // Separate existing images and new images correctly
-    const updatedExistingImages = updatedArray.filter(img => 
-        typeof img === "string" && existingImages.includes(img)
+    const updatedExistingImages = updatedArray.filter(
+      (img) => typeof img === "string" && existingImages.includes(img)
     );
 
-    const updatedNewImages = updatedArray.filter(img => 
-        img instanceof File || !existingImages.includes(img)
+    const updatedNewImages = updatedArray.filter(
+      (img) => img instanceof File || !existingImages.includes(img)
     );
 
     setExistingImages(updatedExistingImages); // Update existing images
     setNewImages(updatedNewImages); // Update new images
 
-    console.warn('Updated Existing Images:', updatedExistingImages);
-    console.warn('Updated New Images:', updatedNewImages);
-};
-
+    console.warn("Updated Existing Images:", updatedExistingImages);
+    console.warn("Updated New Images:", updatedNewImages);
+  };
 
   const handleRemoveImage = (index, isNewImage = false) => {
     setCurrentIndex(0);
@@ -295,7 +296,12 @@ const NewsDetailsBody = () => {
         const adjustedIndex = index - existingCount + 1;
         if (adjustedIndex <= 0) return prev; // Ensure we don't remove an existing image
 
-        console.log("Removing image at: ", index, "Adjusted index: ", adjustedIndex);
+        console.log(
+          "Removing image at: ",
+          index,
+          "Adjusted index: ",
+          adjustedIndex
+        );
 
         return [
           ...prev.slice(0, adjustedIndex),
@@ -334,8 +340,6 @@ const NewsDetailsBody = () => {
       setTempMediaArray((prev) => {
         return prev.filter((_, i) => i !== index);
       });
-      
-      
     }
   };
 
@@ -345,8 +349,14 @@ const NewsDetailsBody = () => {
   }, [newImages]);
 
   useEffect(() => {
-    console.log('tempMediaArray');
+    
+    console.log("tempMediaArray");
     console.warn(tempMediaArray);
+
+    // setTempMediaArray(tempMediaArray.flat());
+
+    // console.log("tempMediaArray afterrrrr");
+    // console.warn(tempMediaArray);
   }, [tempMediaArray]);
 
   const handleImageUpload = (event) => {
@@ -358,7 +368,7 @@ const NewsDetailsBody = () => {
     }
 
     setNewImages((prev) => [...prev, ...selectedFiles]);
-    setTempMediaArray((prev) => [prev, ...selectedFiles]);
+    setTempMediaArray((prev) => [prev, ...selectedFiles].flat());
   };
 
   useEffect(() => {
@@ -463,9 +473,9 @@ const NewsDetailsBody = () => {
   // }, [newImages])
 
   useEffect(() => {
-    console.log('existingImages');
+    console.log("existingImages");
     console.warn(existingImages);
-  }, [existingImages])
+  }, [existingImages]);
 
   const tenderDetailsContent = [
     <div
@@ -650,7 +660,7 @@ const NewsDetailsBody = () => {
                 {/* Media Gallery for Existing Images */}
                 {(imageArray.length > 0 || newImages.length > 0) && (
                   <MediaGallery
-                    mediaArray={[...imageArray, ...newImages]} // ✅ Correctly merging
+                    mediaArray={tempMediaArray} // ✅ Correctly merging
                     setMediaArray={setTempMediaArray}
                     handleMediaChange={handleMediaChange}
                     renderItem={(imagePathOrFile, index) => {
@@ -662,6 +672,8 @@ const NewsDetailsBody = () => {
                         >
                           <div className="flex justify-content">
                             {isNewImage ? (
+                              // ✅ First check if it's a File and extract the extension safely
+                              imagePathOrFile instanceof File &&
                               imageExtensions.includes(
                                 imagePathOrFile.name
                                   .split(".")
@@ -672,8 +684,8 @@ const NewsDetailsBody = () => {
                                   src={URL.createObjectURL(imagePathOrFile)}
                                   alt={`New Image ${index + 1}`}
                                   title={`New Image ${index + 1}`}
-                                  className={`newsDetailsImgEdit width-70 pointer aspectRation5-4 flex`}
-                                  fullImage="true"
+                                  className={`newsDetailsImgEdit width-70 aspectRation5-4 flex`}
+                                  // fullImage="true"
                                   imageArray={imageArray}
                                   currentIndex={index}
                                 />
@@ -681,25 +693,27 @@ const NewsDetailsBody = () => {
                                 <Video
                                   video={imagePathOrFile}
                                   newVideo={true}
-                                  className="width-80 maxHeightVideo"
+                                  className="width-80 maxHeightVideo videoDrag"
                                 />
                               )
-                            ) : imageExtensions.includes(
+                            ) : // ✅ Check if it's a string before using .split()
+                            typeof imagePathOrFile === "string" &&
+                              imageExtensions.includes(
                                 imagePathOrFile.split(".").pop().toLowerCase()
                               ) ? (
                               <Image
                                 src={`http://localhost:8000/${imagePathOrFile}`}
                                 alt={`News Image ${index + 1}`}
                                 title={`Image ${index + 1}`}
-                                className={`newsDetailsImgEdit width-70 pointer flex aspectRation5-4`}
-                                fullImage="true"
+                                className={`newsDetailsImgEdit width-70 flex aspectRation5-4`}
+                                // fullImage="true"
                                 imageArray={imageArray}
                                 currentIndex={index}
                               />
                             ) : (
                               <Video
                                 video={imagePathOrFile}
-                                className="width-80 maxHeightVideo"
+                                className="width-80 maxHeightVideo videoDrag"
                               />
                             )}
 
@@ -808,7 +822,7 @@ const NewsDetailsBody = () => {
                         display="true"
                       />
                     ) : (
-                      <Video video={imagePath} className="width-100" />
+                      <Video video={imagePath} className={`width-100 height-${height} videoPlay pointer`} />
                     )}
                   </div>
                 ))}

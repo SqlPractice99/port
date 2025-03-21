@@ -35,7 +35,7 @@ const Video = ({ video, className = null, newVideo = false }) => {
       <video
         ref={videoRef}
         controls
-        className={className}
+        className={`${className}`}
         onClick={() => setIsActive(true)} // Activate when clicked
         onPause={() => setIsActive(false)} // Deactivate when paused
         onBlur={() => setIsActive(false)} // Deactivate when it loses focus

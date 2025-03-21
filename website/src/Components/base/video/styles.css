@@ -1,0 +1,7 @@
+.videoDrag {
+  pointer-events: none;
+}
+
+.videoPlay {
+  pointer-events: auto;
+}

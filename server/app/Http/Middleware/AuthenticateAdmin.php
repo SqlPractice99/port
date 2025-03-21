@@ -12,9 +12,9 @@ class AuthenticateAdmin
     {
         $user = Auth::user();
 
-        if ($user && $user->admin == 1) {
+        // if ($user && $user->admin == 1) {
             return $next($request);
-        }
+        // }
 
         // if (!Auth::check() || Auth::user()->admin !== 1) {
         //     return response()->json(['message' => 'Unauthorized'], 403);

@@ -18,9 +18,9 @@ class AuthenticatePublisher
     {
         $user = Auth::user();
 
-        if($user && $user->admin == 0) {
+        // if($user && $user->admin == 0) {
             return $next($request);
-        }
+        // }
 
         return redirect()->route("unauthorized");
     }
