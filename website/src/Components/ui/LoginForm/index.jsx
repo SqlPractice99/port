@@ -74,7 +74,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
     return r;
   };
 
-  const users = async () => {
+  const users = async (xsrfToken) => {
     // let xsrfToken = document.cookie
     //     .split("; ")
     //     .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
@@ -86,12 +86,31 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
     //     console.error("Auth check failed:", err.response?.data || err.message)
     //   );
 
-    await axios.get("/user", { withCredentials: true })
-    .then(res => console.log(res.data))
-    .catch(err => console.error("Unauthorized:", err.response?.data || err.message));
-  
+    try {
+      // await axios.get("http://localhost:8000/sanctum/csrf-cookie", { withCredentials: true });
 
-      decryptToken();
+      const response = await axios.get(
+        "http://localhost:8000/api/user",
+        {
+          headers: {
+            "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
+          },
+        },
+        { withCredentials: true }
+      ); // 🔑 Sends cookie automatically
+      console.log("User Data:", response.data);
+
+      // decryptToken();
+    } catch (error) {
+      console.error("Unauthorized:", error.response?.data || error.message);
+    }
+
+    // await axios.get("/user", { withCredentials: true })
+    // .then(res => console.log(res.data))
+    // .catch(err => console.error("Unauthorized:", err.response?.data || err.message));
+
+    //   decryptToken();
+
     // console.log("tokennnnn: ", token);
     // let r = await axios.get(
     //   "/user",
@@ -109,7 +128,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   const handleLogin = async () => {
     try {
       // Step 1: Get CSRF token
-      await axios.get("/sanctum/csrf-cookie"); // ✅ No need to set headers manually
+      await axios.get("/sanctum/csrf-cookie", { withCredentials: true }); // ✅ No need to set headers manually
 
       let xsrfToken = document.cookie
         .split("; ")
@@ -144,9 +163,9 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
       console.log("XSRF Token for /api/hi:", xsrfToken);
 
       // Step 3: Fetch authenticated user
-      const tt = await decryptToken(); // ✅ Await the function
+      // const tt = await decryptToken(); // ✅ Await the function
 
-      users(tt.data.decryptedToken);
+      await users(xsrfToken);
       // Step 4: Save user data
       // setUserD(userResponse.data);
       // dispatch(setUser(userResponse.data));
@@ -369,7 +388,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
           </div>
         </div>
         <div className="loginButton width-85 flex center">
-          <Button text="Login" onClick={decryptToken} />
+          <Button text="Login" onClick={handleLogin} />
         </div>
       </div>
     </div>

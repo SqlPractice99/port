@@ -23,15 +23,15 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // ✅ This ensures user_id is updated in the sessions table
+        \Illuminate\Session\Middleware\AuthenticateSession::class,
         ],
 
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class, // ✅ REQUIRED for SPA auth
+            \Illuminate\Session\Middleware\StartSession::class, // ✅ Add this
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
-            // \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // EnsureFrontendRequestsAreStateful::class,'throttle:api',
         ],
     ];
 

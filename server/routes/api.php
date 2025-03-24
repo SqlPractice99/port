@@ -39,19 +39,34 @@ Route::middleware([EnsureFrontendRequestsAreStateful::class])->group(function ()
         return response()->json(['message' => 'Authenticated', 'user' => $request->user()]);
     });
 
-    Route::middleware('auth:sanctum')->get('/userrr', function (Request $request) {
+    // Route::middleware('auth:sanctum')->get('/userrr', function (Request $request) {
+    //     return response()->json([
+    //         'user' => $request->user(),
+    //         'token' => $request->bearerToken(),
+    //         'authenticated' => $request->user() ? true : false
+    //     ]);
+    // });
+    
+    // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    //     return response()->json($request->user());
+    // });
+    
+    Route::get('/user', function (Request $request) {
         return response()->json([
-            'user' => $request->user(),
-            'token' => $request->bearerToken(),
-            'authenticated' => $request->user() ? true : false
+            'session_id' => session()->getId(),  // 🔥 Check if session is being read
+            'cookies' => request()->cookies->all(), // 🔥 Debug cookies
+            'auth_user' => Auth::user(), // 🔥 Check authenticated user
+            'is_authenticated' => Auth::check(), // 🔥 Should return true
+            'cookies' => $request->cookies->all(),
+            'headers' => $request->headers->all(),
+            'user' => auth()->user()
         ]);
     });
-    
     
     // ✅ Protected Routes (Require Authentication)
     Route::middleware(['auth:sanctum'])->group(function () {
         // Route::get('logout', [AuthController::class, 'logout']);
-        Route::get('user', [AuthController::class, 'user']);
+        // Route::get('user', [AuthController::class, 'user']);
         Route::get('/hi', function(){
             return 'helloooow';
         });
