@@ -28,6 +28,7 @@ Route::middleware([EnsureFrontendRequestsAreStateful::class])->group(function ()
     
     // Authentication routes
     Route::get('debug-auth', [AuthController::class, 'debugAuth']);
+    Route::get('checkId', [AuthController::class, 'checkId']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('request', [AuthController::class, 'handleRequest']);
     Route::post('register', [AuthController::class, 'register']);
