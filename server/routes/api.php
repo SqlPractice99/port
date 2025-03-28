@@ -52,7 +52,7 @@ Route::middleware([EnsureFrontendRequestsAreStateful::class])->group(function ()
     //     return response()->json($request->user());
     // });
     
-    Route::get('/user', function (Request $request) {
+    Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
         return response()->json([
             'session_id' => session()->getId(),  // 🔥 Check if session is being read
             'cookies' => request()->cookies->all(), // 🔥 Debug cookies

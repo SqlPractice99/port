@@ -155,7 +155,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN', null), // This should match `SESSION_DOMAIN`
+    'domain' => env('SESSION_DOMAIN', 'localhost'), // This should match `SESSION_DOMAIN`
 
     /*
     |--------------------------------------------------------------------------

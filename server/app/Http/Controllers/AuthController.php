@@ -64,15 +64,17 @@ class AuthController extends Controller
         $tokenParts = explode("|", $decryptedToken);
         $actualDecryptedToken = $tokenParts[1]; // The token after '|'
 
+        $laSessionId = $request->cookie('laravel_session');
+
         $storedToken = $request->session()->token();
         // Return the tokens in the response
         return response()->json([
+            'laSessionId' => $laSessionId,
             'decryptedToken' => $actualDecryptedToken,
-            'storedToken' => $storedToken
+            'storedToken' => $storedToken,
+            'check: ' => $actualDecryptedToken === $storedToken
         ]);
     }
-
-
 
     public function login(Request $request)
     {
@@ -81,74 +83,115 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // if (!Auth::attempt($credentials)) {
-        //     return response()->json(['message' => 'Invalid credentials'], 401);
-        // }
-
-        // Using the `attempt` method is not available with Sanctum, instead, use `Auth::login()`
+        // Find user
         $user = User::where('username', $request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-         // Log the user in using Sanctum (this does not use the default session-based login)
-        Auth::guard('web')->login($user);  // This is for session-based authentication, not needed for token-based
+        // Get the current session ID before logging in
+        $oldSessionId = session()->getId();
 
-        $user = Auth::user();
+        // Delete the old session from the database BEFORE regenerating
+        // DB::table('sessions')->where('id', $oldSessionId)->delete();
 
-        // 1. Before regeneration, set user_id to a placeholder value
-        session()->forget(['id']); // Remove specific session data
-    session()->flush(); // Alternatively, you can use flush() to clear all session data
-    // session()->save(); // Save session data before regenerating
+        // Log the user in
+        Auth::guard('web')->login($user);
 
-        // Log the session data before regeneration (you can verify old session data)
-        Log::info('Before regeneration, checking the User ID and Session ID', [
-            'user_id' => session()->get('user_id'),
-            'session_id' => session()->getId(),
-        ]);
+        // Now, regenerate the session to get a completely new session ID
+        session()->invalidate();  // Clears session data and generates a new session ID
+        session()->regenerateToken(); // Regenerates CSRF token (important for security)
 
-        // DB::table('sessions')
-        // ->where('id', session()->getId()) // The old session will be the one before regeneration
-        // ->delete(); // Remove old session
-
-        $showSession = session()->all();
-        // 2. Regenerate session to get a new session ID
-        session()->regenerate();
-
-        // Log the session data after regeneration (verify the new session data)
-        Log::info('After regeneration, checking the User ID and Session ID', [
-            'user_id' => session()->get('user_id'),
-            'session_id' => session()->getId(),
-        ]);
-
-        // 3. Get the new session ID (after regeneration)
+        // Get the new session ID after regeneration
         $newSessionId = session()->getId();
 
-        // 4. Ensure old session is not updated, and update only the new session
-        // Find and remove the old session in the database (if needed)
-
-        // 5. Now update the new session (after regeneration) with the correct user_id
-        DB::table('sessions')
-            ->where('id', $newSessionId)
-            ->update(['user_id' => $user->id, 'testing' => '3']); // Update new session with user_id
-
-        // 6. Ensure session data is saved again (force sync)
+        // Save the session again after login to ensure it's properly stored
         session()->save();
 
-        // Retrieve the new session from the database (after regeneration)
-        $newSession = DB::table('sessions')->where('id', $newSessionId)->first();
-
-        // 7. Return the response with session information
         return response()->json([
-            'authenticated' => $user->id,
-            'session_id' => $newSessionId,
-            'session_user' => $newSession, // This should have the correct user_id now
-            'user' => $user,
-            'session details' => $showSession
+            'authenticated' => true,
+            'old_session_deleted' => $oldSessionId,
+            'new_session_id' => $newSessionId,
+            'user' => $user
         ]);
     }
 
+
+//     public function login(Request $request)
+//     {
+//         $credentials = $request->validate([
+//             'username' => 'required',
+//             'password' => 'required'
+//         ]);
+
+//         // if (!Auth::attempt($credentials)) {
+//         //     return response()->json(['message' => 'Invalid credentials'], 401);
+//         // }
+
+//         // Using the `attempt` method is not available with Sanctum, instead, use `Auth::login()`
+//         $user = User::where('username', $request->username)->first();
+
+//         if (!$user || !Hash::check($request->password, $user->password)) {
+//             return response()->json(['message' => 'Invalid credentials'], 401);
+//         }
+
+//          // Log the user in using Sanctum (this does not use the default session-based login)
+//         Auth::guard('web')->login($user);  // This is for session-based authentication, not needed for token-based
+
+//         $user = Auth::user();
+
+//         // 1. Before regeneration, set user_id to a placeholder value
+//         session()->forget(['id']); // Remove specific session data
+//         session()->flush(); // Alternatively, you can use flush() to clear all session data
+//     // session()->save(); // Save session data before regenerating
+
+//         // Log the session data before regeneration (you can verify old session data)
+//         Log::info('Before regeneration, checking the User ID and Session ID', [
+//             'user_id' => session()->get('user_id'),
+//             'session_id' => session()->getId(),
+//         ]);
+
+//         // DB::table('sessions')
+//         // ->where('id', session()->getId()) // The old session will be the one before regeneration
+//         // ->delete(); // Remove old session
+
+//         $showSession = session()->all();
+//         // 2. Regenerate session to get a new session ID
+//         session()->regenerate();
+
+//         // Log the session data after regeneration (verify the new session data)
+//         Log::info('After regeneration, checking the User ID and Session ID', [
+//             'user_id' => session()->get('user_id'),
+//             'session_id' => session()->getId(),
+//         ]);
+
+//         // 3. Get the new session ID (after regeneration)
+//         $newSessionId = session()->getId();
+
+//         // 4. Ensure old session is not updated, and update only the new session
+//         // Find and remove the old session in the database (if needed)
+
+//         // 5. Now update the new session (after regeneration) with the correct user_id
+//         DB::table('sessions')
+//             ->where('id', $newSessionId)
+//             ->update(['user_id' => $user->id, 'testing' => '3']); // Update new session with user_id
+
+//         // 6. Ensure session data is saved again (force sync)
+//         session()->save();
+
+//         // Retrieve the new session from the database (after regeneration)
+//         $newSession = DB::table('sessions')->where('id', $newSessionId)->first();
+
+//         // 7. Return the response with session information
+//         return response()->json([
+//             'authenticated' => $user->id,
+//             'session_id' => $newSessionId,
+//             'session_user' => $newSession, // This should have the correct user_id now
+//             'user' => $user,
+//             'session details' => $showSession
+//         ]);
+//     }
 
     public function checkId() {
         $newSessionId = session()->getId();
@@ -159,8 +202,6 @@ class AuthController extends Controller
             'session_user' => $userSession, // This will now have the correct user_id after the update
         ]);
     }
-
-
 
     public function logout(Request $request) {
         // Logout user from session-based authentication

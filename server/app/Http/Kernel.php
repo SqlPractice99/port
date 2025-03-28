@@ -18,10 +18,11 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class, // ✅ REQUIRED for SPA auth
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
+            // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             // ✅ This ensures user_id is updated in the sessions table
         \Illuminate\Session\Middleware\AuthenticateSession::class,
@@ -32,6 +33,9 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class, // ✅ Add this
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+            // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\ThrottleRequests::class,  // Rate limiting
         ],
     ];
 

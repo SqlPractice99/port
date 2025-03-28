@@ -21,7 +21,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   // const user =  useSelector((state) => state.user);
   const passwordInputRef = useRef(null);
 
-  axios.defaults.baseURL = "http://localhost:8000/api";
+  axios.defaults.baseURL = "http://localhost:8000";
   axios.defaults.withCredentials = true; // Allows cookies to be sent automatically
 
   // const togglePasswordVisibility = () => {
@@ -60,8 +60,12 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
       .find((row) => row.startsWith("XSRF-TOKEN="))
       ?.split("=")[1];
 
+
+      let lara = 'eyJpdiI6IkF6Z21yUlpTeEpQTHVsWXluMUVVZlE9PSIsInZhbHVlIjoieG55Q2VqYWFhQW1EOVM2VDUyMzRxU01WUXhlMy84S2pjRTBIQXd3L3dyY2tTaEZGOXBDeHZ6WDYwSExEQnJSck0vS0x0eXpUTXkzRkkxczJWK3pEVVUzdjFZbkJiQ1lEMCtsT211aEtRR2ljM0pHbldEZ0MzRFEyL0ZDMjUwV1IiLCJtYWMiOiI4ZDc3ZjA3MTEzOGJhZTY2Y2UxODZhODAxZTU2YTM2MjAzYTdkZDRiYzBlZTY3MTM2ZGFiZWIxYmJhYzg3NzE1IiwidGFnIjoiIn0%3D'
+      console.log('loooook: ', xsrfToken)
+      console.log('loooook: ', decodeURIComponent(xsrfToken))
     let r = await axios.post(
-      "/decrypt",
+      "/api/decrypt",
       {},
       {
         headers: {
@@ -70,14 +74,14 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
       }
     );
 
-    console.log("Logged-in User:", r);
+    console.log("Logged-in User:", r.data);
     return r;
   };
 
   const users = async (xsrfToken) => {
-    // let xsrfToken = document.cookie
-    //     .split("; ")
-    //     .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
+    let xsrf = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
 
     // axios
     //   .get("/test-auth", { withCredentials: true })
@@ -87,20 +91,19 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
     //   );
 
     try {
-      // await axios.get("http://localhost:8000/sanctum/csrf-cookie", { withCredentials: true });
-
+      // Ensure CSRF Token is passed in headers
       const response = await axios.get(
-        "http://localhost:8000/api/user",
+        "/api/user",
         {
           headers: {
+            accept: 'application/json',
             "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
           },
         },
         { withCredentials: true }
-      ); // 🔑 Sends cookie automatically
-      console.log("User Data:", response.data);
+      );
 
-      // decryptToken();
+      console.log("User Data:", response.data);
     } catch (error) {
       console.error("Unauthorized:", error.response?.data || error.message);
     }
@@ -128,7 +131,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   const handleLogin = async () => {
     try {
       // Step 1: Get CSRF token
-      await axios.get("/sanctum/csrf-cookie", { withCredentials: true }); // ✅ No need to set headers manually
+      await axios.get("/api/sanctum/csrf-cookie", { withCredentials: true }); // ✅ No need to set headers manually
 
       let xsrfToken = document.cookie
         .split("; ")
@@ -139,13 +142,14 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
 
       // Step 2: Send login request
       const response = await axios.post(
-        "/login",
+        "/api/login",
         {
           username: inputValues["Username"],
           password: inputValues["Password"],
         },
         {
           headers: {
+            accept: 'application/json',
             "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
           },
         },
@@ -389,6 +393,14 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
         </div>
         <div className="loginButton width-85 flex center">
           <Button text="Login" onClick={handleLogin} />
+        </div>
+
+        <div className="loginButton width-85 flex center">
+          <Button text="User" onClick={users} />
+        </div>
+
+        <div className="loginButton width-85 flex center">
+          <Button text="Decrypt" onClick={decryptToken} />
         </div>
       </div>
     </div>
