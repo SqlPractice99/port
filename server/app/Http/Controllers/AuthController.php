@@ -76,45 +76,78 @@ class AuthController extends Controller
         ]);
     }
 
+    // public function login(Request $request)
+    // {
+    //     $credentials = $request->validate([
+    //         'username' => 'required',
+    //         'password' => 'required'
+    //     ]);
+
+    //     // Find user
+    //     $user = User::where('username', $request->username)->first();
+
+    //     if (!$user || !Hash::check($request->password, $user->password)) {
+    //         return response()->json(['message' => 'Invalid credentials'], 401);
+    //     }
+
+    //     // Get the current session ID before logging in
+    //     $oldSessionId = session()->getId();
+
+    //     // Delete the old session from the database BEFORE regenerating
+    //     // DB::table('sessions')->where('id', $oldSessionId)->delete();
+
+    //     // Log the user in
+    //     Auth::guard('web')->login($user);
+
+    //     // Now, regenerate the session to get a completely new session ID
+    //     session()->invalidate();  // Clears session data and generates a new session ID
+    //     session()->regenerateToken(); // Regenerates CSRF token (important for security)
+
+    //     // Get the new session ID after regeneration
+    //     $newSessionId = session()->getId();
+
+    //     // Save the session again after login to ensure it's properly stored
+    //     session()->save();
+
+
+    //     \Log::info('new testing:', [session()->getId()]);
+    //     \Log::info('Session ID:', [session()->getId()]);
+    //     \Log::info('Cookies:', request()->cookies->all());
+    //     \Log::info('Headers:', request()->headers->all());
+    //     \Log::info('Authenticated User:', [auth()->user()]);
+    //     \Log::info('Auth Check:', [Auth::check()]);
+
+
+    //     return response()->json([
+    //         'authenticated' => true,
+    //         'old_session_deleted' => $oldSessionId,
+    //         'new_session_id' => $newSessionId,
+    //         'user' => $user,
+    //         'session_id' => session()->getId(),
+    //         'cookies' => request()->cookies->all(),
+    //         'authenticated_user' => Auth::user(),
+    //         'is_authenticated' => Auth::check(),
+    //     ]);
+    // }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required'
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        // Find user
-        $user = User::where('username', $request->username)->first();
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return response()->json([
+                'message' => 'Login successful',
+                'token' => $token
+            ])->cookie('token', $token, 60, '/', null, true, true);
         }
 
-        // Get the current session ID before logging in
-        $oldSessionId = session()->getId();
-
-        // Delete the old session from the database BEFORE regenerating
-        // DB::table('sessions')->where('id', $oldSessionId)->delete();
-
-        // Log the user in
-        Auth::guard('web')->login($user);
-
-        // Now, regenerate the session to get a completely new session ID
-        session()->invalidate();  // Clears session data and generates a new session ID
-        session()->regenerateToken(); // Regenerates CSRF token (important for security)
-
-        // Get the new session ID after regeneration
-        $newSessionId = session()->getId();
-
-        // Save the session again after login to ensure it's properly stored
-        session()->save();
-
-        return response()->json([
-            'authenticated' => true,
-            'old_session_deleted' => $oldSessionId,
-            'new_session_id' => $newSessionId,
-            'user' => $user
-        ]);
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
 
@@ -203,18 +236,27 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request) {
-        // Logout user from session-based authentication
-        auth()->guard('web')->logout();
+    // public function logout(Request $request) {
+    //     // Logout user from session-based authentication
+    //     auth()->guard('web')->logout();
     
-        // Invalidate the session
-        $request->session()->invalidate();
+    //     // Invalidate the session
+    //     $request->session()->invalidate();
     
-        // Regenerate CSRF token
-        $request->session()->regenerateToken();
+    //     // Regenerate CSRF token
+    //     $request->session()->regenerateToken();
     
-        return response()->json(['message' => 'Logged out successfully']);
-    }    
+    //     return response()->json(['message' => 'Logged out successfully']);
+    // }   
+    
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Logged out'])
+            ->cookie('token', '', -1);
+    }
+
 
 //     public function logout(Request $request)
 // {

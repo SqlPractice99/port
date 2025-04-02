@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class, // ✅ REQUIRED for SPA auth
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
+            'throttle:api',
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -35,7 +36,9 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
             // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class, // 🔥 Important for session-based auth
             \Illuminate\Routing\Middleware\ThrottleRequests::class,  // Rate limiting
+            \Illuminate\Session\Middleware\AuthenticateSession::class, // 🔥 Ensure session persists
         ],
     ];
 

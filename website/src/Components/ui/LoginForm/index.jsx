@@ -21,7 +21,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   // const user =  useSelector((state) => state.user);
   const passwordInputRef = useRef(null);
 
-  axios.defaults.baseURL = "http://localhost:8000";
+  // axios.defaults.baseURL = "http://localhost:8000";
   axios.defaults.withCredentials = true; // Allows cookies to be sent automatically
 
   // const togglePasswordVisibility = () => {
@@ -78,191 +78,218 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
     return r;
   };
 
-  const users = async (xsrfToken) => {
-    let xsrf = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
+  // const users = async (xsrfToken) => {
+  //   let xsrf = document.cookie
+  //       .split("; ")
+  //       .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
 
-    // axios
-    //   .get("/test-auth", { withCredentials: true })
-    //   .then((res) => console.log(res.data))
-    //   .catch((err) =>
-    //     console.error("Auth check failed:", err.response?.data || err.message)
-    //   );
+  //   // axios
+  //   //   .get("/test-auth", { withCredentials: true })
+  //   //   .then((res) => console.log(res.data))
+  //   //   .catch((err) =>
+  //   //     console.error("Auth check failed:", err.response?.data || err.message)
+  //   //   );
 
-    try {
-      // Ensure CSRF Token is passed in headers
-      const response = await axios.get(
-        "/api/user",
-        {
-          headers: {
-            accept: 'application/json',
-            "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
-          },
-        },
-        { withCredentials: true }
-      );
+  //   try {
+  //     // Ensure CSRF Token is passed in headers
+  //     const response = await axios.get(
+  //       "/api/user",
+  //       {
+  //         headers: {
+  //           accept: 'application/json',
+  //           "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
+  //         },
+  //       },
+  //       { withCredentials: true }
+  //     );
 
-      console.log("User Data:", response.data);
-    } catch (error) {
-      console.error("Unauthorized:", error.response?.data || error.message);
-    }
+  //     console.log("User Data:", response.data);
+  //   } catch (error) {
+  //     console.error("Unauthorized:", error.response?.data || error.message);
+  //   }
 
-    // await axios.get("/user", { withCredentials: true })
-    // .then(res => console.log(res.data))
-    // .catch(err => console.error("Unauthorized:", err.response?.data || err.message));
+  //   // await axios.get("/user", { withCredentials: true })
+  //   // .then(res => console.log(res.data))
+  //   // .catch(err => console.error("Unauthorized:", err.response?.data || err.message));
 
-    //   decryptToken();
+  //   //   decryptToken();
 
-    // console.log("tokennnnn: ", token);
-    // let r = await axios.get(
-    //   "/user",
-    //   {},
-    //   {
-    //     headers: {
-    //       "X-XSRF-TOKEN": token, // ✅ Explicitly send CSRF token
-    //     },
-    //   }
-    // );
+  //   // console.log("tokennnnn: ", token);
+  //   // let r = await axios.get(
+  //   //   "/user",
+  //   //   {},
+  //   //   {
+  //   //     headers: {
+  //   //       "X-XSRF-TOKEN": token, // ✅ Explicitly send CSRF token
+  //   //     },
+  //   //   }
+  //   // );
 
-    // console.log("Logged-in User:", r);
-  };
+  //   // console.log("Logged-in User:", r);
+  // };
 
   const handleLogin = async () => {
     try {
-      // Step 1: Get CSRF token
-      await axios.get("/api/sanctum/csrf-cookie", { withCredentials: true }); // ✅ No need to set headers manually
+        await axios.get("http://localhost:8000/api/sanctum/csrf-cookie"); // Ensure CSRF protection
+        const response = await axios.post("http://localhost:8000/api/login", {
+            username: inputValues["Username"],
+            password: inputValues["Password"]
+        });
 
-      let xsrfToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("XSRF-TOKEN="))
-        ?.split("=")[1];
-
-      console.log("XSRF Token for /api/loginnnn:", xsrfToken);
-
-      // Step 2: Send login request
-      const response = await axios.post(
-        "/api/login",
-        {
-          username: inputValues["Username"],
-          password: inputValues["Password"],
-        },
-        {
-          headers: {
-            accept: 'application/json',
-            "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
-          },
-        },
-        { withCredentials: true }
-      );
-
-      console.log("Login Response:", response.data);
-
-      // await axios.get("/sanctum/csrf-cookie"); // ✅ No need to set headers manually
-
-      // xsrfToken = document.cookie
-      //   .split("; ")
-      //   .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
-
-      console.log("XSRF Token for /api/hi:", xsrfToken);
-
-      // Step 3: Fetch authenticated user
-      // const tt = await decryptToken(); // ✅ Await the function
-
-      await users(xsrfToken);
-      // Step 4: Save user data
-      // setUserD(userResponse.data);
-      // dispatch(setUser(userResponse.data));
-
-      // navigate("/Home");
+        console.log("Login successful:", response.data);
+        users();
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
+        console.error("Login failed:", error.response?.data || error.message);
     }
+};
 
-    // try {
-    //   // Step 1: Get CSRF token
-    //   await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-    //     withCredentials: true, // ✅ Important!
-    //   });
+const users = async () => {
+    try {
+        const response = await axios.get("http://localhost:8000/api/user", {
+            withCredentials: true,
+            headers: { Accept: "application/json" },
+        });
 
-    //   const dataForm = {
-    //     username: inputValues["Username"],
-    //     password: inputValues["Password"],
-    //   };
+        console.log("User Data:", response.data);
+    } catch (error) {
+        console.error("Unauthorized:", error.response?.data || error.message);
+    }
+};
 
-    //   const xsrfToken = document.cookie
-    //     .split("; ")
-    //     .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
+  // const handleLogin = async () => {
+  //   try {
+  //     // Step 1: Get CSRF token
+  //     await axios.get("/api/sanctum/csrf-cookie", { withCredentials: true }); // ✅ No need to set headers manually
 
-    //   // Step 2: Send login request
-    //   const response = await axios.post(
-    //     "http://localhost:8000/api/login",
-    //     dataForm,
-    //     {
-    //       headers: {
-    //         "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
-    //       },
-    //     }
-    //   );
+  //     let xsrfToken = document.cookie
+  //       .split("; ")
+  //       .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
 
-    //   console.log("Login Response: ");
-    //   console.log(response.data);
+  //     console.log("XSRF Token for /api/loginnnn:", xsrfToken);
 
-    //   // Step 3: Fetch authenticated user
-    //   const userResponse = await axios
-    //     .get("http://localhost:8000/api/user", {
-    //       headers: {
-    //         "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // 🔥 Send CSRF token
-    //       },
-    //       withCredentials: true,
-    //     })
-    //     .then((response) => console.log("User data:", response.data))
-    //     .catch((error) =>
-    //       console.error("Not authenticated:", error)
-    //     );
+  //     // Step 2: Send login request
+  //     const response = await axios.post(
+  //       "/api/login",
+  //       {
+  //         username: inputValues["Username"],
+  //         password: inputValues["Password"],
+  //       },
+  //       {
+  //         headers: {
+  //           accept: 'application/json',
+  //           "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
+  //         },
+  //       },
+  //       { withCredentials: true }
+  //     );
 
-    //   const userData = userResponse;
+  //     console.log("Login Response:", response.data);
 
-    //   console.log("Logged-in User:", userData);
+  //     // await axios.get("/sanctum/csrf-cookie"); // ✅ No need to set headers manually
 
-    //   // Step 4: Save user data in state
-    //   // setUserD(userResponse);
-    //   // dispatch(setUser(userResponse));
+  //     // xsrfToken = document.cookie
+  //     //   .split("; ")
+  //     //   .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
 
-    //   navigate("/Home");
-    //   // Step 1: Get CSRF token
-    //   // await axios.get("/sanctum/csrf-cookie");
+  //     console.log("XSRF Token for /api/hi:", xsrfToken);
 
-    //   // Step 2: Send login request
-    //   // const response = await axios.post("/login", {
-    //   //   username: inputValues["Username"], // Ensure backend expects "email" not "username"
-    //   //   password: inputValues["Password"],
-    //   // });
+  //     // Step 3: Fetch authenticated user
+  //     // const tt = await decryptToken(); // ✅ Await the function
 
-    //   // Step 3: Fetch authenticated user
-    //   // const userResponse = await axios.get("/user");
-    //   // const userData = userResponse.data;
+  //     await users(xsrfToken);
+  //     // Step 4: Save user data
+  //     // setUserD(userResponse.data);
+  //     // dispatch(setUser(userResponse.data));
 
-    //   // console.log("Logged-in User:", userData);
+  //     // navigate("/Home");
+  //   } catch (error) {
+  //     console.error("Login failed:", error.response?.data || error.message);
+  //   }
 
-    //   // Step 4: Save user data in state & Redux store
-    //   // setUserD(userData);
-    //   // dispatch(setUser(userData));
+  //   // try {
+  //   //   // Step 1: Get CSRF token
+  //   //   await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+  //   //     withCredentials: true, // ✅ Important!
+  //   //   });
 
-    //   // Step 5: Redirect user based on role
-    //   // if (userData.admin === 1) {
-    //   //   console.log("Admin Login");
-    //   //   navigate("/Admin");
-    //   // } else if (userData.admin === 0) {
-    //   //   console.log("Publisher Login");
-    //   //   navigate("/Publisher");
-    //   // }
-    //   // navigate("/Home");
-    // } catch (error) {
-    //   console.error("Login failed:", error);
-    //   // console.error("Login failed:", error.response?.data || error.message);
-    // }
-  };
+  //   //   const dataForm = {
+  //   //     username: inputValues["Username"],
+  //   //     password: inputValues["Password"],
+  //   //   };
+
+  //   //   const xsrfToken = document.cookie
+  //   //     .split("; ")
+  //   //     .find((row) => row.startsWith("XSRF-TOKEN="))?.split("=")[1];
+
+  //   //   // Step 2: Send login request
+  //   //   const response = await axios.post(
+  //   //     "http://localhost:8000/api/login",
+  //   //     dataForm,
+  //   //     {
+  //   //       headers: {
+  //   //         "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // ✅ Explicitly send CSRF token
+  //   //       },
+  //   //     }
+  //   //   );
+
+  //   //   console.log("Login Response: ");
+  //   //   console.log(response.data);
+
+  //   //   // Step 3: Fetch authenticated user
+  //   //   const userResponse = await axios
+  //   //     .get("http://localhost:8000/api/user", {
+  //   //       headers: {
+  //   //         "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // 🔥 Send CSRF token
+  //   //       },
+  //   //       withCredentials: true,
+  //   //     })
+  //   //     .then((response) => console.log("User data:", response.data))
+  //   //     .catch((error) =>
+  //   //       console.error("Not authenticated:", error)
+  //   //     );
+
+  //   //   const userData = userResponse;
+
+  //   //   console.log("Logged-in User:", userData);
+
+  //   //   // Step 4: Save user data in state
+  //   //   // setUserD(userResponse);
+  //   //   // dispatch(setUser(userResponse));
+
+  //   //   navigate("/Home");
+  //   //   // Step 1: Get CSRF token
+  //   //   // await axios.get("/sanctum/csrf-cookie");
+
+  //   //   // Step 2: Send login request
+  //   //   // const response = await axios.post("/login", {
+  //   //   //   username: inputValues["Username"], // Ensure backend expects "email" not "username"
+  //   //   //   password: inputValues["Password"],
+  //   //   // });
+
+  //   //   // Step 3: Fetch authenticated user
+  //   //   // const userResponse = await axios.get("/user");
+  //   //   // const userData = userResponse.data;
+
+  //   //   // console.log("Logged-in User:", userData);
+
+  //   //   // Step 4: Save user data in state & Redux store
+  //   //   // setUserD(userData);
+  //   //   // dispatch(setUser(userData));
+
+  //   //   // Step 5: Redirect user based on role
+  //   //   // if (userData.admin === 1) {
+  //   //   //   console.log("Admin Login");
+  //   //   //   navigate("/Admin");
+  //   //   // } else if (userData.admin === 0) {
+  //   //   //   console.log("Publisher Login");
+  //   //   //   navigate("/Publisher");
+  //   //   // }
+  //   //   // navigate("/Home");
+  //   // } catch (error) {
+  //   //   console.error("Login failed:", error);
+  //   //   // console.error("Login failed:", error.response?.data || error.message);
+  //   // }
+  // };
 
   // const handleLogin = async () => {
   //   try {
