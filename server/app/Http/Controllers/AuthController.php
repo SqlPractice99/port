@@ -132,23 +132,31 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Validate incoming request
         $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
+        // Attempt to log the user in
         if (Auth::attempt($credentials)) {
+            // Retrieve the authenticated user
             $user = Auth::user();
+
+            // Create a personal access token
             $token = $user->createToken('auth_token')->plainTextToken;
 
+            // Return the token in the response body
             return response()->json([
                 'message' => 'Login successful',
                 'token' => $token
-            ])->cookie('token', $token, 60, '/', null, true, true);
+            ]);
         }
 
+        // If authentication fails
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
 
 
 //     public function login(Request $request)

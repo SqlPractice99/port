@@ -13,7 +13,10 @@ import { useNavigate } from "react-router-dom";
 import { login, getUser } from "../../../api";
 
 const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
-  const [inputValues, setInputValues] = useState({});
+  const [inputValues, setInputValues] = useState({
+    Username: "",
+    Password: ""
+  });
   // const [passwordVisible, setPasswordVisible] = useState(false);
   const [eye, setEye] = useState(notVisible);
   const dispatch = useDispatch();
@@ -21,8 +24,8 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   // const user =  useSelector((state) => state.user);
   const passwordInputRef = useRef(null);
 
-  // axios.defaults.baseURL = "http://localhost:8000";
-  axios.defaults.withCredentials = true; // Allows cookies to be sent automatically
+  axios.defaults.baseURL = "http://localhost:8000";
+  // axios.defaults.withCredentials = true; // Allows cookies to be sent automatically
 
   // const togglePasswordVisibility = () => {
   //   if (!passwordVisible) {
@@ -43,7 +46,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      console.log(e.target.name);
+      // console.log(e.target.name);
       if (e.target.name === "Username") {
         if (passwordInputRef.current) {
           passwordInputRef.current.focus();
@@ -130,8 +133,8 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
 
   const handleLogin = async () => {
     try {
-        await axios.get("http://localhost:8000/api/sanctum/csrf-cookie"); // Ensure CSRF protection
-        const response = await axios.post("http://localhost:8000/api/login", {
+        // await axios.get("/api/sanctum/csrf-cookie"); // Ensure CSRF protection
+        const response = await axios.post("/api/login", {
             username: inputValues["Username"],
             password: inputValues["Password"]
         });
@@ -145,8 +148,8 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
 
 const users = async () => {
     try {
-        const response = await axios.get("http://localhost:8000/api/user", {
-            withCredentials: true,
+        const response = await axios.get("/api/user", {
+            // withCredentials: true,
             headers: { Accept: "application/json" },
         });
 

@@ -10,9 +10,7 @@ use App\Http\Controllers\ClientController;
 
 Route::group(["middleware" => "auth:sanctum"], function () {
      // Route::get('socket', [SocketController::class, 'socket']);
-    Route::get('sanctum/csrf-cookie', function (Request $request) {
-        return response()->json(['message' => 'CSRF cookie set']);
-    });
+    
     Route::group(["middleware" => ["auth", "auth.admin"]], function () {
          // Route::post('addPublisher', [AdminController::class, 'addPublisher']);
          // Route::post('removePublisher', [AdminController::class, 'removePublisher']);
@@ -49,13 +47,17 @@ Route::group(["middleware" => "auth:sanctum"], function () {
     Route::post('sendMessage', [ClientController::class, 'sendMessage']);
     Route::post('tenders', [ClientController::class, 'getTenders']);
     Route::get("unauthorized", [AuthController::class, "unauthorized"])->name("unauthorized");
-    Route::post('login', [AuthController::class, 'login']);
     Route::post('register',[AuthController::class,'register']);
     Route::get('logout', [AuthController::class, 'logout']);
     // Route::get('shu', [AdminController::class, 'shu']);
     // Route::post('image', [SupervisorController::class, 'image']);
 
+    // Route::get('sanctum/csrf-cookie', function (Request $request) {
+    //     return response()->json(['message' => 'CSRF cookie set']);
+    // });
+    Route::post('login', [AuthController::class, 'login']);
     Route::get('/hi', function(){
         return 'helloooow';
     });
+    
 });
