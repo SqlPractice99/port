@@ -48,20 +48,30 @@ const Header = () => {
 
   const hi = async () => {
     const userTokenJSON = localStorage.getItem("userToken");
-        if (!userTokenJSON) {
-          console.error("No user token found.");
-          return;
-        }
+    if (!userTokenJSON) {
+      console.error("No user token found.");
+      return;
+    }
 
-        const userToken = JSON.parse(userTokenJSON);
-        console.log(userToken)
-    const res = await axios.get('http://localhost:8000/api/hi', {
-      headers: {
-        Authorization: `Bearer ${userToken}`  // token should be from localStorage or context
+    const userToken = JSON.parse(userTokenJSON);
+    console.log(userToken);
+
+    try {
+      const res = await axios.get("http://localhost:8000/api/hi", {
+        headers: {
+          Authorization: `Bearer ${userToken}`, // token should be from localStorage or context
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      if (error.response?.status === 401) {
+        console.log("User is unauthorized. Redirecting to login...");
+        // Optionally remove UI state, clear user info, redirect
+        navigate("/login"); // or set a flag in your state
+      } else {
+        console.error("An error occurred:", error);
       }
-    })
-    
-    console.log(res.data);
+    }
   };
 
   const handleAdminClick = async () => {
