@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Login;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+
+// use JWTAuth;
 
 class AuthController extends Controller
 {
@@ -140,7 +144,7 @@ class AuthController extends Controller
         ]);
 
         // Explicitly clear any existing token cookie
-        Cookie::queue(Cookie::forget('token'));
+        // Cookie::queue(Cookie::forget('token'));
 
         if (!Auth::attempt($credentials)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
@@ -148,6 +152,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $token = Auth::attempt($credentials);
+        // $user->token = $token;
 
         // Set HttpOnly cookie (valid for 1 day)
         $cookie = cookie(
@@ -162,7 +167,7 @@ class AuthController extends Controller
             'Strict'       // SameSite
         );
 
-        return response()->json(['message' => 'Login successful', 'user' => $user])->cookie($cookie);
+        return response()->json(['message' => 'Login successful', 'user' => $user, 'token' => $token]);
     }
 
 
@@ -242,14 +247,41 @@ class AuthController extends Controller
 //         ]);
 //     }
 
-    public function checkId() {
-        $newSessionId = session()->getId();
+    // public function logout(Request $request)
+    // {
+    //     // Invalidate the token (optional but recommended)
+    //     try {
+    //         return response()->json(['message' => 'Tried']);
 
-        $userSession = DB::table('sessions')->where('id', $newSessionId)->first(); // Before regeneration
-        return response()->json([
-            'session_id' => $newSessionId,
-            'session_user' => $userSession, // This will now have the correct user_id after the update
-        ]);
+    //         JWTAuth::invalidate(JWTAuth::getToken());
+    //     } catch (\Exception $e) {
+    //         // Token was invalid or already expired
+    //     }
+
+    //     // Clear the token cookie
+    //     return response()->json(['message' => 'Logged out']);
+    // }
+
+    public function logout(Request $request)
+    {
+        try {
+            // Get the token from the request
+            $token = JWTAuth::parseToken()->getToken();
+
+                // Blacklist the token (invalidate it)
+                JWTAuth::invalidate(JWTAuth::getToken());
+
+                // Optional: Clear the cookie as well
+                // $cookie = cookie('token', '', -1);  // Expire the cookie
+                
+                return response()->json(['message' => 'Logged out successfully']);
+        } catch (TokenExpiredException $e) {
+            // Handle expired token error
+            return response()->json(['message' => 'Token has expired, please log in again'], 401);
+        } catch (JWTException $e) {
+            // Handle other JWT exceptions (e.g., token parsing errors)
+            return response()->json(['message' => 'Token is invalid or missing'], 400);
+        }
     }
 
     // public function logout(Request $request) {
@@ -265,13 +297,13 @@ class AuthController extends Controller
     //     return response()->json(['message' => 'Logged out successfully']);
     // }   
     
-    public function logout(Request $request)
-    {
-        $request->user()->tokens()->delete();
+    // public function logout(Request $request)
+    // {
+    //     $request->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Logged out'])
-            ->cookie('token', '', -1);
-    }
+    //     return response()->json(['message' => 'Logged out'])
+    //         ->cookie('token', '', -1);
+    // }
 
 
 //     public function logout(Request $request)

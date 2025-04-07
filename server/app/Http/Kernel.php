@@ -28,7 +28,7 @@ class Kernel extends HttpKernel
             // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             // ✅ This ensures user_id is updated in the sessions table
-        \Illuminate\Session\Middleware\AuthenticateSession::class,
+        // \Illuminate\Session\Middleware\AuthenticateSession::class,
         ],
 
         'api' => [
@@ -41,7 +41,7 @@ class Kernel extends HttpKernel
             // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class, // 🔥 Important for session-based auth
             \Illuminate\Routing\Middleware\ThrottleRequests::class,  // Rate limiting
-            \Illuminate\Session\Middleware\AuthenticateSession::class, // 🔥 Ensure session persists
+            // \Illuminate\Session\Middleware\AuthenticateSession::class, // 🔥 Ensure session persists
         ],
     ];
 

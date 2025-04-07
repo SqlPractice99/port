@@ -9,9 +9,13 @@ use App\Http\Controllers\ClientController;
  // use App\Http\Controllers\SocketController;
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
 
 Route::group(["middleware" => "auth:api"], function () {
      // Route::get('socket', [SocketController::class, 'socket']);
+     Route::get('/hi', function(){
+        return 'helloooow';
+    });
     
     Route::group(["middleware" => ["auth", "auth.admin"]], function () {
          // Route::post('addPublisher', [AdminController::class, 'addPublisher']);
@@ -29,9 +33,7 @@ Route::group(["middleware" => "auth:api"], function () {
         Route::post('emails', [AdminController::class, 'getEmails']);
     });
 
-    Route::get('/hi', function(){
-        return 'helloooow';
-    });
+    
  // Route::group(["middleware" => "auth.publisher"], function () {
  //     Route::post('addTender', [PublisherController::class, 'addTender']);
  //     Route::post('removeTender', [PublisherController::class, 'removeTender']);
@@ -39,6 +41,8 @@ Route::group(["middleware" => "auth:api"], function () {
  //     Route::post('emails', [PublisherController::class, 'getEmails']);
  //     Route::get('show', [PublisherController::class, 'show']);
  // });
+    
+
 });
     // Route::get('show', [PublisherController::class, 'show']);
     Route::post('data', [ClientController::class, 'getData']);
@@ -53,7 +57,6 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::post('tenders', [ClientController::class, 'getTenders']);
     Route::get("unauthorized", [AuthController::class, "unauthorized"])->name("unauthorized");
     Route::post('register',[AuthController::class,'register']);
-    Route::get('logout', [AuthController::class, 'logout']);
     // Route::get('shu', [AdminController::class, 'shu']);
     // Route::post('image', [SupervisorController::class, 'image']);
 

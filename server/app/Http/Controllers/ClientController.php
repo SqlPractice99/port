@@ -66,8 +66,9 @@ public function testImage () {
 
     public function getNews(Request $request)
     {
-        $language = $request->language;
-
+        // $language = $request->language;
+        $language = $request->input('language', 'ar');
+        
         if (!$language) {
             return response()->json([
                 'status' => 'error',
@@ -84,7 +85,7 @@ public function testImage () {
         //     'data' => $news
         // ]);
 
-        $language = $request->input('language', 'ar');
+        
         $perPage = $request->input('per_page', 6); // Default to 6 items
         $news = News::where('language', $language)->orderBy('created_at', 'desc')->paginate($perPage);
     

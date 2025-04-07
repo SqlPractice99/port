@@ -192,8 +192,9 @@ const NewsBody = () => {
       // Stop fetching if there's no more data
       setHasMore(response.data.next_page_url !== null);
 
-      // console.log("Fetched data:");
+      console.log("Fetched data:");
       // console.log(response.data.data);
+            console.log(data);
 
       // setData(response.data);
 
@@ -279,7 +280,7 @@ const NewsBody = () => {
           ) : <></>}
 
           <div className={`width-100 ${language === 'ar' ? 'ar' : ''}`}>
-            {Array.isArray(data) && data.length && !loading > 0 ? (
+            {Array.isArray(data) && data.length > 0 && !loading ? (
               <ul className="newsList width-100 flex wrap r-gap-30">
                 {data
                   .filter(item => language === 'en' ? (item.enTitle && item.enContent) : (item.title && item.content)) // Filter based on language

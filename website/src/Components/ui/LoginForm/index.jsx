@@ -15,7 +15,7 @@ import { login, getUser } from "../../../api";
 const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   const [inputValues, setInputValues] = useState({
     Username: "",
-    Password: ""
+    Password: "",
   });
   // const [passwordVisible, setPasswordVisible] = useState(false);
   const [eye, setEye] = useState(notVisible);
@@ -63,10 +63,10 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
       .find((row) => row.startsWith("XSRF-TOKEN="))
       ?.split("=")[1];
 
-
-      let lara = 'eyJpdiI6IkF6Z21yUlpTeEpQTHVsWXluMUVVZlE9PSIsInZhbHVlIjoieG55Q2VqYWFhQW1EOVM2VDUyMzRxU01WUXhlMy84S2pjRTBIQXd3L3dyY2tTaEZGOXBDeHZ6WDYwSExEQnJSck0vS0x0eXpUTXkzRkkxczJWK3pEVVUzdjFZbkJiQ1lEMCtsT211aEtRR2ljM0pHbldEZ0MzRFEyL0ZDMjUwV1IiLCJtYWMiOiI4ZDc3ZjA3MTEzOGJhZTY2Y2UxODZhODAxZTU2YTM2MjAzYTdkZDRiYzBlZTY3MTM2ZGFiZWIxYmJhYzg3NzE1IiwidGFnIjoiIn0%3D'
-      console.log('loooook: ', xsrfToken)
-      console.log('loooook: ', decodeURIComponent(xsrfToken))
+    let lara =
+      "eyJpdiI6IkF6Z21yUlpTeEpQTHVsWXluMUVVZlE9PSIsInZhbHVlIjoieG55Q2VqYWFhQW1EOVM2VDUyMzRxU01WUXhlMy84S2pjRTBIQXd3L3dyY2tTaEZGOXBDeHZ6WDYwSExEQnJSck0vS0x0eXpUTXkzRkkxczJWK3pEVVUzdjFZbkJiQ1lEMCtsT211aEtRR2ljM0pHbldEZ0MzRFEyL0ZDMjUwV1IiLCJtYWMiOiI4ZDc3ZjA3MTEzOGJhZTY2Y2UxODZhODAxZTU2YTM2MjAzYTdkZDRiYzBlZTY3MTM2ZGFiZWIxYmJhYzg3NzE1IiwidGFnIjoiIn0%3D";
+    console.log("loooook: ", xsrfToken);
+    console.log("loooook: ", decodeURIComponent(xsrfToken));
     let r = await axios.post(
       "/api/decrypt",
       {},
@@ -133,32 +133,45 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
 
   const handleLogin = async () => {
     try {
-        // await axios.get("/api/sanctum/csrf-cookie"); // Ensure CSRF protection
-        const response = await axios.post("/api/login", {
-            username: inputValues["Username"],
-            password: inputValues["Password"]
-        });
+      // await axios.get("/api/sanctum/csrf-cookie"); // Ensure CSRF protection
+      const response = await axios.post("/api/login", {
+        username: inputValues["Username"],
+        password: inputValues["Password"],
+      });
 
-        console.log("Login successful:", response.data);
-        // users();
-        navigate('/home');
+      console.log("Login successful:", response.data);
+      // users();
+      const userData = response.data.user;
+      const userToken = response.data.token;
+      const userDataJSON = JSON.stringify(userData);
+      const userTokenJSON = JSON.stringify(userToken);
+      console.log("userData.admin:");
+      console.log(response.data);
+
+      localStorage.setItem("userData", userDataJSON);
+      localStorage.setItem("userToken", userTokenJSON);
+      // setUserD(userData);
+      // setUserT(userToken);
+      dispatch(setUser(userData));
+      dispatch(setUserToken(userToken));
+      navigate("/home");
     } catch (error) {
-        console.error("Login failed:", error.response?.data || error.message);
+      console.error("Login failed:", error.response?.data || error.message);
     }
-};
+  };
 
-const users = async () => {
+  const users = async () => {
     try {
-        const response = await axios.get("/api/user", {
-            // withCredentials: true,
-            headers: { Accept: "application/json" },
-        });
+      const response = await axios.get("/api/user", {
+        // withCredentials: true,
+        headers: { Accept: "application/json" },
+      });
 
-        console.log("User Data:", response.data);
+      console.log("User Data:", response.data);
     } catch (error) {
-        console.error("Unauthorized:", error.response?.data || error.message);
+      console.error("Unauthorized:", error.response?.data || error.message);
     }
-};
+  };
 
   // const handleLogin = async () => {
   //   try {

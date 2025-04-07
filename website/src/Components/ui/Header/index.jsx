@@ -17,7 +17,10 @@ import {
   setDropDown,
   clearDropDown,
 } from "../../../redux/dropDown/dropDownSlice";
-import { setLanguage, clearLanguage } from "../../../redux/language/languageSlice";
+import {
+  setLanguage,
+  clearLanguage,
+} from "../../../redux/language/languageSlice";
 import axios from "axios";
 
 const Header = () => {
@@ -40,27 +43,56 @@ const Header = () => {
   const toggleLanguage = () => {
     // console.log("hello");
     // setIsEnglish(language==='en' ? 'ar' : 'en');
-    dispatch(setLanguage(language==='en' ? 'ar' : 'en'));
+    dispatch(setLanguage(language === "en" ? "ar" : "en"));
+  };
+
+  const hi = async () => {
+    const userTokenJSON = localStorage.getItem("userToken");
+        if (!userTokenJSON) {
+          console.error("No user token found.");
+          return;
+        }
+
+        const userToken = JSON.parse(userTokenJSON);
+        console.log(userToken)
+    const res = await axios.get('http://localhost:8000/api/hi', {
+      headers: {
+        Authorization: `Bearer ${userToken}`  // token should be from localStorage or context
+      }
+    })
+    
+    console.log(res.data);
   };
 
   const handleAdminClick = async () => {
     if (isLoggedIn) {
       try {
         const userTokenJSON = localStorage.getItem("userToken");
-        const userToken = JSON.parse(userTokenJSON);
-        await axios.get("http://localhost:8000/api/logout", {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
+        if (!userTokenJSON) {
+          console.error("No user token found.");
+          return;
+        }
 
-        // if (response.data.status === "success") {
-          localStorage.removeItem("userData");
-          localStorage.removeItem("userToken");
-          setIsLoggedIn(false);
-          if (location.pathname !== "/Home") {
-            navigate("/Home");
+        const userToken = JSON.parse(userTokenJSON);
+        console.log(userToken);
+
+        const res = await axios.post(
+          "http://localhost:8000/api/logout",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
           }
+        );
+        console.log(res);
+        // if (response.data.status === "success") {
+        localStorage.removeItem("userData");
+        localStorage.removeItem("userToken");
+        setIsLoggedIn(false);
+        if (location.pathname !== "/Home") {
+          navigate("/Home");
+        }
         // }
         // window.location.href = "/Home";
       } catch (error) {
@@ -144,6 +176,9 @@ const Header = () => {
         <div className="login width-10 pointer" onClick={handleAdminClick}>
           {isLoggedIn ? "Logout" : "Login"}
         </div>
+        <div className="login width-10 pointer" onClick={hi}>
+          Hi
+        </div>
         <div className="flex width-55 end">
           <a
             href="localhost:3000/Home"
@@ -163,7 +198,7 @@ const Header = () => {
         <div className="Lang-Menu flex width-45 end">
           <div className="lang flex align-items">
             <h4 className="pointer" onClick={toggleLanguage}>
-              {language==='en' ? "AR" : "EN"}
+              {language === "en" ? "AR" : "EN"}
             </h4>
           </div>
           <div className="menu">
