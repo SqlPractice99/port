@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
@@ -132,29 +134,35 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validate incoming request
         $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Attempt to log the user in
-        if (Auth::attempt($credentials)) {
-            // Retrieve the authenticated user
-            $user = Auth::user();
+        // Explicitly clear any existing token cookie
+        Cookie::queue(Cookie::forget('token'));
 
-            // Create a personal access token
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            // Return the token in the response body
-            return response()->json([
-                'message' => 'Login successful',
-                'token' => $token
-            ]);
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // If authentication fails
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        $user = Auth::user();
+        $token = Auth::attempt($credentials);
+
+        // Set HttpOnly cookie (valid for 1 day)
+        $cookie = cookie(
+            'token',       // name
+            $token,        // value
+            60 * 24,       // minutes
+            '/',           // path
+            null,          // domain (null = current)
+            false,         // secure (set true in production w/ HTTPS)
+            true,          // HttpOnly
+            false,         // raw
+            'Strict'       // SameSite
+        );
+
+        return response()->json(['message' => 'Login successful', 'user' => $user])->cookie($cookie);
     }
 
 

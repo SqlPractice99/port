@@ -140,7 +140,8 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
         });
 
         console.log("Login successful:", response.data);
-        users();
+        // users();
+        navigate('/home');
     } catch (error) {
         console.error("Login failed:", error.response?.data || error.message);
     }

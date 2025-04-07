@@ -8,7 +8,9 @@ use App\Http\Controllers\PublisherController;
 use App\Http\Controllers\ClientController;
  // use App\Http\Controllers\SocketController;
 
-Route::group(["middleware" => "auth:sanctum"], function () {
+Route::post('login', [AuthController::class, 'login']);
+
+Route::group(["middleware" => "auth:api"], function () {
      // Route::get('socket', [SocketController::class, 'socket']);
     
     Route::group(["middleware" => ["auth", "auth.admin"]], function () {
@@ -27,6 +29,9 @@ Route::group(["middleware" => "auth:sanctum"], function () {
         Route::post('emails', [AdminController::class, 'getEmails']);
     });
 
+    Route::get('/hi', function(){
+        return 'helloooow';
+    });
  // Route::group(["middleware" => "auth.publisher"], function () {
  //     Route::post('addTender', [PublisherController::class, 'addTender']);
  //     Route::post('removeTender', [PublisherController::class, 'removeTender']);
@@ -34,7 +39,7 @@ Route::group(["middleware" => "auth:sanctum"], function () {
  //     Route::post('emails', [PublisherController::class, 'getEmails']);
  //     Route::get('show', [PublisherController::class, 'show']);
  // });
-
+});
     // Route::get('show', [PublisherController::class, 'show']);
     Route::post('data', [ClientController::class, 'getData']);
     Route::post('tenders', [ClientController::class, 'getTenders']);
@@ -55,9 +60,3 @@ Route::group(["middleware" => "auth:sanctum"], function () {
     // Route::get('sanctum/csrf-cookie', function (Request $request) {
     //     return response()->json(['message' => 'CSRF cookie set']);
     // });
-    Route::post('login', [AuthController::class, 'login']);
-    Route::get('/hi', function(){
-        return 'helloooow';
-    });
-    
-});
