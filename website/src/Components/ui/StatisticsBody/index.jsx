@@ -52,14 +52,14 @@ const StatisticsBody = (data) => {
                 onChange={handleChange}
                 required
               >
-                <option value="" Class="statisticsOptionsList">
+                <option value="" className="statisticsOptionsList">
                   Select Report Type
                 </option>
                 {choices.map((choice, index) => (
                   <option
                     key={index}
                     value={choice}
-                    Class="statisticsOptionsList"
+                    className="statisticsOptionsList"
                   >
                     {choice}
                   </option>
