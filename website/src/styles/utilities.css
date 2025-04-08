@@ -242,3 +242,7 @@
 .aspectRation5-4 {
     aspect-ratio: 5 / 4;
 }
+
+.paddingR-20 {
+    padding-right: 2em;
+}

@@ -81,6 +81,10 @@
   margin-top: 5px;
 }
 
+.specialList {
+  padding-right: 0px; 
+}
+
 .specialList li {
   font-size: 12px;
   margin-top: 3px;
