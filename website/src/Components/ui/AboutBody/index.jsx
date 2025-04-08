@@ -5,7 +5,7 @@ import "./styles.css";
 import Image from "../../../Components/base/image";
 import aboutImg from "../../../assets/images/about.png";
 import ReactDOMServer from "react-dom/server";
-// import axios from "axios";
+import axios from "axios";
 
 const AboutBody = (data) => {
   //   const [data, setData] = useState([]);
@@ -13,6 +13,7 @@ const AboutBody = (data) => {
   //   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const language = useSelector((state) => state.language.language);
+  const token = JSON.parse(localStorage.getItem("userToken"));
 
   //   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
 
@@ -192,30 +193,56 @@ const AboutBody = (data) => {
     // setLayout("flex-wrap");
   };
 
+  const handleSaveClick = async () => {
+    const formData = new FormData();
+    formData.append("token", token);
+    // formData.append("id", news.id);
+    // formData.append("title", title);
+    // formData.append("enTitle", enTitle);
+    // formData.append("content", content);
+    // formData.append("enContent", enContent);
+
+    // console.log("tempMediaArray before processing:", tempMediaArray);
+
+    // console.warn("FormData entries:");
+    // for (let [key, value] of formData.entries()) {
+    //   console.warn(key, value);
+    // }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/editNews",
+        formData
+      );
+
+      console.log(response);
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating about:", error);
+      alert("Failed to update about");
+    }
+  };
+
   const handleCancelClick = () => {
     // setTitle(originalData.title);
     // setEnTitle(originalData.enTitle);
     // setContent(originalData.content);
     // setEnContent(originalData.enContent);
-    // setExistingImages(originalData.images);
-    // setTempMediaArray(originalData.images); // Reset temp state
-    // setNewImages([]);
     setIsEditing(false);
   };
 
-        
-
   const aboutContent = [
-    <div key="left" className="aboutContainerLeft width-50 flex justify-content-end align-items">
+    <div
+      key="left"
+      className="aboutContainerLeft width-50 flex justify-content-end align-items"
+    >
       <div className="aboutContainerText width-80 flex">
         {language === "en" ? "About Port of Beirut" : "عن المرفأ"}
       </div>
     </div>,
 
-    <div
-      key="right"
-      className="aboutContainerRight width-50"
-    >
+    <div key="right" className="aboutContainerRight width-50">
       <Image
         src={aboutImg}
         alt="ِAbout of Port of Beirut"
@@ -229,7 +256,26 @@ const AboutBody = (data) => {
     <>
       <div className="aboutContainer width-100 flex">
         {language === "ar" ? aboutContent.reverse() : aboutContent}
-      </div>      
+      </div>
+
+      <div className="editButtons flex center">
+        {isEditing ? (
+          <>
+            <button className="saveBtn" onClick={handleSaveClick}>
+              Save
+            </button>
+            <button className="cancelBtn" onClick={handleCancelClick}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          token && (
+            <button className="editBtn" onClick={handleEditClick}>
+              Edit
+            </button>
+          )
+        )}
+      </div>
 
       {data.length !== 0 ? (
         <div className="aboutBody width-100 flex center column">
