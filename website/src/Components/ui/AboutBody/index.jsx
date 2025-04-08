@@ -8,12 +8,23 @@ import ReactDOMServer from "react-dom/server";
 import axios from "axios";
 
 const AboutBody = (data) => {
-  //   const [data, setData] = useState([]);
+  const [dataa, setData] = useState(data.data);
   //   const navigate = useNavigate();
   //   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const language = useSelector((state) => state.language.language);
   const token = JSON.parse(localStorage.getItem("userToken"));
+  const [title, setTitle] = useState(data.data.title);
+  const [enTitle, setEnTitle] = useState(data.data.arTitle);
+  // const [content, setContent] = useState(news.content);
+  // const [enContent, setEnContent] = useState(news.enContent);
+  // const [originalData, setOriginalData] = useState({
+  //   title: news.title,
+  //   enTitle: news.enTitle,
+  //   content: news.content,
+  //   enContent: news.enContent,
+  //   images: JSON.parse(news.image) || [],
+  // });
 
   //   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
 
@@ -45,8 +56,8 @@ const AboutBody = (data) => {
   //   };
 
   useEffect(() => {
-    console.log("language:", language);
-  }, [language]);
+    console.log("data:", dataa);
+  }, [dataa]);
 
   // useEffect(() => {
   // if (data.length != 0) {
@@ -56,7 +67,7 @@ const AboutBody = (data) => {
   // }, [data]);
 
   const parseContent = (content) => {
-    console.log("Raw content:", content); // Debugging content before processing
+    // console.log("Raw content:", content); // Debugging content before processing
 
     const elements = [];
     let currentList = [];
@@ -70,12 +81,12 @@ const AboutBody = (data) => {
     let matches = content.match(regex);
 
     matches.forEach((segment, index) => {
-      console.log(`Processing segment [${index}]:`, segment); // Debugging each segment
+      // console.log(`Processing segment [${index}]:`, segment); // Debugging each segment
 
       // Handle <li> tags
       if (segment.startsWith("<li>") && segment.endsWith("</li>")) {
         const listItemText = segment.replace(/<\/?li>/g, "").trim(); // Remove <li> tags
-        console.log("List item found:", listItemText);
+        // console.log("List item found:", listItemText);
 
         // Check if there are nested <sub-li> elements inside the <li>
         const subItems = listItemText.match(/<sub-li>.*?<\/sub-li>/g);
@@ -105,7 +116,7 @@ const AboutBody = (data) => {
         segment.endsWith("</sub-li>")
       ) {
         const subListText = segment.replace(/<\/?sub-li>/g, "").trim();
-        console.log("Sub-list item found:", subListText);
+        // console.log("Sub-list item found:", subListText);
 
         // If there is no current nested <ul>, create one
         if (!nestedList) {
@@ -116,10 +127,10 @@ const AboutBody = (data) => {
       }
       // Handle <br> as a line break (store text after <br>)
       else if (segment.startsWith("<br>") || segment === "") {
-        console.log("Line break found:", segment);
+        // console.log("Line break found:", segment);
 
-        console.log("noooo");
-        console.log(tempText.trim());
+        // console.log("noooo");
+        // console.log(tempText.trim());
 
         elements.push(<br key={`br-before-${index}`} />);
 
@@ -172,7 +183,7 @@ const AboutBody = (data) => {
       elements[0] = y; // Move the last element to the first position
     }
 
-    console.log("Final parsed elements:", elements); // Debug final output
+    // console.log("Final parsed elements:", elements); // Debug final output
     return elements;
   };
 
@@ -290,30 +301,60 @@ const AboutBody = (data) => {
                 <div className="aboutNews width-100 flex space-between">
                   {(language === "en" && index % 2 === 0) ||
                   (language === "ar" && index % 2 !== 0) ? (
-                    <>
-                      <div className="img-content-left width-50 flex">
-                        <Image
-                          src={`http://127.0.0.1:8000/${item.image}`}
-                          className="aboutNewsImg"
-                        />
-                      </div>
-                      <div className="img-content-right flex align-items">
-                        <div
-                          className={`about-title-content width-100 flex column ${
-                            language === "ar" ? "ar" : "en"
+                    isEditing ? (
+                      <>
+                        <div className="img-content-left width-50 flex">
+                          <Image
+                            src={`http://127.0.0.1:8000/${item.image}`}
+                            className="aboutNewsImg"
+                          />
+                        </div>
+                        <textarea
+                          type="text"
+                          value={parseContent(language === "en" ? item.title : item.arTitle)}
+                          onChange={(e) => {
+                            const updatedValue = e.target.value;
+                            const updatedData = [...data.data];
+                            if (language === "en") {
+                              updatedData[index].title = updatedValue;
+                            } else {
+                              updatedData[index].arTitle = updatedValue;
+                            }
+                            setData({ ...data, data: updatedData });
+                          }}
+                          className={`editInput ${
+                            language === "en" ? "en" : "ar"
                           }`}
-                        >
-                          <div className="aboutNewsTitle">
-                            {language === "en" ? item.title : item.arTitle}
-                          </div>
-                          <div className="aboutNewsContent">
-                            {parseContent(
-                              language === "en" ? item.content : item.arContent
-                            )}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div className="img-content-left width-50 flex">
+                          <Image
+                            src={`http://127.0.0.1:8000/${item.image}`}
+                            className="aboutNewsImg"
+                          />
+                        </div>
+                        <div className="img-content-right flex align-items">
+                          <div
+                            className={`about-title-content width-100 flex column ${
+                              language === "ar" ? "ar" : "en"
+                            }`}
+                          >
+                            <div className="aboutNewsTitle">
+                              {language === "en" ? item.title : item.arTitle}
+                            </div>
+                            <div className="aboutNewsContent">
+                              {parseContent(
+                                language === "en"
+                                  ? item.content
+                                  : item.arContent
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </>
+                      </>
+                    )
                   ) : (
                     <>
                       <div className="img-content-right flex align-items">
