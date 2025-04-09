@@ -189,6 +189,70 @@ const Header = () => {
   //   console.log("Language is: " + language)
   // }, [language])
 
+  const LangMenu = () => [
+    <div key="right" className={`lang flex align-items width-10 justify-content`} onClick={toggleLanguage}>
+      <h4 className="pointer">
+        {language === "en" ? "AR" : "EN"}
+      </h4>
+    </div>,
+
+    <div key="left" className={`menu ${language==='en' ? 'justify-content-end' : ''}`}>
+      <div className="menuIcon" onClick={toggleMenu}>
+        <Image
+          src={isMenuOpen ? xMenuLogo : menuLogo}
+          alt="Menu"
+          className="menu-img pointer"
+        />
+      </div>
+      {isMenuOpen && <Dropdown />}
+    </div>,
+  ];
+  const HeaderContent = () => [
+    <div
+      key={1}
+      className={`login width-10 pointer flex ${language==='ar' ? 'justify-content-end' : ''}`}
+      onClick={handleAdminClick}
+    >
+      {language==='en' ? (isLoggedIn ? "Logout" : "Login") : (isLoggedIn ? "تسجيل الخروج" : "تسجيل الدخول")}
+    </div>,
+
+    <div key={2} className={`login width-10 pointer flex ${language==='ar' ? 'justify-content' : ''}`} onClick={hi}>
+      {language==='en' ? 'Hi' : 'مرحبا'}
+    </div>,
+
+    <div key={3} className={`flex width-55 ${language==='en' ? 'justify-content-end' : ''}`}>
+      <a
+        href="localhost:3000/Home"
+        target="_self"
+        className="header-logo-link flex justify-content"
+        onClick={handleLogoClick}
+      >
+        <div className="header-logo-container">
+          <Image
+            src={headerLogo}
+            alt="Header Logo PortDeBeyrouth"
+            className="header-logo"
+          />
+        </div>
+      </a>
+    </div>,
+
+    <div key={4} className={`Lang-Menu flex width-45 ${language==='en' ? 'justify-content-end' : ''}`}>
+      {language === "en" ? LangMenu() : LangMenu().reverse()}
+    </div>,
+  ];
+
+  const order = language === "en" ? [1, 2, 3, 4] : [4, 3, 2, 1];
+
+  return (
+    <div className="header flex center">
+      <div className="header-content flex center">
+        {order.map((index) => HeaderContent()[index - 1])}{" "}
+        {/* -1 to adjust for 0-indexed array */}
+      </div>
+    </div>
+  );
+
   return (
     <div className="header flex center">
       <div className="header-content flex center">
