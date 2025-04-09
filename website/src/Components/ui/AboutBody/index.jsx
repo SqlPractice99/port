@@ -9,6 +9,7 @@ import axios from "axios";
 
 const AboutBody = (data) => {
   const [dataa, setData] = useState(data.data);
+  const [originalData, setOriginalData] = useState([]);
   //   const navigate = useNavigate();
   //   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
@@ -56,7 +57,8 @@ const AboutBody = (data) => {
   //   };
 
   useEffect(() => {
-    console.log("data:", dataa);
+    console.log("dataaaaaa:", data);
+    // console.log("data:", data);
   }, [dataa]);
 
   // useEffect(() => {
@@ -188,18 +190,10 @@ const AboutBody = (data) => {
   };
 
   const handleEditClick = () => {
-    // const parsedExistingImages = Array.isArray(existingImages)
-    //   ? existingImages
+    // const parsedExistingImages = Array.isArray(existingImages) ? existingImages
     //   : JSON.parse(existingImages || "[]");
 
-    // setOriginalData((prev) => ({
-    //   title: news.title ?? prev.title,
-    //   enTitle: news.enTitle ?? prev.enTitle,
-    //   content: news.content ?? prev.content,
-    //   enContent: news.enContent ?? prev.enContent,
-    //   images: existingImages,
-    // }));
-    // setTempMediaArray([...parsedExistingImages, ...newImages]); // Reset temp order
+    setOriginalData(JSON.parse(JSON.stringify(dataa)));
     setIsEditing(true);
     // setLayout("flex-wrap");
   };
@@ -207,22 +201,22 @@ const AboutBody = (data) => {
   const handleSaveClick = async () => {
     const formData = new FormData();
     formData.append("token", token);
-    // formData.append("id", news.id);
-    // formData.append("title", title);
-    // formData.append("enTitle", enTitle);
-    // formData.append("content", content);
-    // formData.append("enContent", enContent);
+    formData.append("id", dataa.id);
+    formData.append("title", dataa.title);
+    formData.append("enTitle", dataa.enTitle);
+    formData.append("content", dataa.content);
+    formData.append("enContent", dataa.enContent);
 
     // console.log("tempMediaArray before processing:", tempMediaArray);
 
-    // console.warn("FormData entries:");
-    // for (let [key, value] of formData.entries()) {
-    //   console.warn(key, value);
-    // }
+    console.warn("FormData entries:");
+    for (let [key, value] of formData.entries()) {
+      console.warn(key, value);
+    }
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/editNews",
+        "http://localhost:8000/api/editData",
         formData
       );
 
@@ -240,7 +234,16 @@ const AboutBody = (data) => {
     // setEnTitle(originalData.enTitle);
     // setContent(originalData.content);
     // setEnContent(originalData.enContent);
+    console.log(originalData)
+    setData(originalData); 
     setIsEditing(false);
+  };
+
+  const handleDataChange = (field, e, index) => {
+    const updatedValue = e.target.value;
+    const updatedData = [...data.data];
+    updatedData[index][field] = updatedValue;
+    setData({ ...data, data: updatedData });
   };
 
   const aboutContent = [
@@ -261,6 +264,78 @@ const AboutBody = (data) => {
         className="aboutPageImg flex center"
       />
     </div>,
+  ];
+
+  const aboutContentBodyEdit = (item, index) => [
+    <div key="left" className="img-content-left width-50 flex">
+      <Image
+        src={`http://127.0.0.1:8000/${item.image}`}
+        className="aboutNewsImg"
+      />
+    </div>,
+
+    <div key="right" className="img-content-right flex align-items">
+      <div
+        className={`about-title-content width-100 flex column ${
+          language === "ar" ? "ar" : "en"
+        }`}
+      >
+        <div className="aboutNewsTitle">
+          <textarea
+            type="text"
+            value={language === "en" ? item.title : item.arTitle}
+            onChange={(e) =>
+              handleDataChange(
+                language === "en" ? "title" : "arTitle",
+                e,
+                index
+              )
+            }
+            className={`editInput height-60 ${language === "en" ? "en" : "ar"}`}
+          />
+        </div>
+        <div className="aboutNewsContent">
+          {console.log("now")}
+          {console.log(item.title)}
+          <textarea
+            type="text"
+            value={language === "en" ? item.content : item.arContent}
+            onChange={(e) =>
+              handleDataChange(
+                language === "en" ? "content" : "arContent",
+                e,
+                index
+              )
+            }
+            className={`editInput ${language === "en" ? "en" : "ar"}`}
+          />
+        </div>
+      </div>
+    </div>,
+  ];
+
+  const aboutContentBody = (item, index) => [
+      <div key='left' className="img-content-left width-50 flex">
+        <Image
+          src={`http://127.0.0.1:8000/${item.image}`}
+          className="aboutNewsImg"
+        />
+      </div>,
+
+      <div key='right' className="img-content-right flex align-items">
+        <div
+          className={`about-title-content width-100 flex column ${
+            language === "ar" ? "ar" : "en"
+          }`}
+        >
+          <div className="aboutNewsTitle">
+            {language === "en" ? item.title : item.arTitle}
+          </div>
+          <div className="aboutNewsContent">
+            {parseContent(language === "en" ? item.content : item.arContent)}
+          </div>
+        </div>
+      </div>,
   ];
 
   return (
@@ -290,7 +365,7 @@ const AboutBody = (data) => {
 
       {data.length !== 0 ? (
         <div className="aboutBody width-100 flex center column">
-          {data.data.map((item, index) => {
+          {dataa.map((item, index) => {
             return (
               <div
                 key={index}
@@ -302,84 +377,14 @@ const AboutBody = (data) => {
                   {(language === "en" && index % 2 === 0) ||
                   (language === "ar" && index % 2 !== 0) ? (
                     isEditing ? (
-                      <>
-                        <div className="img-content-left width-50 flex">
-                          <Image
-                            src={`http://127.0.0.1:8000/${item.image}`}
-                            className="aboutNewsImg"
-                          />
-                        </div>
-                        <textarea
-                          type="text"
-                          value={parseContent(language === "en" ? item.title : item.arTitle)}
-                          onChange={(e) => {
-                            const updatedValue = e.target.value;
-                            const updatedData = [...data.data];
-                            if (language === "en") {
-                              updatedData[index].title = updatedValue;
-                            } else {
-                              updatedData[index].arTitle = updatedValue;
-                            }
-                            setData({ ...data, data: updatedData });
-                          }}
-                          className={`editInput ${
-                            language === "en" ? "en" : "ar"
-                          }`}
-                        />
-                      </>
+                      <>{aboutContentBodyEdit(item, index)}</>
                     ) : (
-                      <>
-                        <div className="img-content-left width-50 flex">
-                          <Image
-                            src={`http://127.0.0.1:8000/${item.image}`}
-                            className="aboutNewsImg"
-                          />
-                        </div>
-                        <div className="img-content-right flex align-items">
-                          <div
-                            className={`about-title-content width-100 flex column ${
-                              language === "ar" ? "ar" : "en"
-                            }`}
-                          >
-                            <div className="aboutNewsTitle">
-                              {language === "en" ? item.title : item.arTitle}
-                            </div>
-                            <div className="aboutNewsContent">
-                              {parseContent(
-                                language === "en"
-                                  ? item.content
-                                  : item.arContent
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </>
+                      <>{aboutContentBody(item, index)}</>
                     )
+                  ) : isEditing ? (
+                    <>{aboutContentBodyEdit(item, index).reverse()}</>
                   ) : (
-                    <>
-                      <div className="img-content-right flex align-items">
-                        <div
-                          className={`about-title-content width-100 flex column ${
-                            language === "ar" ? "ar" : "en"
-                          }`}
-                        >
-                          <div className="aboutNewsTitle">
-                            {language === "en" ? item.title : item.arTitle}
-                          </div>
-                          <div className="aboutNewsContent">
-                            {parseContent(
-                              language === "en" ? item.content : item.arContent
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="img-content-left width-50 flex justify-content-end">
-                        <Image
-                          src={`http://127.0.0.1:8000/${item.image}`}
-                          className="aboutNewsImg"
-                        />
-                      </div>
-                    </>
+                    <>{aboutContentBody(item, index).reverse()}</>
                   )}
                 </div>
               </div>
