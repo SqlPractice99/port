@@ -502,11 +502,23 @@ class AdminController extends Controller
             $existingItem = Data::find($item['id']);
 
             if ($existingItem) {
+                if (isset($item['title'])) {
+                    $existingItem->title = $item['title'];
+                }
+                if (isset($item['arTitle'])) {
+                    $existingItem->arTitle = $item['arTitle'];
+                }
                 if (isset($item['sub_title'])) {
                     $existingItem->sub_title = $item['sub_title'];
                 }
+                if (isset($item['arSub_title'])) {
+                    $existingItem->arSub_title = $item['arSub_title'];
+                }
                 if (isset($item['content'])) {
                     $existingItem->content = $item['content'];
+                }
+                if (isset($item['arContent'])) {
+                    $existingItem->arContent = $item['arContent'];
                 }
 
                 $existingItem->save();
