@@ -67,6 +67,9 @@ const Header = () => {
       if (error.response?.status === 401) {
         console.log("User is unauthorized. Redirecting to login...");
         // Optionally remove UI state, clear user info, redirect
+        localStorage.removeItem("userData");
+        localStorage.removeItem("userToken");
+        setIsLoggedIn(false);
         navigate("/login"); // or set a flag in your state
       } else {
         console.error("An error occurred:", error);
@@ -97,16 +100,22 @@ const Header = () => {
         );
         console.log(res);
         // if (response.data.status === "success") {
-        localStorage.removeItem("userData");
-        localStorage.removeItem("userToken");
-        setIsLoggedIn(false);
-        if (location.pathname !== "/Home") {
-          navigate("/Home");
-        }
         // }
         // window.location.href = "/Home";
       } catch (error) {
-        console.error("Logout failed", error.response?.data || error.message);
+        if (error.response && error.response.status === 401) {
+          // Token is invalid or expired — remove it anyway
+          console.warn("Unauthorized, token removed");
+        } else {
+          console.error("Logout failed", error.response?.data || error.message);
+        }
+      }
+
+      localStorage.removeItem("userData");
+      localStorage.removeItem("userToken");
+      setIsLoggedIn(false);
+      if (location.pathname !== "/Home") {
+        navigate("/Home");
       }
     } else {
       window.location.href = "/Login";

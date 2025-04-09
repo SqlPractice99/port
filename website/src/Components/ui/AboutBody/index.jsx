@@ -15,8 +15,9 @@ const AboutBody = (data) => {
   const [isEditing, setIsEditing] = useState(false);
   const language = useSelector((state) => state.language.language);
   const token = JSON.parse(localStorage.getItem("userToken"));
-  const [title, setTitle] = useState(data.data.title);
-  const [enTitle, setEnTitle] = useState(data.data.arTitle);
+  // const [title, setTitle] = useState(data.data.title);
+  // const [enTitle, setEnTitle] = useState(data.data.arTitle);
+  const [changedItems, setChangedItems] = useState({}); // track by ID or index
   // const [content, setContent] = useState(news.content);
   // const [enContent, setEnContent] = useState(news.enContent);
   // const [originalData, setOriginalData] = useState({
@@ -57,7 +58,7 @@ const AboutBody = (data) => {
   //   };
 
   useEffect(() => {
-    console.log("dataaaaaa:", data);
+    console.log("dataaaaaa:", dataa);
     // console.log("data:", data);
   }, [dataa]);
 
@@ -199,34 +200,33 @@ const AboutBody = (data) => {
   };
 
   const handleSaveClick = async () => {
-    const formData = new FormData();
-    formData.append("token", token);
-    formData.append("id", dataa.id);
-    formData.append("title", dataa.title);
-    formData.append("enTitle", dataa.enTitle);
-    formData.append("content", dataa.content);
-    formData.append("enContent", dataa.enContent);
+    console.log("Changed items:", changedItems);
 
-    // console.log("tempMediaArray before processing:", tempMediaArray);
-
-    console.warn("FormData entries:");
-    for (let [key, value] of formData.entries()) {
-      console.warn(key, value);
-    }
+    const changesArray = Object.values(changedItems);
 
     try {
       const response = await axios.post(
         "http://localhost:8000/api/editData",
-        formData
+        {
+          items: changesArray,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // if needed
+            "Content-Type": "application/json",
+          },
+        }
       );
-
-      console.log(response);
-
+  
+      console.log("Updated successfully:", response.data);
       setIsEditing(false);
+      setChangedItems({}); // reset
     } catch (error) {
-      console.error("Error updating about:", error);
-      alert("Failed to update about");
+      console.error(`Error updating items ${changesArray}:`, error);
     }
+
+    setIsEditing(false);
+    setChangedItems({}); // reset
   };
 
   const handleCancelClick = () => {
@@ -234,8 +234,8 @@ const AboutBody = (data) => {
     // setEnTitle(originalData.enTitle);
     // setContent(originalData.content);
     // setEnContent(originalData.enContent);
-    console.log(originalData)
-    setData(originalData); 
+    console.log(originalData);
+    setData(originalData);
     setIsEditing(false);
   };
 
@@ -243,7 +243,12 @@ const AboutBody = (data) => {
     const updatedValue = e.target.value;
     const updatedData = [...data.data];
     updatedData[index][field] = updatedValue;
-    setData({ ...data, data: updatedData });
+    setData(updatedData);
+
+    setChangedItems((prev) => ({
+      ...prev,
+      [updatedData[index].id]: updatedData[index],
+    }));
   };
 
   const aboutContent = [
@@ -267,7 +272,7 @@ const AboutBody = (data) => {
   ];
 
   const aboutContentBodyEdit = (item, index) => [
-    <div key="left" className="img-content-left width-50 flex">
+    <div key="left" className={`img-content-left width-50 flex ${(language==='ar' && (index%2===0)) || (language==='en' && (index%2!==0)) ? 'justify-content-end' : ''}`}>
       <Image
         src={`http://127.0.0.1:8000/${item.image}`}
         className="aboutNewsImg"
@@ -291,12 +296,12 @@ const AboutBody = (data) => {
                 index
               )
             }
-            className={`editInput height-60 ${language === "en" ? "en" : "ar"}`}
+            className={`editInput-about height-60 ${language === "en" ? "en" : "ar"}`}
           />
         </div>
         <div className="aboutNewsContent">
-          {console.log("now")}
-          {console.log(item.title)}
+          {/* {console.log("now")}
+          {console.log(item.title)} */}
           <textarea
             type="text"
             value={language === "en" ? item.content : item.arContent}
@@ -307,7 +312,7 @@ const AboutBody = (data) => {
                 index
               )
             }
-            className={`editInput ${language === "en" ? "en" : "ar"}`}
+            className={`editInput-about ${language === "en" ? "en" : "ar"}`}
           />
         </div>
       </div>
@@ -315,27 +320,27 @@ const AboutBody = (data) => {
   ];
 
   const aboutContentBody = (item, index) => [
-      <div key='left' className="img-content-left width-50 flex">
-        <Image
-          src={`http://127.0.0.1:8000/${item.image}`}
-          className="aboutNewsImg"
-        />
-      </div>,
+    <div key="left" className={`img-content-left width-50 flex ${(language==='ar' && (index%2===0)) || (language==='en' && (index%2!==0)) ? 'justify-content-end' : ''}`}>
+      <Image
+        src={`http://127.0.0.1:8000/${item.image}`}
+        className="aboutNewsImg"
+      />
+    </div>,
 
-      <div key='right' className="img-content-right flex align-items">
-        <div
-          className={`about-title-content width-100 flex column ${
-            language === "ar" ? "ar" : "en"
-          }`}
-        >
-          <div className="aboutNewsTitle">
-            {language === "en" ? item.title : item.arTitle}
-          </div>
-          <div className="aboutNewsContent">
-            {parseContent(language === "en" ? item.content : item.arContent)}
-          </div>
+    <div key="right" className="img-content-right flex align-items">
+      <div
+        className={`about-title-content width-100 flex column ${
+          language === "ar" ? "ar" : "en"
+        }`}
+      >
+        <div className="aboutNewsTitle">
+          {language === "en" ? item.title : item.arTitle}
         </div>
-      </div>,
+        <div className="aboutNewsContent">
+          {parseContent(language === "en" ? item.content : item.arContent)}
+        </div>
+      </div>
+    </div>,
   ];
 
   return (
@@ -362,8 +367,8 @@ const AboutBody = (data) => {
           )
         )}
       </div>
-
-      {data.length !== 0 ? (
+      {console.log(dataa)}
+      {dataa.length !== 0 ? (
         <div className="aboutBody width-100 flex center column">
           {dataa.map((item, index) => {
             return (

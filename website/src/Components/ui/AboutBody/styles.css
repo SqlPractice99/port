@@ -38,11 +38,11 @@
 /* } */
 
 .aboutContentBody {
-    padding: 50px 20px;
+  padding: 50px 20px;
 }
 
 .img-content-right {
-    width: 48%;
+  width: 48%;
 }
 
 .aboutNewsTitle {
@@ -82,7 +82,7 @@
 }
 
 .specialList {
-  padding-right: 0px; 
+  padding-right: 0px;
 }
 
 .specialList li {
@@ -118,7 +118,7 @@
 }
 
 .about-title-content {
-    margin-left: -2px;
+  margin-left: -2px;
 }
 
 .white-bg {
@@ -147,4 +147,16 @@
   /* margin: 30px 0; */
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap'); 
+.editInput-about {
+  width: 96%;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 25px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  min-height: 150px;
+  resize: vertical;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap");
