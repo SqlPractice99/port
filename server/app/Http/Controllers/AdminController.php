@@ -486,88 +486,102 @@ class AdminController extends Controller
 
     public function editData(Request $request)
     {
-        $items = $request->input('items'); // Get all items
+        $items = $request->input('items', []);
 
-        if (!$items || !is_array($items)) {
-            return response()->json(['status' => 'Error', 'message' => 'Invalid data format']);
-        }
+        foreach ($items as $index => $item) {
+            $id = $item['id'] ?? null;
+            if (!$id) continue;
 
-        $updatedRecords = [];
+            $data = Data::find($id);
+            if (!$data) continue;
 
-        foreach ($items as $item) {
-            if (!isset($item['id'])) {
-                continue; // Skip if no ID is provided
+            // Only update fields that are present
+            if (isset($item['title'])) $data->title = $item['title'];
+            if (isset($item['content'])) $data->content = $item['content'];
+            if (isset($item['arTitle'])) $data->arTitle = $item['arTitle'];
+            if (isset($item['arContent'])) $data->arContent = $item['arContent'];
+            if (isset($item['page'])) $data->page = $item['page'];
+            if (isset($item['language'])) $data->language = $item['language'];
+
+            // Image upload
+            if ($request->hasFile("items.$index.image")) {
+                $img = $request->file("items.$index.image");
+                $imgName = time() . '_' . $img->getClientOriginalName();
+                $img->move(public_path('images'), $imgName);
+                $data->image = 'images/' . $imgName;
             }
 
-            $existingItem = Data::find($item['id']);
-
-            if ($existingItem) {
-                if (isset($item['title'])) {
-                    $existingItem->title = $item['title'];
-                }
-                if (isset($item['arTitle'])) {
-                    $existingItem->arTitle = $item['arTitle'];
-                }
-                if (isset($item['sub_title'])) {
-                    $existingItem->sub_title = $item['sub_title'];
-                }
-                if (isset($item['arSub_title'])) {
-                    $existingItem->arSub_title = $item['arSub_title'];
-                }
-                if (isset($item['content'])) {
-                    $existingItem->content = $item['content'];
-                }
-                if (isset($item['arContent'])) {
-                    $existingItem->arContent = $item['arContent'];
-                }
-
-                // Check for image file by ID key
-                // $imageKey = 'image_' . $item['id'];
-                if ($request->hasFile('image')) {
-                    return response()->json([
-                        'status' => 'Sucssssssssscess'
-                    ]);
-                    $file = $request->file('image');
-                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('images'), $filename);
-                    $existingItem->image = 'images/' . $filename;
-                }
-
-            $existingItem->save();
-            $updatedRecords[] = $existingItem;
-            }
+            $data->save();
         }
 
         return response()->json([
             'status' => 'Success',
-            'message' => count($updatedRecords) . ' records updated',
-            'updated' => $request->all()
+            'message' => count($items) . ' records updated',
+            'updated' => ['items' => $items]
         ]);
-
-        // $data = Data::find($request->id);
-
-        // if ($data) {
-        //     if ($request->has('sub_title') && $data->sub_title !== $request->sub_title) {
-        //         $data->sub_title = $request->sub_title;
-        //     }
-
-        //     if ($request->has('content') && $data->content !== $request->content) {
-        //         $data->content = $request->content;
-        //     }
-
-        //     $data->save();
-
-        //     return response()->json([
-        //         'status' => 'Success',
-        //         'data' => $data
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'status' => 'Error',
-        //         'data' => 'Data with ID: ' . $request->id . ' not found.'
-        //     ]);
-        // }
     }
+
+
+    // public function editData(Request $request)
+    // {
+    //     $items = $request->input('items'); // Get all items
+
+    //     if (!$items || !is_array($items)) {
+    //         return response()->json(['status' => 'Error', 'message' => 'Invalid data format']);
+    //     }
+
+    //     $updatedRecords = [];
+
+    //     foreach ($items as $item) {
+    //         if (!isset($item['id'])) {
+    //             continue; // Skip if no ID is provided
+    //         }
+
+    //         $existingItem = Data::find($item['id']);
+
+    //         if ($existingItem) {
+    //             if (isset($item['title'])) {
+    //                 $existingItem->title = $item['title'];
+    //             }
+    //             if (isset($item['arTitle'])) {
+    //                 $existingItem->arTitle = $item['arTitle'];
+    //             }
+    //             if (isset($item['sub_title'])) {
+    //                 $existingItem->sub_title = $item['sub_title'];
+    //             }
+    //             if (isset($item['arSub_title'])) {
+    //                 $existingItem->arSub_title = $item['arSub_title'];
+    //             }
+    //             if (isset($item['content'])) {
+    //                 $existingItem->content = $item['content'];
+    //             }
+    //             if (isset($item['arContent'])) {
+    //                 $existingItem->arContent = $item['arContent'];
+    //             }
+
+    //             // Check for image file by ID key
+    //             // $imageKey = 'image_' . $item['id'];
+    //             if ($request->hasFile('image')) {
+    //                 return response()->json([
+    //                     'status' => 'Sucssssssssscess'
+    //                 ]);
+    //                 $file = $request->file('image');
+    //                 $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+    //                 $file->move(public_path('images'), $filename);
+    //                 $existingItem->image = 'images/' . $filename;
+    //             }
+
+    //         $existingItem->save();
+    //         $updatedRecords[] = $existingItem;
+    //         }
+    //     }
+
+    //     return response()->json([
+    //         'status' => 'Success',
+    //         'message' => count($updatedRecords) . ' records updated',
+    //         'updated' => $request->all()
+    //     ]);
+    // }
 
     public function getEmails()
     {
