@@ -202,31 +202,44 @@ const AboutBody = (data) => {
   const handleSaveClick = async () => {
     console.log("Changed items:", changedItems);
 
-    const changesArray = Object.values(changedItems);
+    const formData = new FormData();
+    let i = 0;
+
+    for (const [id, item] of Object.entries(changedItems)) {
+      formData.append(`items[${i}][id]`, id);
+
+      // Loop over each field in the item (excluding id)
+      Object.entries(item).forEach(([key, value]) => {
+        if (key === "id") return;
+
+        if (key === "image" && typeof value === "object") {
+          formData.append(`items[${i}][image]`, value);
+        } else if (key !== "image") {
+          formData.append(`items[${i}][${key}]`, value);
+        }
+      });
+
+      i++;
+    }
 
     try {
       const response = await axios.post(
         "http://localhost:8000/api/editData",
-        {
-          items: changesArray,
-        },
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // if needed
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
       console.log("Updated successfully:", response.data);
       setIsEditing(false);
-      setChangedItems({}); // reset
+      setChangedItems({});
     } catch (error) {
-      console.error(`Error updating items ${changesArray}:`, error);
+      console.error("Error updating items:", error);
     }
-
-    // setIsEditing(false);
-    // setChangedItems({}); // reset
   };
 
   const handleCancelClick = () => {
@@ -241,28 +254,51 @@ const AboutBody = (data) => {
 
   const handleDataChange = (field, e, index) => {
     const updatedValue = e.target.value;
+    const originalItem = data.data[index];
+    const updatedItem = {
+      ...changedItems[originalItem.id],
+      id: originalItem.id,
+    };
+
+    if (originalItem[field] !== updatedValue) {
+      updatedItem[field] = updatedValue;
+    } else {
+      delete updatedItem[field];
+    }
+
+    // Clean up if nothing changed
+    if (Object.keys(updatedItem).length > 1) {
+      setChangedItems((prev) => ({
+        ...prev,
+        [originalItem.id]: updatedItem,
+      }));
+    } else {
+      const { [originalItem.id]: _, ...rest } = changedItems;
+      setChangedItems(rest);
+    }
+
+    // update UI
     const updatedData = [...data.data];
     updatedData[index][field] = updatedValue;
     setData(updatedData);
-
-    setChangedItems((prev) => ({
-      ...prev,
-      [updatedData[index].id]: updatedData[index],
-    }));
   };
 
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const updatedData = [...data.data];
-    updatedData[index].image = file;
-    setData(updatedData);
+    const itemId = data.data[index].id;
+    const updatedItem = { ...changedItems[itemId], id: itemId, image: file };
 
     setChangedItems((prev) => ({
       ...prev,
-      [updatedData[index].id]: updatedData[index],
+      [itemId]: updatedItem,
     }));
+
+    // update UI
+    const updatedData = [...data.data];
+    updatedData[index].image = file;
+    setData(updatedData);
   };
 
   const aboutContent = [
@@ -288,7 +324,7 @@ const AboutBody = (data) => {
   const aboutContentBodyEdit = (item, index) => [
     <div
       key="left"
-      className={`img-content-left width-50 flex ${
+      className={`img-content-left width-50 flex column center r-gap-20 ${
         (language === "ar" && index % 2 === 0) ||
         (language === "en" && index % 2 !== 0)
           ? "justify-content-end"
