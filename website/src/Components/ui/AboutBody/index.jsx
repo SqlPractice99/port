@@ -57,10 +57,10 @@ const AboutBody = (data) => {
   //     }
   //   };
 
-  useEffect(() => {
-    console.log("dataaaaaa:", dataa);
+  // useEffect(() => {
+    // console.log("dataaaaaa:", dataa);
     // console.log("data:", data);
-  }, [dataa]);
+  // }, [dataa]);
 
   // useEffect(() => {
   // if (data.length != 0) {
@@ -247,7 +247,7 @@ const AboutBody = (data) => {
     // setEnTitle(originalData.enTitle);
     // setContent(originalData.content);
     // setEnContent(originalData.enContent);
-    console.log(originalData);
+    // console.log(originalData);
     setData(originalData);
     setIsEditing(false);
   };
@@ -439,21 +439,21 @@ const AboutBody = (data) => {
         {isEditing ? (
           <>
             <button className="saveBtn" onClick={handleSaveClick}>
-              Save
+            {language==='en' ? 'Save' : 'حفظ'}
             </button>
             <button className="cancelBtn" onClick={handleCancelClick}>
-              Cancel
+              {language==='en' ? 'Cancel' : 'إلغاء'}
             </button>
           </>
         ) : (
           token && (
             <button className="editBtn" onClick={handleEditClick}>
-              Edit
+              {language==='en' ? 'Edit' : 'تعديل'}
             </button>
           )
         )}
       </div>
-      {console.log(dataa)}
+      {/* {console.log(dataa)} */}
       {dataa.length !== 0 ? (
         <div className="aboutBody width-100 flex center column">
           {dataa.map((item, index) => {

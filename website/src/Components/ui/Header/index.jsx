@@ -118,6 +118,9 @@ const Header = () => {
         navigate("/Home");
       }
     } else {
+      localStorage.removeItem("userData");
+      localStorage.removeItem("userToken");
+      setIsLoggedIn(false);
       window.location.href = "/Login";
     }
   };
@@ -207,6 +210,7 @@ const Header = () => {
       {isMenuOpen && <Dropdown />}
     </div>,
   ];
+
   const HeaderContent = () => [
     <div
       key={1}
@@ -248,53 +252,6 @@ const Header = () => {
     <div className="header flex center">
       <div className="header-content flex center">
         {order.map((index) => HeaderContent()[index - 1])}{" "}
-        {/* -1 to adjust for 0-indexed array */}
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="header flex center">
-      <div className="header-content flex center">
-        <div className="login width-10 pointer" onClick={handleAdminClick}>
-          {isLoggedIn ? "Logout" : "Login"}
-        </div>
-        <div className="login width-10 pointer" onClick={hi}>
-          Hi
-        </div>
-        <div className="flex width-55 end">
-          <a
-            href="localhost:3000/Home"
-            target="_self"
-            className="header-logo-link flex justify-content"
-            onClick={handleLogoClick}
-          >
-            <div className="header-logo-container">
-              <Image
-                src={headerLogo}
-                alt="Header Logo PortDeBeyrouth"
-                className="header-logo"
-              />
-            </div>
-          </a>
-        </div>
-        <div className="Lang-Menu flex width-45 end">
-          <div className="lang flex align-items">
-            <h4 className="pointer" onClick={toggleLanguage}>
-              {language === "en" ? "AR" : "EN"}
-            </h4>
-          </div>
-          <div className="menu">
-            <div className="menuIcon" onClick={toggleMenu}>
-              <Image
-                src={isMenuOpen ? xMenuLogo : menuLogo}
-                alt="Menu"
-                className="menu-img pointer"
-              />
-            </div>
-            {isMenuOpen && <Dropdown />}
-          </div>
-        </div>
       </div>
     </div>
   );
