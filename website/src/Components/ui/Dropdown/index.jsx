@@ -13,9 +13,7 @@ import linkedin from "../../../assets/images/linkedin.png";
 import "../../../styles/utilities.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setSelectedTab,
-} from "../../../redux/selectedTab/selectedTabSlice";
+import { setSelectedTab } from "../../../redux/selectedTab/selectedTabSlice";
 
 import {
   clearDropDown,
@@ -27,6 +25,7 @@ const Dropdown = () => {
   const navigate = useNavigate();
   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   const dropDown = useSelector((state) => state.dropDown.dropDown);
+  const language = useSelector((state) => state.language.language);
   // const [activeTab, setActiveTab] = useState(selectedTab);
 
   const handleTabClick = (tab) => {
@@ -90,27 +89,53 @@ const Dropdown = () => {
   }, []);
 
   const tabs = [
-    "Home",
-    "About",
-    "History",
-    "Tariffs",
-    "Free-Zone",
-    "Statistics",
-    "News",
-    "Tenders",
-    "Contact-Us",
+    { en: "Home", ar: "الصفحة الرئيسية" },
+    { en: "About", ar: "عن المرفأ" },
+    { en: "History", ar: "التاريخ" },
+    { en: "Tariffs", ar: "التعريفات الجمركية" },
+    { en: "Free-Zone", ar: "المنطقة الحرة" },
+    { en: "Statistics", ar: "الإحصاءات" },
+    { en: "News", ar: "النشاطات" },
+    { en: "Tenders", ar: "المناقصات" },
+    { en: "Contact-Us", ar: "اتصل بنا" },
   ];
+
+  const currentTabs =
+    language === "ar" ? tabs.map((tab) => tab.ar) : tabs.map((tab) => tab.en);
+
+    const Location = () => ({
+      en: (
+        <>
+          Quarantaine region
+          <br />
+          POBOX. 1490
+          <br />
+          Beirut - Lebanon
+        </>
+      ),
+      ar: (
+        <>
+          منطقة الكرنتينا
+          <br />
+          ص.ب: 1490
+          <br />
+          بيروت، لبنان
+        </>
+      ),
+    });    
 
   return (
     <div className="dropdown flex center">
-      <div className="dropdown-content flex width-100">
-        <div className="dropdown-options width-45">
+      <div className={`dropdown-content flex width-100 ${language==='en' ? '' : 'reverse'}`}>
+        <div className={`dropdown-options width-45 ${language==='en' ? 'borderRight' : 'ar borderLeft'}`}>
           <ul>
-            {tabs.map((tab, index) => (
+            {currentTabs.map((tab, index) => (
               <li
                 key={index}
                 className={
-                  selectedTab === tab.replace(/-/g, " ") ? "active-tab pointer" : "pointer"
+                  selectedTab === tab.replace(/-/g, " ")
+                    ? "active-tab pointer"
+                    : "pointer"
                 }
                 onClick={() => handleTabClick(tab)}
               >
@@ -121,7 +146,11 @@ const Dropdown = () => {
         </div>
 
         <div className="dropdown-info flex width-55 center">
-          <ul className="flex width-80 align-items-start space-between">
+          <ul
+            className={`flex width-80 align-items-start space-between ${
+              language === "en" ? "" : "reverse"
+            }`}
+          >
             <li className="flex column r-gap-20 center">
               <div className="info-imgs">
                 <Image src={phone} className="info-phone" />
@@ -129,7 +158,12 @@ const Dropdown = () => {
               <div className="info-text">
                 <div className="flex">
                   TEL: &nbsp;
-                  <a href="tel:+961 1 580211" className="info-select info-phone-number pointer">+961 1 580211</a>
+                  <a
+                    href="tel:+961 1 580211"
+                    className="info-select info-phone-number pointer"
+                  >
+                    +961 1 580211
+                  </a>
                 </div>
               </div>
             </li>
@@ -140,11 +174,7 @@ const Dropdown = () => {
                 </div>
                 <div className="info-text">
                   <div>
-                    Quarantaine region
-                    <br />
-                    POBOX. 1490
-                    <br />
-                    Beirut - Lebanon
+                  {Location()[language]}
                   </div>
                 </div>
               </div>
@@ -155,7 +185,11 @@ const Dropdown = () => {
                   <Image src={email} className="info-email" />
                 </div>
                 <div className="info-text info-select pointer">
-                  <a href="mailto:info@portdebeyrouth.com" target="_blank" className="info-email-address">
+                  <a
+                    href="mailto:info@portdebeyrouth.com"
+                    target="_blank"
+                    className="info-email-address"
+                  >
                     info@portdebeyrouth.com
                   </a>
                 </div>

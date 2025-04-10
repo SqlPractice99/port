@@ -56,6 +56,33 @@ const HomeBody = (data) => {
   // }
   // }, [data]);
 
+  const items = [
+    {
+      en: "Cama",
+      ar: "كاما",
+      type: "external",
+      link: "https://cama.portdebeyrouth.com/CAMA/",
+    },
+    {
+      en: "News",
+      ar: "النشاطات",
+      type: "internal",
+      route: "/News",
+    },
+    {
+      en: "Tenders",
+      ar: "المناقصات",
+      type: "internal",
+      route: "/Tenders",
+    },
+    {
+      en: "Statistics",
+      ar: "احصائيات",
+      type: "internal",
+      route: "/Statistics",
+    },
+  ];
+
   return (
     <>
       <div className="imgContainer flex align-items-start justify-content">
@@ -72,35 +99,28 @@ const HomeBody = (data) => {
           </div>
 
           <div className="optionsListContainer flex">
-            <ul className="optionsList pointer">
-              <li>
-                <a
-                  href="https://cama.portdebeyrouth.com/CAMA/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="pointer"
-                >
-                  Cama
-                </a>
-              </li>
-              <li>
-                <span className="pointer" onClick={() => navigate("/News")}>
-                  News
-                </span>
-              </li>
-              <li>
-                <span className="pointer" onClick={() => navigate("/Tenders")}>
-                  Tenders
-                </span>
-              </li>
-              <li>
-                <span
-                  className="pointer"
-                  onClick={() => navigate("/Statistics")}
-                >
-                  Statistics
-                </span>
-              </li>
+            <ul className={`optionsList pointer ${language==='en' ? '' : 'ar'}`}>
+              {items.map((item, i) => (
+                <li key={i}>
+                  {item.type === "external" ? (
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pointer"
+                    >
+                      {language === "ar" ? item.ar : item.en}
+                    </a>
+                  ) : (
+                    <span
+                      className="pointer"
+                      onClick={() => navigate(item.route)}
+                    >
+                      {language === "ar" ? item.ar : item.en}
+                    </span>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -108,7 +128,11 @@ const HomeBody = (data) => {
 
       {data.length != 0 ? (
         <div className="homeContentBody">
-          <div className={`news flex column center ${language==='en' ? '' : 'ar'}`}>
+          <div
+            className={`news flex column center ${
+              language === "en" ? "" : "ar"
+            }`}
+          >
             <div className="news flex column center">
               <div className="newsTitle">
                 {language === "en" ? data.data[0].title : data.data[0].arTitle}
