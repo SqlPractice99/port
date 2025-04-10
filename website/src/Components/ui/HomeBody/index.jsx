@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./styles.css";
 import Image from "../../../Components/base/image";
 import homeImg from "../../../assets/images/porthome.jpg";
@@ -9,6 +10,10 @@ import axios from "axios";
 const HomeBody = (data) => {
   //   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  let contentLang0;
+  let contentLang1;
+  const language = useSelector((state) => state.language.language);
+
   //   const dispatch = useDispatch();
 
   //   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
@@ -100,11 +105,12 @@ const HomeBody = (data) => {
         <div className="homeContentBody">
           <div className="news flex column center">
             <div className="news flex column center">
-              <div className="newsTitle">{data.data[0].title}</div>
-              <div className="newsSubTitle">{data.data[0].sub_title}</div>
+              <div className="newsTitle">{language==='en' ? data.data[0].title : data.data[0].arTitle}</div>
+              <div className="newsSubTitle">{language==='en' ? data.data[0].sub_title : data.data[0].arSub_title}</div>
               <div className="newsContent">
-                {data.data[0].content &&
-                  data.data[0].content
+                {contentLang0 = language==='en' ? data.data[0].content : data.data[0].arContent}
+                {contentLang0 &&
+                  contentLang0
                     .split(/ - /)
                     .map((segment, index, arr) => {
                       if (index === arr.length - 1 && arr.length > 1) {
@@ -147,7 +153,7 @@ const HomeBody = (data) => {
                     href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
                     className="learnMore"
                   >
-                    Learn More
+                    {language==='en' ? 'Learn More' : 'للمزيد'}
                   </a>
                 </div>
               </div>
@@ -157,11 +163,12 @@ const HomeBody = (data) => {
               />
             </div>
             <div className="news flex column center">
-              <div className="newsTitle">{data.data[1].title}</div>
-              <div className="newsSubTitle">{data.data[1].sub_title}</div>
+              <div className="newsTitle">{language==='en' ? data.data[1].title : data.data[1].arTitle}</div>
+              <div className="newsSubTitle">{language==='en' ? data.data[1].sub_title : data.data[1].arSub_title}</div>
               <div className="newsContent2">
-                {data.data[1].content &&
-                  data.data[1].content
+              {contentLang1 = language==='en' ? data.data[1].content : data.data[1].arContent}
+                {contentLang1 &&
+                  contentLang1
                     .replace(/\. /g, ".<br/>")
                     .split("<br/>")
                     .map((line, index) => (
