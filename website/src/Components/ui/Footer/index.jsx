@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 // import { useLocation, useNavigate } from "react-router-dom";
 import "./styles.css";
 import "../../../styles/utilities.css";
@@ -12,8 +13,9 @@ import linkedin from "../../../assets/images/footer/footer-linkedin.png";
 // import axios from "axios";
 import FooterTop from "../FooterTop";
 
-const Footer = ({ removeFooterTop=false }) => {
+const Footer = ({ removeFooterTop = false }) => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const language = useSelector((state) => state.language.language);
 
   useEffect(() => {
     // const token = localStorage.getItem("userToken");
@@ -40,20 +42,27 @@ const Footer = ({ removeFooterTop=false }) => {
 
   return (
     <>
-    {!removeFooterTop && (
-      <FooterTop />
-    )}
-      <div className={`footer flex center ${removeFooterTop ? 'fixed-bottom' : ''}`}>
-        <div className="footer-content flex">
-          <div className="leftFooter width-50 flex align-items">
-            © {currentYear} Port of Beirut. All Rights Reserved. |&nbsp;
+      {!removeFooterTop && <FooterTop />}
+      <div className={`footer flex center ${removeFooterTop ? "fixed-bottom" : ""}`}>
+        <div className={`footer-content flex ${language === "en" ? "" : "reverse"}`}>
+          <div className={`leftFooter width-50 flex align-items ${language === "en" ? "" : "ar"}`}>
+            {language === "en" ? (
+              <>
+                © {currentYear} Port of Beirut. All Rights Reserved. |{"\u00A0"}
+              </>
+            ) : (
+              <>
+                © {currentYear} مرفأ بيروت. كل الحقوق محفوظة. |{"\u00A0"}
+              </>
+            )}
+
             <a href="" className="pointer">
-              Privacy Policy
+              {language === "en" ? "Privacy Policy" : "سياسة الخصوصية"}
             </a>
           </div>
 
-          <div className="rightFooter width-50 flex end">
-            <ul className="socialMediaListFooter width-20 flex space-between">
+          <div className={`rightFooter width-50 flex ${language === "en" ? "end" : ""}`}>
+            <ul className={`socialMediaListFooter width-20 flex space-between ${language === "en" ? "" : "reverse"}`}>
               <li>
                 <a
                   href="https://www.facebook.com/portdebeyrouth?mibextid=LQQJ4d"

@@ -93,9 +93,14 @@ const HomeBody = (data) => {
                   Tenders
                 </span>
               </li>
-              <li><span className="pointer" onClick={() => navigate("/Statistics")}>
-                Statistics
-              </span></li>
+              <li>
+                <span
+                  className="pointer"
+                  onClick={() => navigate("/Statistics")}
+                >
+                  Statistics
+                </span>
+              </li>
             </ul>
           </div>
         </div>
@@ -103,57 +108,66 @@ const HomeBody = (data) => {
 
       {data.length != 0 ? (
         <div className="homeContentBody">
-          <div className="news flex column center">
+          <div className={`news flex column center ${language==='en' ? '' : 'ar'}`}>
             <div className="news flex column center">
-              <div className="newsTitle">{language==='en' ? data.data[0].title : data.data[0].arTitle}</div>
-              <div className="newsSubTitle">{language==='en' ? data.data[0].sub_title : data.data[0].arSub_title}</div>
+              <div className="newsTitle">
+                {language === "en" ? data.data[0].title : data.data[0].arTitle}
+              </div>
+              <div className="newsSubTitle">
+                {language === "en"
+                  ? data.data[0].sub_title
+                  : data.data[0].arSub_title}
+              </div>
               <div className="newsContent">
-                {contentLang0 = language==='en' ? data.data[0].content : data.data[0].arContent}
+                {
+                  (contentLang0 =
+                    language === "en"
+                      ? data.data[0].content
+                      : data.data[0].arContent)
+                }
                 {contentLang0 &&
-                  contentLang0
-                    .split(/ - /)
-                    .map((segment, index, arr) => {
-                      if (index === arr.length - 1 && arr.length > 1) {
-                        return (
-                          <React.Fragment key={index}>
-                            <a
-                              href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
-                              target="_blank"
-                              className="content2 pointer"
-                            >
-                              {segment}
-                            </a>
-                            <br />
-                          </React.Fragment>
-                        );
-                      } else {
-                        return (
-                          <React.Fragment key={index}>
+                  contentLang0.split(/ - /).map((segment, index, arr) => {
+                    if (index === arr.length - 1 && arr.length > 1) {
+                      return (
+                        <React.Fragment key={index}>
+                          <a
+                            href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
+                            target="_blank"
+                            className="content2 pointer"
+                          >
                             {segment}
-                            {index !== arr.length - 1 && <br />}
-                            {index !== arr.length - 1 && (
-                              <>
-                                <div className="dashContainer">
-                                  <a
-                                    href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
-                                    target="_blank"
-                                    className="dash"
-                                  >
-                                    -
-                                  </a>
-                                </div>
-                              </>
-                            )}
-                          </React.Fragment>
-                        );
-                      }
-                    })}
+                          </a>
+                          <br />
+                        </React.Fragment>
+                      );
+                    } else {
+                      return (
+                        <React.Fragment key={index}>
+                          {segment}
+                          {index !== arr.length - 1 && <br />}
+                          {index !== arr.length - 1 && (
+                            <>
+                              <div className="dashContainer">
+                                <a
+                                  href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
+                                  target="_blank"
+                                  className="dash"
+                                >
+                                  -
+                                </a>
+                              </div>
+                            </>
+                          )}
+                        </React.Fragment>
+                      );
+                    }
+                  })}
                 <div className="learnMoreBtn">
                   <a
                     href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
                     className="learnMore"
                   >
-                    {language==='en' ? 'Learn More' : 'للمزيد'}
+                    {language === "en" ? "Learn More" : "للمزيد"}
                   </a>
                 </div>
               </div>
@@ -163,10 +177,21 @@ const HomeBody = (data) => {
               />
             </div>
             <div className="news flex column center">
-              <div className="newsTitle">{language==='en' ? data.data[1].title : data.data[1].arTitle}</div>
-              <div className="newsSubTitle">{language==='en' ? data.data[1].sub_title : data.data[1].arSub_title}</div>
+              <div className="newsTitle">
+                {language === "en" ? data.data[1].title : data.data[1].arTitle}
+              </div>
+              <div className="newsSubTitle">
+                {language === "en"
+                  ? data.data[1].sub_title
+                  : data.data[1].arSub_title}
+              </div>
               <div className="newsContent2">
-              {contentLang1 = language==='en' ? data.data[1].content : data.data[1].arContent}
+                {
+                  (contentLang1 =
+                    language === "en"
+                      ? data.data[1].content
+                      : data.data[1].arContent)
+                }
                 {contentLang1 &&
                   contentLang1
                     .replace(/\. /g, ".<br/>")
