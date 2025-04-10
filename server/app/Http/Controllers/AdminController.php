@@ -521,15 +521,27 @@ class AdminController extends Controller
                     $existingItem->arContent = $item['arContent'];
                 }
 
-                $existingItem->save();
-                $updatedRecords[] = $existingItem; // Store updated items for response
+                // Check for image file by ID key
+                // $imageKey = 'image_' . $item['id'];
+                if ($request->hasFile('image')) {
+                    return response()->json([
+                        'status' => 'Sucssssssssscess'
+                    ]);
+                    $file = $request->file('image');
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('images'), $filename);
+                    $existingItem->image = 'images/' . $filename;
+                }
+
+            $existingItem->save();
+            $updatedRecords[] = $existingItem;
             }
         }
 
         return response()->json([
             'status' => 'Success',
             'message' => count($updatedRecords) . ' records updated',
-            'updated' => $updatedRecords
+            'updated' => $request->all()
         ]);
 
         // $data = Data::find($request->id);
