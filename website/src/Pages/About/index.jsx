@@ -8,9 +8,7 @@ import axios from "axios";
 import Footer from "../../Components/ui/Footer";
 import FactsHolder from "../../Components/ui/FactsHolder";
 import AboutBody from "../../Components/ui/AboutBody";
-import {
-  setSelectedTab,
-} from "../../redux/selectedTab/selectedTabSlice";
+import { setSelectedTab } from "../../redux/selectedTab/selectedTabSlice";
 
 const About = () => {
   const [data, setData] = useState([]);
@@ -19,6 +17,7 @@ const About = () => {
 
   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   const dropDown = useSelector((state) => state.dropDown.dropDown);
+  const language = useSelector((state) => state.language.language);
 
   useEffect(() => {
     document.title = selectedTab ? `Port of Beirut | About` : "Port of Beirut";
@@ -68,18 +67,34 @@ const About = () => {
   //   }
   // }, [data]);
 
+  const NavBar = () => [
+    <div
+      key="left"
+      className="pageLocationHome flex"
+      onClick={() => navigate("/Home")}
+    >
+      {language === "ar" && <span>&nbsp;.&nbsp;</span>}
+      <div className="pointer">
+        {language === "en" ? "Home" : "الصفحة الرئيسية"}
+      </div>
+      {language === "en" && <span>&nbsp;.&nbsp;</span>}
+    </div>,
+
+    <div key="right" className="pageLocationTab">
+      {selectedTab}
+    </div>,
+  ];
+
   return (
-    <div className={`homeContainer flex column ${dropDown ? 'scrollbar' : ''}`}>
+    <div className={`homeContainer flex column ${dropDown ? "scrollbar" : ""}`}>
       <Header />
       <div className="pageLocationContainer width-100 flex center">
-        <div className="pageLocation flex justify-content-start">
-          <div
-            className="pageLocationHome flex"
-            onClick={() => navigate("/Home")}
-          >
-            <div className="pointer">Home</div>&nbsp;.&nbsp;
-          </div>
-          <div className="pageLocationTab">{selectedTab}</div>
+        <div
+          className={`pageLocation flex ${
+            language === "en" ? "" : "justify-content-end"
+          }`}
+        >
+          {language === "en" ? NavBar() : NavBar().reverse()}
         </div>
       </div>
       {data.length !== 0 ? (

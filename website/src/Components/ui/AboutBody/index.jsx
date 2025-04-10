@@ -217,7 +217,7 @@ const AboutBody = (data) => {
           },
         }
       );
-  
+
       console.log("Updated successfully:", response.data);
       setIsEditing(false);
       setChangedItems({}); // reset
@@ -225,8 +225,8 @@ const AboutBody = (data) => {
       console.error(`Error updating items ${changesArray}:`, error);
     }
 
-    setIsEditing(false);
-    setChangedItems({}); // reset
+    // setIsEditing(false);
+    // setChangedItems({}); // reset
   };
 
   const handleCancelClick = () => {
@@ -243,6 +243,20 @@ const AboutBody = (data) => {
     const updatedValue = e.target.value;
     const updatedData = [...data.data];
     updatedData[index][field] = updatedValue;
+    setData(updatedData);
+
+    setChangedItems((prev) => ({
+      ...prev,
+      [updatedData[index].id]: updatedData[index],
+    }));
+  };
+
+  const handleImageChange = (e, index) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const updatedData = [...data.data];
+    updatedData[index].image = file;
     setData(updatedData);
 
     setChangedItems((prev) => ({
@@ -272,10 +286,32 @@ const AboutBody = (data) => {
   ];
 
   const aboutContentBodyEdit = (item, index) => [
-    <div key="left" className={`img-content-left width-50 flex ${(language==='ar' && (index%2===0)) || (language==='en' && (index%2!==0)) ? 'justify-content-end' : ''}`}>
-      <Image
+    <div
+      key="left"
+      className={`img-content-left width-50 flex ${
+        (language === "ar" && index % 2 === 0) ||
+        (language === "en" && index % 2 !== 0)
+          ? "justify-content-end"
+          : ""
+      }`}
+    >
+      {/* <Image
         src={`http://127.0.0.1:8000/${item.image}`}
         className="aboutNewsImg"
+      /> */}
+
+      <Image
+        src={
+          item.image instanceof File
+            ? URL.createObjectURL(item.image)
+            : `http://127.0.0.1:8000/${item.image}`
+        }
+        className="aboutNewsImg"
+      />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => handleImageChange(e, index)}
       />
     </div>,
 
@@ -296,7 +332,9 @@ const AboutBody = (data) => {
                 index
               )
             }
-            className={`editInput-about height-60 ${language === "en" ? "en" : "ar"}`}
+            className={`editInput-about height-60 ${
+              language === "en" ? "en" : "ar"
+            }`}
           />
         </div>
         <div className="aboutNewsContent">
@@ -320,9 +358,21 @@ const AboutBody = (data) => {
   ];
 
   const aboutContentBody = (item, index) => [
-    <div key="left" className={`img-content-left width-50 flex ${(language==='ar' && (index%2===0)) || (language==='en' && (index%2!==0)) ? 'justify-content-end' : ''}`}>
+    <div
+      key="left"
+      className={`img-content-left width-50 flex ${
+        (language === "ar" && index % 2 === 0) ||
+        (language === "en" && index % 2 !== 0)
+          ? "justify-content-end"
+          : ""
+      }`}
+    >
       <Image
-        src={`http://127.0.0.1:8000/${item.image}`}
+        src={
+          item.image instanceof File
+            ? URL.createObjectURL(item.image)
+            : `http://127.0.0.1:8000/${item.image}`
+        }
         className="aboutNewsImg"
       />
     </div>,
