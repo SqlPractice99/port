@@ -28,10 +28,10 @@ const Dropdown = () => {
   const language = useSelector((state) => state.language.language);
   // const [activeTab, setActiveTab] = useState(selectedTab);
 
-  const handleTabClick = (tab) => {
-    // console.log("active: " + tab);
+  const handleTabClick = (tab, label) => {
+    console.log("active: " + label);
     // setActiveTab(tab);
-    const tabForRedux = tab.replace(/-/g, " ");
+    const tabForRedux = label.replace(/-/g, " ");
     const tabForNavigate = tab.replace(/-/g, "");
 
     dispatch(setSelectedTab(tabForRedux));
@@ -91,57 +91,65 @@ const Dropdown = () => {
   const tabs = [
     { en: "Home", ar: "الصفحة الرئيسية" },
     { en: "About", ar: "عن المرفأ" },
-    { en: "History", ar: "التاريخ" },
-    { en: "Tariffs", ar: "التعريفات الجمركية" },
+    { en: "History", ar: "تاريخ المرفأ" },
+    { en: "Tariffs", ar: "التعريفات" },
     { en: "Free-Zone", ar: "المنطقة الحرة" },
-    { en: "Statistics", ar: "الإحصاءات" },
-    { en: "News", ar: "النشاطات" },
+    { en: "Statistics", ar: "إحصائيات" },
+    { en: "News", ar: "نشاطات المرفأ" },
     { en: "Tenders", ar: "المناقصات" },
     { en: "Contact-Us", ar: "اتصل بنا" },
   ];
 
-  const currentTabs =
-    language === "ar" ? tabs.map((tab) => tab.ar) : tabs.map((tab) => tab.en);
-
-    const Location = () => ({
-      en: (
-        <>
-          Quarantaine region
-          <br />
-          POBOX. 1490
-          <br />
-          Beirut - Lebanon
-        </>
-      ),
-      ar: (
-        <>
-          منطقة الكرنتينا
-          <br />
-          ص.ب: 1490
-          <br />
-          بيروت، لبنان
-        </>
-      ),
-    });    
+  const Location = () => ({
+    en: (
+      <>
+        Quarantaine region
+        <br />
+        POBOX. 1490
+        <br />
+        Beirut - Lebanon
+      </>
+    ),
+    ar: (
+      <>
+        منطقة الكرنتينا
+        <br />
+        ص.ب: 1490
+        <br />
+        بيروت، لبنان
+      </>
+    ),
+  });
 
   return (
     <div className="dropdown flex center">
-      <div className={`dropdown-content flex width-100 ${language==='en' ? '' : 'reverse'}`}>
-        <div className={`dropdown-options width-45 ${language==='en' ? 'borderRight' : 'ar borderLeft'}`}>
+      <div
+        className={`dropdown-content flex width-100 ${
+          language === "en" ? "" : "reverse"
+        }`}
+      >
+        <div
+          className={`dropdown-options width-45 ${
+            language === "en" ? "borderRight" : "ar borderLeft"
+          }`}
+        >
           <ul>
-            {currentTabs.map((tab, index) => (
-              <li
-                key={index}
-                className={
-                  selectedTab === tab.replace(/-/g, " ")
-                    ? "active-tab pointer"
-                    : "pointer"
-                }
-                onClick={() => handleTabClick(tab)}
-              >
-                {tab.replace(/-/g, " ")}
-              </li>
-            ))}
+            {tabs.map((tab, index) => {
+              const label = language === "ar" ? tab.ar : tab.en;
+              return (
+                <li
+                  key={index}
+                  className={
+                    selectedTab === tab.en.replace(/-/g, " ")
+                      ? "active-tab pointer"
+                      : "pointer"
+                  }
+                  onClick={() => handleTabClick(tab.en, label)}
+                >
+                  {label.replace(/-/g, " ")}
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -173,9 +181,7 @@ const Dropdown = () => {
                   <Image src={location} className="info-location" />
                 </div>
                 <div className="info-text">
-                  <div>
-                  {Location()[language]}
-                  </div>
+                  <div>{Location()[language]}</div>
                 </div>
               </div>
             </li>

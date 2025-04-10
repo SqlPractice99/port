@@ -8,12 +8,9 @@ import FooterTop from "../../Components/ui/FooterTop";
 import Footer from "../../Components/ui/Footer";
 import FactsHolder from "../../Components/ui/FactsHolder";
 import NewsBody from "../../Components/ui/NewsBody";
-import {
-  setSelectedTab,
-} from "../../redux/selectedTab/selectedTabSlice";
+import { setSelectedTab } from "../../redux/selectedTab/selectedTabSlice";
 
 const News = () => {
-  
   // const [visibleNews, setVisibleNews] = useState(6);
   // const [loading, setLoading] = useState(false);
   // const observer = useRef(null);
@@ -26,9 +23,13 @@ const News = () => {
   const dropDown = useSelector((state) => state.dropDown.dropDown);
   const language = useSelector((state) => state.language.language);
 
+  const tabLabel = language === "en" ? "News" : "نشاطات المرفأ";
+
   useEffect(() => {
-    document.title = selectedTab ? `Port of Beirut | News` : "Port of Beirut";
-    dispatch(setSelectedTab("News"));
+    document.title = selectedTab
+      ? `Port of Beirut | ${tabLabel}`
+      : "Port of Beirut";
+    dispatch(setSelectedTab(tabLabel));
     // const preventDragHandler = (e) => {
     //   if (e.target.tagName === "IMG") {
     //     e.preventDefault();
@@ -40,7 +41,7 @@ const News = () => {
     // return () => {
     //   document.removeEventListener("dragstart", preventDragHandler);
     // };
-  }, [dispatch, selectedTab]);
+  }, [tabLabel]);
 
   // Lazy loading function
   // useEffect(() => {
@@ -71,17 +72,16 @@ const News = () => {
   // }, [filteredNews, visibleNews]);
 
   // Lazy loading observer
- 
 
   // useEffect(() => {
   //   fetchData();
   // }, []);
 
   // useEffect(() => {
-    // if (data.length !== 0) {
-      // console.log("Data:");
-      // console.log(data.data[0]);
-    // }
+  // if (data.length !== 0) {
+  // console.log("Data:");
+  // console.log(data.data[0]);
+  // }
   // }, [data]);
 
   useEffect(() => {
@@ -93,25 +93,31 @@ const News = () => {
 
     // console.log(data.data);
   }, []);
-  
+
   return (
-    <div className={`homeContainer flex column ${dropDown ? 'scrollbar' : ''}`}>
+    <div className={`homeContainer flex column ${dropDown ? "scrollbar" : ""}`}>
       <Header />
       <div className="pageLocationContainer width-100 flex center">
-        <div className={`pageLocation width-95 flex ${language === 'ar' ? 'justify-content-end' : ''}`}>
-          <div className={`${language === 'ar' ? 'ar' : ''} flex`}>
-            <div
-              className="pageLocationHome pointer"
-              onClick={() => navigate("/Home")}
-            >{language === 'en' ? 'Home' : 'الصفحة الرئيسية'}.&nbsp;
+        <div
+          className={`pageLocation flex justify-content-start ${
+            language === "en" ? "" : "reverse"
+          }`}
+        >
+          <div
+            className="pageLocationHome flex"
+            onClick={() => navigate("/Home")}
+          >
+            <div className="pointer">
+              {language === "en" ? "Home" : "الصفحة الرئيسية"}
             </div>
-            <div className="pageLocationTab">{selectedTab}</div>
           </div>
+          &nbsp;.&nbsp;
+          <div className="pageLocationTab">{selectedTab}</div>
         </div>
       </div>
       {/* {data.length !== 0 ? ( */}
       <div className="homeContent flex column">
-        <NewsBody/>
+        <NewsBody />
         {/* <FactsHolder /> */}
         {/* <FooterTop /> */}
       </div>

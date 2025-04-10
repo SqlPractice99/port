@@ -20,10 +20,15 @@ const Statistics = () => {
 
   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   const dropDown = useSelector((state) => state.dropDown.dropDown);
+  const language = useSelector((state) => state.language.language);
+
+  const tabLabel = language === "en" ? "Statistics" : "إحصائيات";
 
   useEffect(() => {
-    document.title = selectedTab ? `Port of Beirut | Statistics` : "Port of Beirut";
-    dispatch(setSelectedTab("Statistics"));
+    document.title = selectedTab
+      ? `Port of Beirut | ${tabLabel}`
+      : "Port of Beirut";
+    dispatch(setSelectedTab(tabLabel));
     // const preventDragHandler = (e) => {
     //   if (e.target.tagName === "IMG") {
     //     e.preventDefault();
@@ -35,7 +40,7 @@ const Statistics = () => {
     // return () => {
     //   document.removeEventListener("dragstart", preventDragHandler);
     // };
-  }, []);
+  }, [tabLabel]);
 
   const fetchData = async () => {
     try {
@@ -73,13 +78,20 @@ const Statistics = () => {
     <div className={`homeContainer flex column ${dropDown ? 'scrollbar' : ''}`}>
       <Header />
       <div className="pageLocationContainer width-100 flex center">
-        <div className="pageLocation width-95 flex">
+      <div
+          className={`pageLocation flex justify-content-start ${
+            language === "en" ? "" : "reverse"
+          }`}
+        >
           <div
-            className="pageLocationHome pointer"
+            className="pageLocationHome flex"
             onClick={() => navigate("/Home")}
           >
-            Home .&nbsp;
+            <div className="pointer">
+              {language === "en" ? "Home" : "الصفحة الرئيسية"}
+            </div>
           </div>
+          &nbsp;.&nbsp;
           <div className="pageLocationTab">{selectedTab}</div>
         </div>
       </div>

@@ -19,9 +19,13 @@ const About = () => {
   const dropDown = useSelector((state) => state.dropDown.dropDown);
   const language = useSelector((state) => state.language.language);
 
+  const tabLabel = language === "en" ? "About" : "عن المرفأ";
+
   useEffect(() => {
-    document.title = selectedTab ? `Port of Beirut | About` : "Port of Beirut";
-    dispatch(setSelectedTab("About"));
+    document.title = selectedTab
+      ? `Port of Beirut | ${tabLabel}`
+      : "Port of Beirut";
+    dispatch(setSelectedTab(tabLabel));
     // const preventDragHandler = (e) => {
     //   if (e.target.tagName === "IMG") {
     //     e.preventDefault();
@@ -33,7 +37,7 @@ const About = () => {
     // return () => {
     //   document.removeEventListener("dragstart", preventDragHandler);
     // };
-  }, []);
+  }, [tabLabel]);
 
   const fetchData = async () => {
     try {
@@ -67,34 +71,25 @@ const About = () => {
   //   }
   // }, [data]);
 
-  const NavBar = () => [
-    <div
-      key="left"
-      className="pageLocationHome flex"
-      onClick={() => navigate("/Home")}
-    >
-      {language === "ar" && <span>&nbsp;.&nbsp;</span>}
-      <div className="pointer">
-        {language === "en" ? "Home" : "الصفحة الرئيسية"}
-      </div>
-      {language === "en" && <span>&nbsp;.&nbsp;</span>}
-    </div>,
-
-    <div key="right" className="pageLocationTab">
-      {selectedTab}
-    </div>,
-  ];
-
   return (
     <div className={`homeContainer flex column ${dropDown ? "scrollbar" : ""}`}>
       <Header />
       <div className="pageLocationContainer width-100 flex center">
-        <div
-          className={`pageLocation flex ${
-            language === "en" ? "" : "justify-content-end"
+      <div
+          className={`pageLocation flex justify-content-start ${
+            language === "en" ? "" : "reverse"
           }`}
         >
-          {language === "en" ? NavBar() : NavBar().reverse()}
+          <div
+            className="pageLocationHome flex"
+            onClick={() => navigate("/Home")}
+          >
+            <div className="pointer">
+              {language === "en" ? "Home" : "الصفحة الرئيسية"}
+            </div>
+          </div>
+          &nbsp;.&nbsp;
+          <div className="pageLocationTab">{selectedTab}</div>
         </div>
       </div>
       {data.length !== 0 ? (

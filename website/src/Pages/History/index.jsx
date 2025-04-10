@@ -8,9 +8,7 @@ import axios from "axios";
 import Footer from "../../Components/ui/Footer";
 // import FactsHolder from "../../Components/ui/FactsHolder";
 import HistoryBody from "../../Components/ui/HistoryBody";
-import {
-  setSelectedTab
-} from "../../redux/selectedTab/selectedTabSlice";
+import { setSelectedTab } from "../../redux/selectedTab/selectedTabSlice";
 
 const History = () => {
   const [data, setData] = useState([]);
@@ -19,10 +17,15 @@ const History = () => {
 
   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   const dropDown = useSelector((state) => state.dropDown.dropDown);
+  const language = useSelector((state) => state.language.language);
+
+  const tabLabel = language === "en" ? "History" : "تاريخ المرفأ";
 
   useEffect(() => {
-    document.title = selectedTab ? `Port of Beirut | History` : "Port of Beirut";
-    dispatch(setSelectedTab("History"));
+    document.title = selectedTab
+      ? `Port of Beirut | ${tabLabel}`
+      : "Port of Beirut";
+    dispatch(setSelectedTab(tabLabel));
     // const preventDragHandler = (e) => {
     //   if (e.target.tagName === "IMG") {
     //     e.preventDefault();
@@ -34,7 +37,7 @@ const History = () => {
     // return () => {
     //   document.removeEventListener("dragstart", preventDragHandler);
     // };
-  }, []);
+  }, [tabLabel]);
 
   const fetchData = async () => {
     try {
@@ -69,16 +72,23 @@ const History = () => {
   // }, [data]);
 
   return (
-    <div className={`homeContainer flex column ${dropDown ? 'scrollbar' : ''}`}>
+    <div className={`homeContainer flex column ${dropDown ? "scrollbar" : ""}`}>
       <Header />
       <div className="pageLocationContainer width-100 flex center">
-        <div className="pageLocation flex justify-content-start">
+        <div
+          className={`pageLocation flex justify-content-start ${
+            language === "en" ? "" : "reverse"
+          }`}
+        >
           <div
             className="pageLocationHome flex"
             onClick={() => navigate("/Home")}
           >
-            <div className="pointer">Home</div>&nbsp;.&nbsp;
+            <div className="pointer">
+              {language === "en" ? "Home" : "الصفحة الرئيسية"}
+            </div>
           </div>
+          &nbsp;.&nbsp;
           <div className="pageLocationTab">{selectedTab}</div>
         </div>
       </div>
