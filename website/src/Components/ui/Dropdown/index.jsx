@@ -140,7 +140,7 @@ const Dropdown = () => {
                 <li
                   key={index}
                   className={
-                    selectedTab === tab.en.replace(/-/g, " ")
+                    selectedTab === label.replace(/-/g, " ")
                       ? "active-tab pointer"
                       : "pointer"
                   }
