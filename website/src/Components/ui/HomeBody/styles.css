@@ -98,7 +98,9 @@
   font-weight: 600;
   margin-bottom: 10px;
   text-transform: uppercase;
-  font-family: "Montserrat", sans-serif;
+  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Almarai", sans-serif;
+
   line-height: 40px;
 }
 
@@ -106,19 +108,22 @@
   font-size: 22px;
   font-weight: normal;
   margin-bottom: 25px;
-  font-family: "Montserrat", sans-serif;
+  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Almarai", sans-serif;
 }
 
 .newsContent {
   font-size: 16px;
   line-height: 25px;
   font-weight: normal;
-  font-family: "Montserrat", sans-serif;
+  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Almarai", sans-serif;
   text-align: center;
 }
 
 .content2 {
-  font-family: "Montserrat", sans-serif;
+  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Almarai", sans-serif;
   font-size: 14px;
   font-style: italic;
   font-weight: 400;
@@ -138,7 +143,8 @@
 .newsContent2 {
   font-size: 11pt;
   line-height: 25px;
-  font-family: Calibri, sans-serif;
+  /* font-family: Calibri, sans-serif; */
+  font-family: "Almarai", sans-serif;
   font-weight: normal;
   text-align: center;
 }
@@ -156,9 +162,46 @@
   padding: 15px 37px;
   font-size: 16px;
   text-align: center;
-  font-family: "Montserrat", sans-serif;
+  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Almarai", sans-serif;
   font-weight: normal;
   color: #000;
   border: 1px solid black;
   text-decoration: none;
+}
+
+.homeNews {
+  width: 1238px;
+}
+
+.homeNewsTitle {
+  font-size: 35px;
+  color: #333333;
+  line-height: 30px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: "Almarai", sans-serif;
+}
+
+.allNewsBtn {
+  margin-top: 50px;
+  font-size: 14px;
+  font-family: "Almarai", sans-serif;
+  font-weight: normal;
+}
+
+.allNewsBtn a {
+  border: 1px solid #1a548d;
+  padding: 15px 37px;
+  color: #ffffff;
+  background-color: #1a548d;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.allNewsBtn a:hover {
+  background-color: #ffffff;
+  color: #1a548d;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./styles.css";
 import Image from "../../../Components/base/image";
@@ -10,6 +10,8 @@ import axios from "axios";
 const HomeBody = (data) => {
   //   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [news, setNews] = useState([]);
   let contentLang0;
   let contentLang1;
   const language = useSelector((state) => state.language.language);
@@ -45,9 +47,9 @@ const HomeBody = (data) => {
   //     }
   //   };
 
-  //   useEffect(() => {
-  //     fetchData();
-  //   }, []);
+  useEffect(() => {
+    fetchNews();
+  }, []);
 
   // useEffect(() => {
   // if (data.length != 0) {
@@ -55,6 +57,41 @@ const HomeBody = (data) => {
   // console.log(data);
   // }
   // }, [data]);
+
+  const fetchNews = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("language", "ar");
+      formData.append("page", 1);
+      formData.append("per_page", 3);
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/news",
+        formData
+      );
+
+      setNews(response.data.data);
+
+      console.log("Fetched data:");
+      // console.log(response.data.data);
+      console.log(data);
+
+      // setData(response.data);
+
+      //     // if (data.length !== 0) {
+      //     //   console.log("Data:");
+      //     //   console.log(data.data);
+      //     // }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const handleNewsClick = (item) => {
+    navigate("/NewsDetails", {
+      state: { news: item, from: location.pathname },
+    });
+  };
 
   const items = [
     {
@@ -99,7 +136,9 @@ const HomeBody = (data) => {
           </div>
 
           <div className="optionsListContainer flex">
-            <ul className={`optionsList pointer ${language==='en' ? '' : 'ar'}`}>
+            <ul
+              className={`optionsList pointer ${language === "en" ? "" : "ar"}`}
+            >
               {items.map((item, i) => (
                 <li key={i}>
                   {item.type === "external" ? (
@@ -143,49 +182,47 @@ const HomeBody = (data) => {
                   : data.data[0].arSub_title}
               </div>
               <div className="newsContent">
-                {
-                  (contentLang0 =
-                    language === "en"
-                      ? data.data[0].content
-                      : data.data[0].arContent)
-                }
-                {contentLang0 &&
-                  contentLang0.split(/ - /).map((segment, index, arr) => {
-                    if (index === arr.length - 1 && arr.length > 1) {
-                      return (
-                        <React.Fragment key={index}>
-                          <a
-                            href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
-                            target="_blank"
-                            className="content2 pointer"
-                          >
+                {data.data[0][
+                  `${language === "en" ? "content" : "arContent"}`
+                ] &&
+                  data.data[0][`${language === "en" ? "content" : "arContent"}`]
+                    .split(/ - /)
+                    .map((segment, index, arr) => {
+                      if (index === arr.length - 1 && arr.length > 1) {
+                        return (
+                          <React.Fragment key={index}>
+                            <a
+                              href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
+                              target="_blank"
+                              className="content2 pointer"
+                            >
+                              {segment}
+                            </a>
+                            <br />
+                          </React.Fragment>
+                        );
+                      } else {
+                        return (
+                          <React.Fragment key={index}>
                             {segment}
-                          </a>
-                          <br />
-                        </React.Fragment>
-                      );
-                    } else {
-                      return (
-                        <React.Fragment key={index}>
-                          {segment}
-                          {index !== arr.length - 1 && <br />}
-                          {index !== arr.length - 1 && (
-                            <>
-                              <div className="dashContainer">
-                                <a
-                                  href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
-                                  target="_blank"
-                                  className="dash"
-                                >
-                                  -
-                                </a>
-                              </div>
-                            </>
-                          )}
-                        </React.Fragment>
-                      );
-                    }
-                  })}
+                            {index !== arr.length - 1 && <br />}
+                            {index !== arr.length - 1 && (
+                              <>
+                                <div className="dashContainer">
+                                  <a
+                                    href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
+                                    target="_blank"
+                                    className="dash"
+                                  >
+                                    -
+                                  </a>
+                                </div>
+                              </>
+                            )}
+                          </React.Fragment>
+                        );
+                      }
+                    })}
                 <div className="learnMoreBtn">
                   <a
                     href={`http://127.0.0.1:8000/${data.data[0].dwnld_material}`}
@@ -210,14 +247,10 @@ const HomeBody = (data) => {
                   : data.data[1].arSub_title}
               </div>
               <div className="newsContent2">
-                {
-                  (contentLang1 =
-                    language === "en"
-                      ? data.data[1].content
-                      : data.data[1].arContent)
-                }
-                {contentLang1 &&
-                  contentLang1
+                {data.data[1][
+                  `${language === "en" ? "content" : "arContent"}`
+                ] &&
+                  data.data[1][`${language === "en" ? "content" : "arContent"}`]
                     .replace(/\. /g, ".<br/>")
                     .split("<br/>")
                     .map((line, index) => (
@@ -226,6 +259,61 @@ const HomeBody = (data) => {
                         <br />
                       </React.Fragment>
                     ))}
+              </div>
+            </div>
+
+            <div className="homeNews flex column justify-content-start">
+              <h2 className="homeNewsTitle">
+                {language === "en" ? "News" : "الأخبار"}
+              </h2>
+
+              {Array.isArray(news) && news.length > 0 ? (
+                <ul className="newsList width-100 flex wrap r-gap-30">
+                  {news
+                    .filter((item) =>
+                      language === "en"
+                        ? item.enTitle && item.enContent
+                        : item.title && item.content
+                    ) // Filter based on language
+                    .map((item, index) => (
+                      <li key={index}>
+                        <div className="newsListSection">
+                          <Image
+                            src={`http://localhost:8000/${item.coverImg}`}
+                            alt="News Cover"
+                            title={
+                              language === "en" ? item.enTitle : item.title
+                            }
+                            className="newsListImg pointer"
+                            onClick={() => handleNewsClick(item)}
+                          />
+
+                          <div className="newsListDate flex">
+                            {new Intl.DateTimeFormat("de-DE", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }).format(new Date(item.created_at))}
+                          </div>
+
+                          <div
+                            className="newsListTitle pointer"
+                            onClick={() => handleNewsClick(item)}
+                          >
+                            {language === "en" ? item.enTitle : item.title}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <></>
+              )}
+
+              <div className="allNewsBtn flex justify-content">
+                <a href='/news'>
+                  {language==='en' ? 'See All' : 'مشاهدة الكل'}
+                </a>
               </div>
             </div>
           </div>
