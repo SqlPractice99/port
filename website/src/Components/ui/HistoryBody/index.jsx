@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import "./styles.css";
 import Image from "../../../Components/base/image";
 import historyImg from "../../../assets/images/history.png";
@@ -6,6 +7,7 @@ import ReactDOMServer from "react-dom/server";
 // import axios from "axios";
 
 const HistoryBody = (data) => {
+  const language = useSelector((state) => state.language.language);
   const parseContent = (content) => {
     console.log("Raw content:", content); // Debugging content before processing
 
@@ -108,14 +110,14 @@ const HistoryBody = (data) => {
 
     // After parsing all segments, check if there's any remaining text to add as a paragraph
     if (tempText.trim()) {
-        console.log("zzzzzzzzzzzzzzzzzz");
-        console.log(tempText.trim())
+      console.log("zzzzzzzzzzzzzzzzzz");
+      console.log(tempText.trim());
       elements.push(<p key={`p-final`}>{tempText.trim()}</p>);
     }
 
     // If there are ongoing list items, close them by adding to <ul>
     if (currentList.length > 0) {
-        console.log("llllllllllllllllllllllllllllllll");
+      console.log("llllllllllllllllllllllllllllllll");
 
       elements.push(<ul key={`ul-final`}>{currentList}</ul>);
     }
@@ -128,7 +130,7 @@ const HistoryBody = (data) => {
 
     // Now shift the elements array, move the last element to the first position
     if (elements.length > 1) {
-        console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
+      console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
 
       let y = elements[elements.length - 1]; // Store the last element
       for (let i = elements.length - 1; i > 0; i--) {
@@ -144,9 +146,15 @@ const HistoryBody = (data) => {
 
   return (
     <>
-      <div className="aboutContainer width-100 flex">
+      <div
+        className={`aboutContainer width-100 flex ${
+          language === "en" ? "" : "reverse"
+        }`}
+      >
         <div className="aboutContainerLeft width-50 flex center">
-          <div className="aboutContainerText flex">History</div>
+          <div className="aboutContainerText flex">
+            {language === "en" ? "History" : "لمحة تاريخية"}
+          </div>
         </div>
 
         <div className="aboutContainerRight width-50">
@@ -169,42 +177,33 @@ const HistoryBody = (data) => {
                   index % 2 === 0 ? "white-bg" : "grey-bg"
                 }`}
               >
-                <div className="aboutNews width-100 flex space-between">
-                  {index % 2 === 0 ? (
-                    <>
-                      <div className="img-content-left width-50 flex">
-                        <Image
-                          src={`http://127.0.0.1:8000/${item.image}`}
-                          className="aboutNewsImg"
-                        />
+                <div
+                  className={`aboutNews width-100 flex space-between ${language === "en" ? "" : "reverse"} ${index % 2 === 0 ? '' : 'ar'}`}
+                >
+                  <div className={`img-content-left width-50 flex ${language==='en' ? '' : 'justify-content-end'}`}>
+                    <Image
+                      src={`http://127.0.0.1:8000/${item.image}`}
+                      className="aboutNewsImg"
+                    />
+                  </div>
+                  <div className="img-content-right flex align-items">
+                    <div
+                      className={`about-title-content width-100 flex column ${
+                        language === "en" ? "en" : "ar"
+                      }`}
+                    >
+                      <div className="aboutNewsTitle">
+                        {language === "en"
+                          ? `${item.title}`
+                          : `${item.arTitle}`}
                       </div>
-                      <div className="img-content-right flex align-items">
-                        <div className="about-title-content flex column">
-                          <div className="aboutNewsTitle">{item.title}</div>
-                          <div className="aboutNewsContent">
-                            {parseContent(item.content)}
-                          </div>
-                        </div>
+                      <div className="aboutNewsContent">
+                        {language === "en"
+                          ? parseContent(item.content)
+                          : parseContent(item.arContent)}
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="img-content-right flex align-items">
-                        <div className="about-title-content flex column">
-                          <div className="aboutNewsTitle">{item.title}</div>
-                          <div className="aboutNewsContent">
-                            {parseContent(item.content)}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="img-content-left width-50 flex justify-content-end">
-                        <Image
-                          src={`http://127.0.0.1:8000/${item.image}`}
-                          className="aboutNewsImg"
-                        />
-                      </div>
-                    </>
-                  )}
+                    </div>
+                  </div>
                 </div>
               </div>
             );

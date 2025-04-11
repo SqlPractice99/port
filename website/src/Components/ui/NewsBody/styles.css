@@ -1,5 +1,5 @@
 .newsBody {
-  padding: 80px 0 30px 0px;
+  padding: 40px 0 30px 0px;
   width: 1240px;
   margin: 0 auto;
 }
@@ -92,6 +92,10 @@
 .noNews, .loadingNews {
   padding-top: 30px;
   padding-bottom: 10px;
+}
+
+.newsButtonContainer {
+  margin-bottom: 20px;
 }
 
 /* .searchClear {
