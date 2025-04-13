@@ -130,7 +130,7 @@ const Dropdown = () => {
       >
         <div
           className={`dropdown-options width-45 ${
-            language === "en" ? "borderRight" : "ar borderLeft"
+            language === "en" ? "borderRight dropdown-options-en" : "ar borderLeft dropdown-options-ar"
           }`}
         >
           <ul>
