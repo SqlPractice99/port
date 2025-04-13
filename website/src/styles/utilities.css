@@ -171,6 +171,10 @@
   justify-content: space-between;
 }
 
+.space-evenly {
+  justify-content: space-evenly;
+}
+
 .button {
   padding: 4px 8px;
   border-radius: 5px;
@@ -261,4 +265,17 @@
 
 .borderLeft {
   border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.almarai {
+  font-family: 'Almarai', sans-serif !important;
+
 }

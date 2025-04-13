@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 import "./styles.css";
 import Image from "../../../Components/base/image";
 import freeZoneImg from "../../../assets/images/about.png";
@@ -11,6 +12,8 @@ const FreeZoneBody = (data) => {
     const token = JSON.parse(localStorage.getItem("userToken"));
     const [activeContent, setActiveContent] = useState("1");
     const [isEditing, setIsEditing] = useState(false);
+    const language = useSelector((state) => state.language.language);
+    const en = (language==='en');
 
     const filteredData = data.data
         .filter((item) => item.title === "Rules and Regulations")
@@ -171,9 +174,9 @@ const FreeZoneBody = (data) => {
 
     return (
         <>
-            <div className="aboutContainer width-100 flex">
+            <div className={`aboutContainer width-100 flex ${en ? '' : 'reverse'}`}>
                 <div className="aboutContainerLeft width-50 flex center">
-                    <div className="aboutContainerText flex">Free Zone</div>
+                    <div className={`aboutContainerText flex ${en ? '' : 'almarai'}`}>{en ? 'Free Zone' : 'المنطقة الحرة'}</div>
                 </div>
 
                 <div className="aboutContainerRight width-50">
@@ -189,18 +192,17 @@ const FreeZoneBody = (data) => {
             <div className="freeZoneContainer width-100 flex center">
                 <div className="freeZoneContent flex column center">
                     <div className="freeZoneListContainer width-100 flex center">
-                        <ul className="freeZoneList flex space-between">
-                            <li className={`${activeContent === "1" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("1")}>Hint</li>
-                            <li className={`${activeContent === "2" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("2")}>Rules and Regulations</li>
-                            <li className={`${activeContent === "3" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("3")}>Buildings & Equipments</li>
-                            <li className={`${activeContent === "4" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("4")}>Duty Free Market</li>
-                            <li className={`${activeContent === "5" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("5")}>The Logistic Free Zone</li>
-                            <li className={`${activeContent === "6" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("6")}>Taxes & Cost</li>
+                        <ul className={`freeZoneList flex space-between c-gap-10 ${en ? '' : 'reverse'}`}>
+                            <li className={`flex1 nowrap flex justify-content ${activeContent === "1" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("1")}>{en ? 'Hint' : 'مقدمة'}</li>
+                            <li className={`flex1 nowrap flex justify-content ${activeContent === "2" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("2")}>{en ? 'Rules and Regulations' : 'القوانين والانظمة'}</li>
+                            <li className={`flex1 nowrap flex justify-content ${activeContent === "3" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("3")}>{en ? 'Buildings & Equipments' : 'المباني والتجهيزات'}</li>
+                            <li className={`flex1 nowrap flex justify-content ${activeContent === "4" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("4")}>{en ? 'Duty Free Market' : 'السوق الحرة'}</li>
+                            <li className={`flex1 nowrap flex justify-content ${activeContent === "5" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("5")}>{en ? 'The Logistic Free Zone' : 'المنطقة الحرة اللوجستية'}</li>
+                            <li className={`flex1 nowrap flex justify-content ${activeContent === "6" ? "freeZoneActiveList" : ""}`} onClick={() => handleTabClick("6")}>{en ? 'Taxes & Cost' : 'الرسوم والتكاليف'}</li>
                         </ul>
                     </div>
 
                     <div className="freeZoneTitleContent width-100 flex center">
-                        {/* Buttons */}
                         <div className="flex column fit-width button-group">
                             {isEditing ? (
                                 <div className="width-20 flex c-gap-10">
@@ -220,12 +222,12 @@ const FreeZoneBody = (data) => {
                                             key={item.id}
                                             className={`content ${activeContent === "1" ? "show" : ""}`}
                                         >
-                                            <div className="flex column">
-                                                {item.sub_title && <h2 className="freeZoneSubTitle">{item.sub_title}</h2>}
+                                            <div className={`flex column ${en ? '' : 'almarai ar'}`}>
+                                                {(en ? item.sub_title : item.arSub_title) && <h2 className={`freeZoneSubTitle ${en ? '' : 'almarai'}`}>{en ? item.sub_title : item.arSub_title}</h2>}
 
                                                 <div id={item.id}>
                                                     <div>
-                                                        {item.content.split("<br>").map((line, index) => {
+                                                        {(en ? item.content : item.arContent) && (en ? item.content : item.arContent).split("<br>").map((line, index) => {
                                                             if (line === " " || line === "") {
                                                                 return <div key={index} className="empty-line"></div>;
                                                             }
@@ -270,7 +272,7 @@ const FreeZoneBody = (data) => {
 
                                                                         // }
                                                                         // console.log(listItems)
-                                                                        listItems = []; // Reset the list
+                                                                        listItems = [];
                                                                         isInList = false;
 
                                                                         const sanitizedPart = DOMPurify.sanitize(part);
@@ -280,7 +282,6 @@ const FreeZoneBody = (data) => {
                                                                 }
                                                             });
 
-                                                            // If list items are still left at the end, wrap them in a <ul>
                                                             if (listItems.length > 0) {
                                                                 content.push(
                                                                     <ul key="last-ul" className="freeZoneContentList">
@@ -305,11 +306,8 @@ const FreeZoneBody = (data) => {
                                             <div className="flex center">
 
                                                 <div className="flex column width-100">
-                                                    {/* Find the correct item in editedData */}
                                                     {editedData.find((entry) => entry.id === item.id) && (
                                                         <>
-                                                            {/* Title Section */}
-                                                            {/* {console.log(editedData.find((entry) => entry.id === item.id))} */}
                                                             <div id={item.id}>
                                                                 {isEditing ? (
                                                                     <AutoResizeTextarea
@@ -322,13 +320,12 @@ const FreeZoneBody = (data) => {
                                                                         className="freeZoneSubTitle edit-input"
                                                                     />
                                                                 ) : (
-                                                                    <h2 className="freeZoneSubTitle">
+                                                                    <h2 className={`freeZoneSubTitle ${en ? '' : 'almarai'}`}>
                                                                         {editedData.find((entry) => entry.id === item.id)?.sub_title}
                                                                     </h2>
                                                                 )}
                                                             </div>
 
-                                                            {/* Content Section */}
                                                             <div id={item.id}>
                                                                 {isEditing ? (
                                                                     <AutoResizeTextarea
@@ -351,7 +348,6 @@ const FreeZoneBody = (data) => {
                                                                                     return <div key={index} className="empty-line"></div>;
                                                                                 }
 
-                                                                                // Chapter Matching
                                                                                 const chapterRegex = /<red>Chapter\s(\d+|\w+):?\s?(.*?)<\/red>/gi;
                                                                                 const blLightRegex = /<bl-light>(.*?)<\/bl-light>/gi;
 
@@ -383,12 +379,10 @@ const FreeZoneBody = (data) => {
                                                                                     );
                                                                                 }
 
-                                                                                // Apply Tag Formatting
                                                                                 line = line.replace(/<red>(.*?)<\/red>/g, `<span class="red-color">$1</span>`);
                                                                                 line = line.replace(/<bl>(.*?)<\/bl>/g, `<span class="bl-color">$1</span>`);
                                                                                 line = line.replace(/<bl-light>(.*?)<\/bl-light>/g, `<span class="bl-light-color">$1</span>`);
 
-                                                                                // Handle List Items
                                                                                 const liRegex = /<li>([\s\S]*?)<\/li>/g;
 
                                                                                 let parts = line.split(liRegex);
@@ -439,8 +433,6 @@ const FreeZoneBody = (data) => {
                                         </div>
                                     );
                                 }
-
-
 
                                 if (item.title === "Buildings & Equipments") {
                                     return (
@@ -498,7 +490,7 @@ const FreeZoneBody = (data) => {
 
                                                                         // }
                                                                         // console.log(listItems)
-                                                                        listItems = []; // Reset the list
+                                                                        listItems = [];
                                                                         isInList = false;
 
                                                                         const sanitizedPart = DOMPurify.sanitize(part);
@@ -508,7 +500,6 @@ const FreeZoneBody = (data) => {
                                                                 }
                                                             });
 
-                                                            // If list items are still left at the end, wrap them in a <ul>
                                                             if (listItems.length > 0) {
                                                                 content.push(
                                                                     <ul key="last-ul" className="freeZoneContentList">
@@ -592,7 +583,6 @@ const FreeZoneBody = (data) => {
                                                                 }
                                                             });
 
-                                                            // If list items are still left at the end, wrap them in a <ul>
                                                             if (listItems.length > 0) {
                                                                 content.push(
                                                                     <ul key="last-ul" className="freeZoneContentList">
@@ -667,7 +657,7 @@ const FreeZoneBody = (data) => {
 
                                                                         // }
                                                                         // console.log(listItems)
-                                                                        listItems = []; // Reset the list
+                                                                        listItems = [];
                                                                         isInList = false;
 
                                                                         const sanitizedPart = DOMPurify.sanitize(part);
@@ -677,7 +667,6 @@ const FreeZoneBody = (data) => {
                                                                 }
                                                             });
 
-                                                            // If list items are still left at the end, wrap them in a <ul>
                                                             if (listItems.length > 0) {
                                                                 content.push(
                                                                     <ul key="last-ul" className="freeZoneContentList">
@@ -751,7 +740,7 @@ const FreeZoneBody = (data) => {
 
                                                                         // }
                                                                         // console.log(listItems)
-                                                                        listItems = []; // Reset the list
+                                                                        listItems = [];
                                                                         isInList = false;
 
                                                                         const sanitizedPart = DOMPurify.sanitize(part);
@@ -761,7 +750,6 @@ const FreeZoneBody = (data) => {
                                                                 }
                                                             });
 
-                                                            // If list items are still left at the end, wrap them in a <ul>
                                                             if (listItems.length > 0) {
                                                                 content.push(
                                                                     <ul key="last-ul" className="freeZoneContentList">
