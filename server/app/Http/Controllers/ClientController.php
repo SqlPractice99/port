@@ -308,11 +308,14 @@ public function testImage () {
         // Determine the column to search in based on the language
         $titleColumn = $language === 'en' ? 'enTitle' : 'title';
     
+        $perPage = $request->input('per_page', 6);
+        $news = News::where('language', $language)->orderBy('created_at', 'desc')->paginate($perPage);
+
         // Fetch news where the correct title column contains the search term (case-insensitive)
         $news = News::where('language', 'ar')
                     ->where($titleColumn, 'LIKE', "%{$title}%")
                     ->orderBy('created_at', 'desc')
-                    ->get();
+                    ->paginate($perPage);
     
         return response()->json(['data' => $news]);
     }
