@@ -11,6 +11,7 @@ import HomeBody from "../../Components/ui/HomeBody";
 import {
   setSelectedTab,
 } from "../../redux/selectedTab/selectedTabSlice";
+import LoadingText from "../../Components/base/loadingText";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -79,7 +80,7 @@ const Home = () => {
           {/* <FooterTop /> */}
         </div>
       ) : (
-        <div className="loading flex center">Loading...</div>
+        <LoadingText className={'loading'} />
       )}
       <Footer />
     </div>

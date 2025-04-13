@@ -9,6 +9,7 @@ import Footer from "../../Components/ui/Footer";
 import FactsHolder from "../../Components/ui/FactsHolder";
 import HomeBody from "../../Components/ui/HomeBody";
 import { setSelectedTab } from "../../redux/selectedTab/selectedTabSlice";
+import LoadingText from "../../Components/base/loadingText";
 
 const Tariffs = () => {
   const [data, setData] = useState([]);
@@ -99,7 +100,7 @@ const Tariffs = () => {
           {/* <FooterTop /> */}
         </div>
       ) : (
-        <div className="loading flex center">Loading...</div>
+        <LoadingText className={'loading'} />
       )}
       <Footer />
     </div>

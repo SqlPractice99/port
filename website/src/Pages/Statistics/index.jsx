@@ -12,6 +12,7 @@ import {
   setSelectedTab,
 } from "../../redux/selectedTab/selectedTabSlice";
 import StatisticsBody from "../../Components/ui/StatisticsBody";
+import LoadingText from "../../Components/base/loadingText";
 
 const Statistics = () => {
   const [data, setData] = useState([]);
@@ -102,7 +103,7 @@ const Statistics = () => {
           {/* <FooterTop /> */}
         </div>
       ) : (
-        <div className="loading flex center">Loading...</div>
+        <LoadingText className={'loading'} />
       )}
       <Footer />
     </div>
