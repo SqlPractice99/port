@@ -15,7 +15,7 @@ const FreeZoneSection = ({ item, special=false, activeContent, activeNumber, edi
   return (
     <div
       key={item.id}
-      className={`content ${special ? 'special-width' : ''} ${
+      className={`content ${special ? (en ? 'special-width' : '') : ''} ${
         activeContent === activeNumber &&
         (en ||
           (item.arSub_title?.trim() ||
@@ -24,7 +24,7 @@ const FreeZoneSection = ({ item, special=false, activeContent, activeNumber, edi
           : ""
       }`}
     >
-      <div className="flex center">
+      <div className={`flex center ${en ? '' : 'width-100'} `}>
         <div className="flex column width-100">
           {item &&
             (en

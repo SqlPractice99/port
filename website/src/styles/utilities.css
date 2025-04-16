@@ -246,6 +246,10 @@
   aspect-ratio: 5 / 4;
 }
 
+.noPadding {
+  padding-top: 0;
+}
+
 .paddingR-20 {
   padding-right: 2em;
 }
