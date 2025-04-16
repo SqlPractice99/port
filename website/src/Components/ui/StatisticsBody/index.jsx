@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 import "./styles.css";
 import Image from "../../../Components/base/image";
 import statisticsImg from "../../../assets/images/statistics.png";
@@ -13,6 +14,8 @@ const StatisticsBody = (data) => {
       .filter((choice) => choice !== "")
   );
   const [selectedOption, setSelectedOption] = useState("");
+  const language = useSelector((state) => state.language.language);
+  const en = (language==='en');
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
@@ -25,9 +28,9 @@ const StatisticsBody = (data) => {
 
   return (
     <>
-      <div className="aboutContainer width-100 flex">
+      <div className={`aboutContainer width-100 flex ${en ? '' : 'reverse'}`}>
         <div className="aboutContainerLeft width-50 flex center">
-          <div className="aboutContainerText flex">Statistics</div>
+          <div className="aboutContainerText flex">{en ? 'Statistics' : 'إحصائيات'}</div>
         </div>
 
         <div className="aboutContainerRight width-50">
@@ -42,18 +45,18 @@ const StatisticsBody = (data) => {
 
       {data.length !== 0 ? (
         <div className="width-100 flex center">
-          <div className="statisticsBody flex align-items-start column">
-            <label className="statisticsOptionsLabel">Report Type</label>
-            <div className="flex c-gap-10">
+          <div className={`statisticsBody flex column ${en ? 'align-items-start' : 'align-items-end'}`}>
+            <label className="statisticsOptionsLabel">{en ? 'Report Type' : 'نوع التقرير'}</label>
+            <div className={`flex c-gap-10 ${en ? '' : 'reverse'}`}>
               <select
                 name="statisticsOptions"
-                className="statisticsOptionsSelect width-75"
+                className={`statisticsOptionsSelect width-75 ${en ? '' : 'ar'}`}
                 value={selectedOption}
                 onChange={handleChange}
                 required
               >
                 <option value="" className="statisticsOptionsList">
-                  Select Report Type
+                  {en ? 'Select Report Type' : 'اختر نوع التقرير'}
                 </option>
                 {choices.map((choice, index) => (
                   <option
@@ -66,7 +69,7 @@ const StatisticsBody = (data) => {
                 ))}
               </select>
 
-              <div className="statisticsSearch pointer">Search</div>
+              <div className="statisticsSearch pointer">{en ? 'Search' : 'بحث'}</div>
             </div>
 
             {/* {data.data.map((item, index) => {
