@@ -27,6 +27,7 @@ const NewsDetails = () => {
   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   const dropDown = useSelector((state) => state.dropDown.dropDown);
   const language = useSelector((state) => state.language.language);
+  const tabLabel = language === "en" ? "News" : "نشاطات المرفأ";
 
   // const base64UrlDecode = (str) => {
   //   if (!str) return null;
@@ -51,8 +52,10 @@ const NewsDetails = () => {
   // }, [news, navigate]);
 
   useEffect(() => {
-    document.title = selectedTab ? `Port of Beirut | News` : "Port of Beirut";
-    dispatch(setSelectedTab("News"));
+    document.title = selectedTab
+      ? `Port of Beirut | ${tabLabel}`
+      : "Port of Beirut";
+    dispatch(setSelectedTab(tabLabel));
     // const preventDragHandler = (e) => {
     //   if (e.target.tagName === "IMG") {
     //     e.preventDefault();
