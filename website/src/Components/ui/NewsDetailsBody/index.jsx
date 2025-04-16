@@ -20,6 +20,7 @@ const NewsDetailsBody = () => {
   const storedNews = sessionStorage.getItem("news");
   const token = JSON.parse(localStorage.getItem("userToken"));
   const language = useSelector((state) => state.language.language);
+  const en = language === "en";
   const [newImages, setNewImages] = useState([]);
   const [layout, setLayout] = useState("flex-wrap");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,11 +31,14 @@ const NewsDetailsBody = () => {
   const [news, setNews] = useState(
     storedNews ? JSON.parse(storedNews) : location.state?.news
   );
+  const [previewCoverImg, setPreviewCoverImg] = useState(null);
+  const [coverImgFile, setCoverImgFile] = useState(null);
   const [title, setTitle] = useState(news.title);
   const [enTitle, setEnTitle] = useState(news.enTitle);
   const [content, setContent] = useState(news.content);
   const [enContent, setEnContent] = useState(news.enContent);
   const [originalData, setOriginalData] = useState({
+    coverImg: news.coverImg,
     title: news.title,
     enTitle: news.enTitle,
     content: news.content,
@@ -49,7 +53,7 @@ const NewsDetailsBody = () => {
     existingImages,
     newImages,
   ]);
-  // Temporary state
+
   let tempImageArray = [];
 
   const handleScaleChange = (e) => {
@@ -96,8 +100,8 @@ const NewsDetailsBody = () => {
     formData.append("enTitle", enTitle);
     formData.append("content", content);
     formData.append("enContent", enContent);
+    formData.append("coverImg", coverImgFile);
 
-    // console.log("where");
     if (Array.isArray(existingImages)) {
       console.log("case 1");
       console.log(typeof existingImages);
@@ -130,39 +134,14 @@ const NewsDetailsBody = () => {
       }
     }
 
-    // setImageArray(tempImageArray);
-    // console.log("imageArray")
-    // imageArray.forEach((img, index) =>
-    //   formData.append(`imageArray[${index}]`, img)
-    // );
-    // Append images correctly
-    // tempMediaArray.forEach((img, index) => {
-    //     formData.append(`imageArray[${index}]`, img)
-    // });
-
-    // newImages.forEach((img) => formData.append("newImages[]", img));
-
-    // let processedImages = tempMediaArray;
-    // if (typeof tempMediaArray === 'string') {
-    //     try {
-    //         processedImages = JSON.parse(tempMediaArray);
-    //     } catch (e) {
-    //         console.error("Error parsing tempMediaArray:", e);
-    //     }
-    // }
-
-    // console.log("processedImages:", processedImages);
-
     tempMediaArray.flat().forEach((img, index) => {
       if (img instanceof File) {
-        formData.append(`newImages[${index}]`, img); // Append new images
-        formData.append(`imageArray[${index}]`, "new"); // Append existing images
+        formData.append(`newImages[${index}]`, img);
+        formData.append(`imageArray[${index}]`, "new");
       } else {
-        formData.append(`imageArray[${index}]`, img); // Append existing images
+        formData.append(`imageArray[${index}]`, img);
       }
     });
-
-    // console.log("tempMediaArray before processing:", tempMediaArray);
 
     console.warn("FormData entries:");
     for (let [key, value] of formData.entries()) {
@@ -231,6 +210,7 @@ const NewsDetailsBody = () => {
           content: content,
           enContent: enContent,
           image: JSON.stringify(response.data.data.image),
+          coverImg: response.data.data.coverImg,
         };
       });
 
@@ -349,7 +329,6 @@ const NewsDetailsBody = () => {
   }, [newImages]);
 
   useEffect(() => {
-    
     console.log("tempMediaArray");
     console.warn(tempMediaArray);
 
@@ -459,6 +438,14 @@ const NewsDetailsBody = () => {
     return result;
   }, [existingImages]);
 
+  const handleCoverImgChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCoverImgFile(file);
+      setPreviewCoverImg(URL.createObjectURL(file));
+    }
+  };
+
   let fileExtension;
   let isValidImage;
 
@@ -477,66 +464,92 @@ const NewsDetailsBody = () => {
     console.warn(existingImages);
   }, [existingImages]);
 
-  const tenderDetailsContent = [
-    <div
-      key="left"
-      className={`tenderDetailsLeft flex column align-items width-50 ${
-        language === "en" ? "marginLeft-0" : ""
-      }`}
-    >
-      <div className="tenderDetailsLeftContent">
-        <div
-          className={`tenderDetailsDateContainer flex column ${
-            language === "en" ? "align-items-start" : "align-items-end"
-          }`}
-        >
-          <div className="tenderDetailsDate flex">
-            {new Intl.DateTimeFormat("de-DE", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            }).format(new Date(news.created_at))}
-          </div>
-        </div>
+  useEffect(() => {
+    if(previewCoverImg === null){
+      setPreviewCoverImg(`http://localhost:8000/${news.coverImg}`);
+    }
+    console.log("previewCoverImg", previewCoverImg);
+  }, [previewCoverImg]);
 
-        {isEditing ? (
-          <textarea
-            type="text"
-            value={language === "en" ? enTitle : title}
-            onChange={(e) =>
-              language === "en"
-                ? setEnTitle(e.target.value)
-                : setTitle(e.target.value)
-            }
-            className={`editInput ${language === "en" ? "en" : "ar"}`}
-          />
-        ) : (
-          <div
-            className={`newsDetailsTitle ${language === "en" ? "en" : "ar"}`}
-          >
-            {language === "en" ? news.enTitle : news.title}
-          </div>
-        )}
-      </div>
-    </div>,
-
-    <div key="right" className="tenderDetailsRight flex column width-50">
-      <Image
-        src={`http://localhost:8000/${news.coverImg}`}
-        alt="Tenders of Port of Beirut"
-        title="PORT OF BEIRUT"
-        className="tenderDetailsCoverImg flex center"
-      />
-    </div>,
-  ];
+  console.warn("en", en);
 
   return (
     <div className="tenderDetailsContainer width-100 flex column center">
       <div className="newsDetailsSection flex column">
-        <div className="tenderDetails flex">
-          {language === "ar"
-            ? tenderDetailsContent
-            : tenderDetailsContent.reverse()}
+        <div
+          className={`tenderDetails flex
+         ${en ? "" : "reverse"}`}
+        >
+          <div className="tenderDetailsRight flex column width-50">
+            {isEditing ? (
+              <>
+                {previewCoverImg && (
+                  <img
+                    src={previewCoverImg}
+                    alt="Preview"
+                    className="tenderDetailsCoverImg flex center"
+                  />
+                )}
+                <div className="flex center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCoverImgChange}
+                    className="upload-input"
+                  />
+                </div>
+              </>
+            ) : (
+              <Image
+                src={`http://localhost:8000/${news.coverImg}`}
+                alt="Tenders of Port of Beirut"
+                title="PORT OF BEIRUT"
+                className="tenderDetailsCoverImg flex center"
+              />
+            )}
+          </div>
+
+          <div
+            className={`tenderDetailsLeft flex column align-items width-50
+             ${en ? "marginLeft-0" : ""}`}
+          >
+            <div className="tenderDetailsLeftContent">
+              <div
+                className={`tenderDetailsDateContainer flex column ${
+                  en ? "align-items-start" : "align-items-end"
+                }`}
+              >
+                <div className="tenderDetailsDate flex">
+                  {new Intl.DateTimeFormat("de-DE", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }).format(new Date(news.created_at))}
+                </div>
+              </div>
+
+              {isEditing ? (
+                <textarea
+                  type="text"
+                  value={language === "en" ? enTitle : title}
+                  onChange={(e) =>
+                    language === "en"
+                      ? setEnTitle(e.target.value)
+                      : setTitle(e.target.value)
+                  }
+                  className={`editInput ${language === "en" ? "en" : "ar"}`}
+                />
+              ) : (
+                <div
+                  className={`newsDetailsTitle ${
+                    language === "en" ? "en" : "ar"
+                  }`}
+                >
+                  {language === "en" ? news.enTitle : news.title}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="newsDetailsDownload flex column align-items-end">
@@ -822,7 +835,10 @@ const NewsDetailsBody = () => {
                         display="true"
                       />
                     ) : (
-                      <Video video={imagePath} className={`width-100 height-${height} videoPlay pointer`} />
+                      <Video
+                        video={imagePath}
+                        className={`width-100 height-${height} videoPlay pointer`}
+                      />
                     )}
                   </div>
                 ))}

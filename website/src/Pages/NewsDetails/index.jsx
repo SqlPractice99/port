@@ -27,6 +27,7 @@ const NewsDetails = () => {
   const selectedTab = useSelector((state) => state.selectedTab.selectedTab);
   const dropDown = useSelector((state) => state.dropDown.dropDown);
   const language = useSelector((state) => state.language.language);
+  const en = language==='en';
   const tabLabel = language === "en" ? "News" : "نشاطات المرفأ";
 
   // const base64UrlDecode = (str) => {
@@ -180,7 +181,7 @@ const NewsDetails = () => {
             >
               {language === 'en' ? 'Home' : 'الصفحة الرئيسية'}.&nbsp;
             </div>
-            <div className="pageLocationTab">{selectedTab}</div>
+            <div className="pageLocationTab">{en ? selectedTab : 'أخبار'}</div>
           </div>
         </div>
       </div>
