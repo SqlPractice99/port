@@ -17,7 +17,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
     Username: "",
     Password: "",
   });
-  // const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [eye, setEye] = useState(notVisible);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,15 +27,15 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
   axios.defaults.baseURL = "http://localhost:8000";
   // axios.defaults.withCredentials = true; // Allows cookies to be sent automatically
 
-  // const togglePasswordVisibility = () => {
-  //   if (!passwordVisible) {
-  //     setEye(visible);
-  //   } else {
-  //     setEye(notVisible);
-  //   }
+  const togglePasswordVisibility = () => {
+    if (!passwordVisible) {
+      setEye(visible);
+    } else {
+      setEye(notVisible);
+    }
 
-  //   setPasswordVisible(!passwordVisible);
-  // };
+    setPasswordVisible(!passwordVisible);
+  };
 
   // Define the getCookie function
   // function getCookie(name) {
@@ -413,7 +413,7 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
           <div className="password-input width-100 flex center">
             <Input
               ref={passwordInputRef}
-              type={"password"}
+              type={passwordVisible ? "text" : "password"}
               placeholder="Password"
               value={inputValues["Password"]}
               state={inputValues}
@@ -422,30 +422,30 @@ const LoginForm = ({ userD, setUserD, userT, setUserT }) => {
               onChange={(newValue) => handleInputChange("Password", newValue)}
               name="Password"
             />
-            {/* <button
+            <button
               type="button"
               className="passwordToggle pointer"
               onClick={togglePasswordVisibility}
-            > */}
-            {/* <Image
+            > 
+            <Image
                 src={eye}
                 alt="Toggle password visibility"
                 className="eyeToggle"
-              /> */}
-            {/* </button> */}
+              />
+            </button>
           </div>
         </div>
         <div className="loginButton width-85 flex center">
           <Button text="Login" onClick={handleLogin} />
         </div>
 
-        <div className="loginButton width-85 flex center">
+        {/* <div className="loginButton width-85 flex center">
           <Button text="User" onClick={users} />
         </div>
 
         <div className="loginButton width-85 flex center">
           <Button text="Decrypt" onClick={decryptToken} />
-        </div>
+        </div> */}
       </div>
     </div>
   );
