@@ -433,13 +433,10 @@ class AdminController extends Controller
                 ], 404);
             }
         
-            // Get existing images from the database
             $imagePaths = json_decode($news->image, true) ?? [];
         
-            // Get the order from imageArray (frontend)
             $requestedOrder = $request->imageArray ?? $imagePaths; 
         
-            // Handle new image uploads
             $newImagePaths = [];
             if ($request->hasFile('newImages')) {
                 foreach ($request->file('newImages') as $image) {
@@ -449,24 +446,27 @@ class AdminController extends Controller
                 }
             }
         
-            // Final array to maintain correct order
             $finalImagePaths = [];
-            $newImageIndex = 0; // Track index for new images
+            $newImageIndex = 0;
         
             foreach ($requestedOrder as $index => $image) {
                 if (str_starts_with($image, 'images/')) {
-                    // Existing image, keep in order
                     $finalImagePaths[] = $image;
                 } elseif ($newImageIndex < count($newImagePaths)) {
-                    // Replace "new" placeholder or empty slot with an uploaded image
                     $finalImagePaths[] = $newImagePaths[$newImageIndex++];
                 }
             }
         
-            // If any new images are left, append them at the end (failsafe)
             $finalImagePaths = array_merge($finalImagePaths, array_slice($newImagePaths, $newImageIndex));
+
+            $deletedImages = array_diff($imagePaths, $finalImagePaths);
+            foreach ($deletedImages as $oldImage) {
+                $imagePath = public_path($oldImage);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
         
-            // Save the final ordered images to the database
             $news->image = json_encode($finalImagePaths, JSON_UNESCAPED_SLASHES);
             $news->save();
 
