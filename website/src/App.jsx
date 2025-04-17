@@ -11,6 +11,7 @@ import FreeZone from "./Pages/FreeZone";
 import Statistics from "./Pages/Statistics";
 import News from "./Pages/News";
 import NewsDetails from "./Pages/NewsDetails";
+import NewsDetailsForm from "./Pages/NewsDetailsForm";
 import Tenders from "./Pages/Tenders";
 import TenderDetails from "./Pages/TenderDetails";
 import ContactUs from "./Pages/ContactUs";
@@ -70,6 +71,7 @@ function App() {
           <Route path="/Statistics" element={<Statistics />} />
           <Route path="/News" element={<News />} />
           <Route path="/NewsDetails" element={<NewsDetails />} />
+          <Route path="/NewsDetailsFrom" element={<NewsDetailsForm />} />
           <Route path="/Tenders" element={<Tenders />} />
           <Route path="/TenderDetails" element={<TenderDetails />} />
           <Route path="/ContactUs" element={<ContactUs />} />
