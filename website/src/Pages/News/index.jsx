@@ -115,15 +115,9 @@ const News = () => {
           <div className="pageLocationTab">{selectedTab}</div>
         </div>
       </div>
-      {/* {data.length !== 0 ? ( */}
       <div className="homeContent flex column">
         <NewsBody />
-        {/* <FactsHolder /> */}
-        {/* <FooterTop /> */}
       </div>
-      {/* ) : ( */}
-      {/* <div className="loading flex center">Loading...</div> */}
-      {/* )} */}
       <Footer />
     </div>
   );

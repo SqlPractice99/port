@@ -19,7 +19,7 @@ const NewsBody = () => {
   const location = useLocation();
   const token = JSON.parse(localStorage.getItem("userToken"));
   const language = useSelector((state) => state.language.language);
-
+  const en = language==='en';
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [searchPage, setSearchPage] = useState(1);
@@ -133,6 +133,10 @@ const NewsBody = () => {
     }
   };
 
+  const handleAddNewsClick = () => {
+    navigate("/newsDetailsForm")
+  }
+
   useEffect(() => {
     fetchData(page);
   }, [page]);
@@ -151,25 +155,21 @@ const NewsBody = () => {
     }
   }, [inView, hasMore]);
 
-  const aboutContent = [
-    <div key='left' className="aboutContainerLeft width-50 flex center">
-      <div className="aboutContainerText flex">{language === 'en' ? "News" : "نشاطات المرفأ"}</div>
-    </div>,
-
-    <div key='right' className="aboutContainerRight flex center column width-50">
-      <Image
-        src={NewsImg}
-        alt="News of Port of Beirut"
-        title={"PORT OF BEIRUT"}
-        className="aboutPageImg flex center"
-      />
-    </div>,
-  ]
-
   return (
     <>
-      <div className="aboutContainer width-100 flex">
-        {language === "ar" ? aboutContent : aboutContent.reverse()}
+      <div className={`aboutContainer width-100 flex ${en ? '' : 'reverse'}`}>
+        <div className="aboutContainerRight flex center column width-50">
+          <Image
+            src={NewsImg}
+            alt="News of Port of Beirut"
+            title={"PORT OF BEIRUT"}
+            className="aboutPageImg flex center"
+          />
+        </div>
+
+        <div className="aboutContainerLeft width-50 flex center">
+          <div className="aboutContainerText flex">{language === 'en' ? "News" : "نشاطات المرفأ"}</div>
+        </div>
       </div>
 
       <div className="width-100 flex center">
@@ -181,13 +181,22 @@ const NewsBody = () => {
           </div>
 
           {token ? (
-            <input
-              type="text"
-              placeholder={language === 'en' ? "Search news by title..." : "...البحث من خلال العنوان"}
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e)}
-              className={`newsSearchBar ${language === 'ar' ? 'ar' : ''}`}
-            />
+            <div className={`flex width-100 ${en ? '' : 'reverse'}`}>
+              <div className={`flex align-items ${en ? '' : 'reverse'}`}>
+                <div className="newsButton width-100 flex center pointer" onClick={handleAddNewsClick}>
+                  {en ? 'Add News' : 'أضف خبر'}
+                </div>
+              </div>
+              <div className={`width-85 flex center ${en ? 'width-80' : 'width-85 reverse'}`}>
+                <input
+                  type="text"
+                  placeholder={language === 'en' ? "Search news by title..." : "...البحث من خلال العنوان"}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e)}
+                  className={`newsSearchBar ${language === 'ar' ? 'ar' : ''}`}
+                />
+              </div>
+            </div>
           ) : <></>}
 
           <div className={`width-100 ${language === 'ar' ? 'ar' : ''}`}>
