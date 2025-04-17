@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./styles.css";
 import Image from "../../base/image";
@@ -17,6 +17,7 @@ const NewsDetailsBody = () => {
   // const [media, setMedia] = useState(initialMedia);
   const imageExtensions = ["jpeg", "jpg", "png"];
   const location = useLocation();
+  const navigate = useNavigate();
   const storedNews = sessionStorage.getItem("news");
   const token = JSON.parse(localStorage.getItem("userToken"));
   const language = useSelector((state) => state.language.language);
@@ -26,6 +27,7 @@ const NewsDetailsBody = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imageArray, setImageArray] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [imageScale, setImageScale] = useState(40);
   const [height, setHeight] = useState(40);
   const [news, setNews] = useState(
@@ -75,12 +77,34 @@ const NewsDetailsBody = () => {
     setLayout(layoutType);
   };
 
+  const handleDeleteClick = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("token", token);
+      formData.append("id", news.id);
+
+      const response = await axios.post(
+        "http://localhost:8000/api/removeNews",
+        formData
+      );
+
+      if (response.data.message === "News Deleted") {
+        navigate("/news");
+      }
+    } catch (error) {
+      console.error("Error updating news:", error);
+      alert("Failed to update news");
+    }
+  };
+
   const handleEditClick = () => {
+    console.log("previewCoverImg", previewCoverImg);
     const parsedExistingImages = Array.isArray(existingImages)
       ? existingImages
       : JSON.parse(existingImages || "[]");
 
     setOriginalData((prev) => ({
+      coverImg: news.coverImg ?? prev.coverImg,
       title: news.title ?? prev.title,
       enTitle: news.enTitle ?? prev.enTitle,
       content: news.content ?? prev.content,
@@ -222,10 +246,12 @@ const NewsDetailsBody = () => {
   };
 
   const handleCancelClick = () => {
+    console.warn(originalData);
     setTitle(originalData.title);
     setEnTitle(originalData.enTitle);
     setContent(originalData.content);
     setEnContent(originalData.enContent);
+    setPreviewCoverImg(`http://localhost:8000/${originalData.coverImg}`);
     setExistingImages(originalData.images);
     setTempMediaArray(originalData.images); // Reset temp state
     setNewImages([]);
@@ -465,13 +491,13 @@ const NewsDetailsBody = () => {
   }, [existingImages]);
 
   useEffect(() => {
-    if(previewCoverImg === null){
+    if (previewCoverImg === null) {
       setPreviewCoverImg(`http://localhost:8000/${news.coverImg}`);
     }
-    console.log("previewCoverImg", previewCoverImg);
-  }, [previewCoverImg]);
 
-  console.warn("en", en);
+    console.log("newwws", news.coverImg);
+    console.log("newww previewCoverImg", previewCoverImg);
+  }, [previewCoverImg]);
 
   return (
     <div className="tenderDetailsContainer width-100 flex column center">
@@ -482,7 +508,7 @@ const NewsDetailsBody = () => {
         >
           <div className="tenderDetailsRight flex column width-50">
             {isEditing ? (
-              <>
+              <div className="coverImgSection flex center">
                 {previewCoverImg && (
                   <img
                     src={previewCoverImg}
@@ -490,15 +516,18 @@ const NewsDetailsBody = () => {
                     className="tenderDetailsCoverImg flex center"
                   />
                 )}
-                <div className="flex center">
+
+                <div className="overlayLayer"></div>
+
+                <div className="coverImgInput flex center">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleCoverImgChange}
-                    className="upload-input"
+                    className="upload-input pointer"
                   />
                 </div>
-              </>
+              </div>
             ) : (
               <Image
                 src={`http://localhost:8000/${news.coverImg}`}
@@ -537,7 +566,7 @@ const NewsDetailsBody = () => {
                       ? setEnTitle(e.target.value)
                       : setTitle(e.target.value)
                   }
-                  className={`editInput ${language === "en" ? "en" : "ar"}`}
+                  className={`newsEditInput ${language === "en" ? "en" : "ar"}`}
                 />
               ) : (
                 <div
@@ -601,9 +630,39 @@ const NewsDetailsBody = () => {
               </>
             ) : (
               token && (
-                <button className="editBtn" onClick={handleEditClick}>
-                  Edit
-                </button>
+                <>
+                  <button className="editBtn" onClick={handleEditClick}>
+                    Edit
+                  </button>
+                  <button
+                    className="remove-btn"
+                    onClick={() => setShowDeleteModal(true)}
+                  >
+                    Delete
+                  </button>
+
+                  {showDeleteModal && (
+                    <div className="modal-overlay">
+                      <div className="modal-box">
+                        <h3>Are you sure you want to delete this news?</h3>
+                        <div className="modal-buttons">
+                          <button
+                            onClick={handleDeleteClick}
+                            className="confirm-delete pointer"
+                          >
+                            Yes, Delete
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteModal(false)}
+                            className="cancel-delete pointer"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )
             )}
           </div>

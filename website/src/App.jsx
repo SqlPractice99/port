@@ -56,7 +56,7 @@ function App() {
           {/* <Route path="/news/:slug" element={<NewsDetails />} /> */}
           <Route path="/news/:encodedNews" element={<NewsDetails />} />
           <Route path="/Login" element={userT ? (userD.admin == 1 ? (<Navigate to="/Admin" />) : (<Navigate to="/Publisher" />)) : <Login userD={userD} setUserD={setUserD} userT={userT} setUserT={setUserT} />}/>
-          <Route path="/Admin" element={userT ? (userD.admin == 1 ? (<Admin />) : (<Navigate to="/Publisher" />)) : <Navigate to="/Login" />}/>
+          <Route path="/Admin" element={userT ? (userD.admin == 1 ? (<Admin />) : (<Navigate to="/Publisher" />)) : <Admin />}/>
           <Route path="/Publisher" element={userT ? (userD.admin == 0 ? (<Publisher />) : (<Navigate to="/Admin" />)) : <Navigate to="/Login" />}/>
           {/* <Route path="/Admin" element={<Admin />}/> */}
           {/* <Route path="/Publisher" element={<Publisher />}/> */}

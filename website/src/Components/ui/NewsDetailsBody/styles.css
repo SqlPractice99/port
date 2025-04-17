@@ -169,8 +169,6 @@
     font-family: 'Almarai', sans-serif;
   }
 
-
-
   .tenderListTitle {
     color: #4D4D4D;
     font-size: 18px;
@@ -188,21 +186,16 @@
   
   @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap');
   
-  .editInput, .editTextarea {
-    width: 100%;
+  .newsEditInput, .editTextarea {
+    width: 96.5%;
     padding: 10px;
     font-size: 18px;
     line-height: 25px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
-  }
-  
-  .editInput, .editTextarea {
     min-height: 150px;
     resize: vertical;
-    /* direction: rtl; */
-    /* text-align: right; */
   }
 
   .shareBtn {
@@ -221,21 +214,20 @@
     font-size: 16px;
     border: none;
     border-radius: 5px;
+    color: white;
     cursor: pointer;
   }
   
   .editBtn, .saveBtn {
     background-color: #1a548d;
-    color: white;
   }
   
   .cancelBtn {
     background-color: #a7a7a7;
-    color: white;
   }
-  
+
   .remove-btn {
-    background-color: #ff4d4d; /* Red color for warning */
+    background-color: #fc2d2d; /* Red color for warning */
     color: white; /* White text for contrast */
     border: none; /* Remove default border */
     padding: 8px 12px; /* Comfortable padding */
@@ -257,6 +249,48 @@
   .upload-container {
     margin-bottom: 15px;
   }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-box {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .modal-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .confirm-delete {
+    background-color: #d9534f;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+  }
+  
+  .cancel-delete {
+    background-color: #ccc;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+  }
+  
 
   /* .popupimg {
     width: 150px;
@@ -402,4 +436,28 @@
 
 .maxHeightVideo {
   max-height: 400px;
+}
+
+.coverImgInput {
+  position: absolute;
+  z-index: 2;
+}
+
+.coverImgSection {
+  position: relative;
+}
+
+.upload-input {
+  background-color: white;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.overlayLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
 }
