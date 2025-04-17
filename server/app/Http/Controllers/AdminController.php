@@ -10,6 +10,7 @@ use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 
 class AdminController extends Controller
 {
@@ -481,6 +482,32 @@ class AdminController extends Controller
                 'data' => 'News with ID: ' . $request->id . ' not found.'
             ], 404);
         }
+    }
+
+    public function removeNews(Request $request)
+    {
+        $news = News::find($request->id);
+
+        if (!$news) {
+            return response()->json(['message' => 'News not found'], 404);
+        }
+
+        if ($news->coverImg && File::exists(public_path($news->coverImg))) {
+            File::delete(public_path($news->coverImg));
+        }
+
+        $imagePaths = json_decode($news->image, true);
+        if (is_array($imagePaths)) {
+            foreach ($imagePaths as $path) {
+                if (File::exists(public_path($path))) {
+                    File::delete(public_path($path));
+                }
+            }
+        }
+
+        $news->delete();
+
+        return response()->json(['message' => 'News Deleted']);
     }
 
 
