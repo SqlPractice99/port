@@ -613,7 +613,7 @@ const NewsDetailsBody = () => {
           )}
         </div>
 
-        <div className="flex space-between">
+        <div className={`flex space-between ${en ? '' : 'reverse'}`}>
           <div className="shareBtn">
             <ShareButton news={news} />
           </div>
@@ -622,41 +622,41 @@ const NewsDetailsBody = () => {
             {isEditing ? (
               <>
                 <button className="saveBtn" onClick={handleSaveClick}>
-                  Save
+                  {en ? 'Save' : 'حفظ'}
                 </button>
                 <button className="cancelBtn" onClick={handleCancelClick}>
-                  Cancel
+                {en ? 'Cancel' : 'إلغاء'}
                 </button>
               </>
             ) : (
               token && (
                 <>
                   <button className="editBtn" onClick={handleEditClick}>
-                    Edit
+                    {en ? 'Edit' : 'تعديل'}
                   </button>
                   <button
                     className="remove-btn"
                     onClick={() => setShowDeleteModal(true)}
                   >
-                    Delete
+                    {en ? 'Delete' : 'مسح'}
                   </button>
 
                   {showDeleteModal && (
                     <div className="modal-overlay">
                       <div className="modal-box">
-                        <h3>Are you sure you want to delete this news?</h3>
-                        <div className="modal-buttons">
+                        <h3>{en ? 'Are you sure you want to delete this news?' : 'هل أنت متأكد أنك تريد حذف هذا الخبر؟'}</h3>
+                        <div className={`modal-buttons ${en ? '' : 'reverse'}`}>
                           <button
                             onClick={handleDeleteClick}
                             className="confirm-delete pointer"
                           >
-                            Yes, Delete
+                            {en ? 'Yes, Delete' : 'نعم، إمسح'}
                           </button>
                           <button
                             onClick={() => setShowDeleteModal(false)}
                             className="cancel-delete pointer"
                           >
-                            Cancel
+                            {en ? 'Cancel' : 'إلغاء'}
                           </button>
                         </div>
                       </div>
